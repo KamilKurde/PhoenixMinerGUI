@@ -32,4 +32,5 @@ Unofficial PhoenixMiner GUI for windows
 
 ## Notes
 * This app uses unfinished UI library called [Desktop Compose](https://www.jetbrains.com/lp/compose/), this means that UI of the app can behave weirdly (e.g. flicker)
+* App weights a lot (along with the app files there is whole runtime environment packed, if you know how can we make this app lighter, please contact [main dev](https://github.com/KamilKurde) )
 * Feel free to contribute
