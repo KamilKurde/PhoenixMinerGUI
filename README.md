@@ -1,5 +1,6 @@
 # PhoenixMinerGUI
 Unofficial PhoenixMiner GUI for windows
+![Unofficial PhoenixMiner GUI for windows](/src/main/resources/phoenixgui.png?raw=true "Unofficial PhoenixMiner GUI for windows")
 
 ## Installation
 1. Download PhoenixMiner for windows from [official website](https://phoenixminer.org)
