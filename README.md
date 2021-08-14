@@ -9,13 +9,16 @@ Unofficial PhoenixMiner GUI for windows
    * if you want to test PhoenixMinerGUI without installing it, download "portable" version. Otherwise, download "installer" version.
 4. Install PhoenixMinerGUI or extract its contents (for installer and portable respectively)
 5. After opening PhoenixMinerGUI for the first time, it will ask you to point to PhoenixMiner.exe file (which you extracted earlier).
+![Setup](../assets/Setup.jpg?raw=true)
    * After that, PhoenixMinerGUI will check if PhoenixMiner responds correctly
    * PhoenixMinerGUI check for PhoenixMiner.exe on each startup, don't change its name because it's hardcoded into the app
    * All data including PhoenixMiner.exe path is stored in *%localappdata%\PhoenixMinerGUI*
 
 ## Usage
 1. Main app screen consists of two tables, the upper one shows GPUs detected by PhoenixMiner, the bottom one shows your configured miners
-2. To create new miner simply click on "Create new miner" button which will take you to the configuration screen
+![Summary](../assets/Summary.jpg?raw=true)
+3. To create new miner simply click on "Create new miner" button which will take you to the configuration screen
+![Settings](../assets/Settings.jpg?raw=true)
    * You can change name of the miner in the upper text field
    * Changes aren't saved automatically, to save changes you need to click on the "Save" button
    * Settings table consists of 4 columns:
@@ -24,10 +27,11 @@ Unofficial PhoenixMiner GUI for windows
      3. Description is shortened description from PhoenixMiner docs
      4. Value is field for changing parameter, if it's text field, and it turns red that means current data that's entered in there isn't in correct format.
         * In that case when you save settings it will take last correct value (so e.g. when you enter "80" as value of Ttli and you hit backspace it changes to "8" which is a correct value and when you hit backspace it changes to "" which isn't correct value, so when you hit "Save" button it will save Ttli as "8")
-3. On the left of the miner name you have two buttons:
+4. On the left of the miner name you have two buttons:
+![Working](../assets/Working.jpg?raw=true)
    * Start/Stop button which changes depending on miner status
    * Settings button which takes you back to the configuration screen of the miner (you can delete miner in there using red button on the bottom)
-4. You can start miner from command line by launching PhoenixMinerGUI and passing ID or Name of the miner as arguments (you can mix usage of IDs and Names), if the name contains spaces you need to wrap it in quotation marks
+5. You can start miner from command line by launching PhoenixMinerGUI and passing ID or Name of the miner as arguments (you can mix usage of IDs and Names), if the name contains spaces you need to wrap it in quotation marks
    * (eg, if you have "My Miner" with ID 1, and "The other miner" with ID 2, and you want to run them both then you can do this like that: "*[Path to PhoenixMinerGUI folder]*\PhoenixMiner GUI.exe "My Miner" 2", this will start PhoenixMiner, and it will 
       automatically start both miners)
 
