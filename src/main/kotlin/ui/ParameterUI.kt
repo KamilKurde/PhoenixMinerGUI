@@ -116,7 +116,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true)
 							try
 							{
 								val ids = temporalValue.split(",").map { Id(it.toInt()) }.toTypedArray()
-								if (ids.all { id -> Settings.gpus.any { gpu -> gpu.id.value == id.value } })
+								if (ids.all { id -> Settings.gpus.any { gpu -> gpu.id == id } })
 								{
 									config.value = ids
 									errorState = false

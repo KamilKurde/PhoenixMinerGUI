@@ -46,7 +46,7 @@ fun GpuTable()
 				MaterialRow(Modifier.fillMaxWidth()) {
 					val gpu = Settings.gpus[it]
 					TableCell(gpu.name, nameColumnWeight)
-					TableCell(gpu.id.toString(), columnWeight)
+					TableCell(gpu.id, columnWeight)
 					TableCell(gpu.inUse.toString(), columnWeight)
 					TableCell(gpu.percentage?.let{ "$it%" }, columnWeight, textAlign = TextAlign.Right)
 					TableCell(gpu.temperature?.let { "$it°C" }, columnWeight, textAlign = TextAlign.Right)
