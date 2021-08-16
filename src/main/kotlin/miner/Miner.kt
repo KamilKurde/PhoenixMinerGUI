@@ -23,6 +23,7 @@ class MinerData(val name: String = "", val id: Id = Id(1), val settings: Array<S
 	fun toMiner() = Miner(name, id, Parameters(*settings))
 }
 
+@Suppress("BlockingMethodInNonBlockingContext")
 @ExperimentalCoroutinesApi
 class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 {
@@ -197,21 +198,6 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 
 										}
 									}
-									line.startsWith("Throttling GPUs") ->
-									{
-										val split = line.split(" ")
-										for (internalId in 1..assignedGpuIds.size + 1)
-										{
-											split.forEachIndexed { index, string ->
-												if (string == "GPU$internalId")
-												{
-													val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId - 1] }
-													val gpu = Settings.gpus[gpuSettingsIndex]
-													gpu.percentage = split[index + 1].removeSuffix(",").removePrefix("(").removeSuffix("%)").toInt()
-												}
-											}
-										}
-									}
 									line.startsWith("miner stopped")                                       ->
 									{
 										working = false
@@ -242,13 +228,5 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 			powerEfficiency = null
 			status = MinerStatus.Offline
 		}
-	}
-
-	fun changeState()
-	{
-		if (status == MinerStatus.Offline)
-			startMining()
-		else
-			stopMining()
 	}
 }

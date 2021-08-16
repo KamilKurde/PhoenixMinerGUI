@@ -22,7 +22,6 @@ import ui.material.Tooltip
 fun Setup()
 {
 	Column(modifier = Modifier.fillMaxSize().padding(8.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-		//Spacer(modifier = Modifier.height(16.dp).weight(0.25f))
 		Image(painterResource("phoenixgui.png"), "PhoenixMiner GUI Icon", Modifier.weight(0.75f), contentScale = ContentScale.Inside)
 		Spacer(modifier = Modifier.height(16.dp))
 		Column(Modifier.weight(0.25f), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -48,7 +47,7 @@ fun Setup()
 			)
 			{
 				BoxWithTooltip({
-								   Tooltip("This version was tested for PhoenixMiner 5.6d however it should work with newer version as well")
+								   Tooltip("This version was tested for PhoenixMiner 5.7b however it should work with newer version as well")
 							   })
 				{ Text("Choose File") }
 			}
