@@ -206,6 +206,22 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 
 										}
 									}
+									// Workaround for phoenix not reporting throttled usage in normal stats
+									line.startsWith("Throttling GPUs") ->
+									{
+										val split = line.split(" ")
+										for (internalId in 1..assignedGpuIds.size + 1)
+										{
+											split.forEachIndexed { index, string ->
+												if (string == "GPU$internalId")
+												{
+													val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId - 1] }
+													val gpu = Settings.gpus[gpuSettingsIndex]
+													gpu.percentage = split[index + 1].removeSuffix(",").removePrefix("(").removeSuffix("%)").toInt()
+												}
+											}
+										}
+									}
 									line.startsWith("miner stopped")                                       ->
 									{
 										working = false
