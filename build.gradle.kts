@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.github.KamilKurde"
-val currentVersion = "0.1.0"
+val currentVersion = "0.1.1"
 version = currentVersion
 
 repositories {
@@ -33,7 +33,7 @@ compose.desktop {
 			description = "GUI for PhoenixMiner"
 			packageVersion = currentVersion
 			windows {
-				iconFile.set(project.file("src" + File.separator + "main" + File.separator + "resources" + File.separator + "phoenixgui.ico"))
+				iconFile.set(project.file("src" + File.separator + "main" + File.separator + "resources" + File.separator + "icon.ico"))
 				dirChooser = true
 				perUserInstall = true
 				shortcut = true

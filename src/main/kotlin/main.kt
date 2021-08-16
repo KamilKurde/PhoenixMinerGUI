@@ -20,7 +20,7 @@ import ui.screen.Setup
 import ui.screen.Summary
 import ui.theme.AppTheme
 
-val icon @Composable get() = painterResource("phoenixgui.ico")
+val icon @Composable get() = painterResource("icon.ico")
 
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi

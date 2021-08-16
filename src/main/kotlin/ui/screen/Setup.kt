@@ -22,7 +22,7 @@ import ui.material.Tooltip
 fun Setup()
 {
 	Column(modifier = Modifier.fillMaxSize().padding(8.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-		Image(painterResource("phoenixgui.png"), "PhoenixMiner GUI Icon", Modifier.weight(0.75f), contentScale = ContentScale.Inside)
+		Image(painterResource("icon.png"), "PhoenixMiner GUI Icon", Modifier.weight(0.75f), contentScale = ContentScale.Inside)
 		Spacer(modifier = Modifier.height(16.dp))
 		Column(Modifier.weight(0.25f), horizontalAlignment = Alignment.CenterHorizontally) {
 			Text("Welcome to PhoenixMiner GUI, to start link PhoenixMiner executable below")
