@@ -111,6 +111,14 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 					process(file.absolutePath,
 							stdout = Redirect.CAPTURE,
 							destroyForcibly = true,
+							// setting environmental variables like instructed ond PhoenixMiner.org
+							env = mapOf(
+								"GPU_FORCE_64BIT_PTR" to "0",
+								"GPU_MAX_HEAP_SIZE" to "100",
+								"GPU_USE_SYNC_OBJECTS" to "1",
+								"GPU_MAX_ALLOC_PERCENT" to "100",
+								"GPU_SINGLE_ALLOC_PERCENT" to "100"
+							),
 							consumer = { line ->
 								println("Miner $id: $line")
 								when
