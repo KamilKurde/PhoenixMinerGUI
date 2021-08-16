@@ -120,7 +120,10 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 								"GPU_SINGLE_ALLOC_PERCENT" to "100"
 							),
 							consumer = { line ->
-								println("Miner $id: $line")
+								if (line.isNotEmpty())
+								{
+									println("Miner $id: $line")
+								}
 								when
 								{
 									line.startsWith("Phoenix Miner")                                       -> {
