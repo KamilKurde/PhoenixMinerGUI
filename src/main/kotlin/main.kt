@@ -42,7 +42,7 @@ fun main(args: Array<String>) = application {
 			if (phoenixAvailable)
 			{
 				rememberCoroutineScope().launchOnce {
-					args.forEachIndexed { index, arg ->
+					args.forEach{ arg ->
 						Settings.miners.firstOrNull {
 							it.name == arg || try
 							{
