@@ -55,8 +55,6 @@ object Settings
 		minersToStart.add(miner)
 	}
 
-	fun startMiner(id: Id) = miners.firstOrNull { it.id.value == id.value }?.let { startMiner(it) }
-
 	private val coroutineScope = CoroutineScope(Job())
 
 	init
