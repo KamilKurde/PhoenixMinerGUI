@@ -111,7 +111,7 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 					process(file.absolutePath,
 							stdout = Redirect.CAPTURE,
 							destroyForcibly = true,
-							// setting environmental variables like instructed ond PhoenixMiner.org
+							// setting environmental variables like instructed on PhoenixMiner.org
 							env = mapOf(
 								"GPU_FORCE_64BIT_PTR" to "0",
 								"GPU_MAX_HEAP_SIZE" to "100",
