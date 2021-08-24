@@ -42,15 +42,10 @@ fun main(args: Array<String>) = application {
 			if (phoenixAvailable)
 			{
 				rememberCoroutineScope().launchOnce {
-					args.forEach{ arg ->
+					args.forEach { arg ->
 						Settings.miners.firstOrNull {
-							it.name == arg || try
-							{
+							it.name == arg || tryOrFalse {
 								it.id.value == arg.toInt()
-							}
-							catch (e: Exception)
-							{
-								false
 							}
 						}?.let { Settings.startMiner(it) }
 					}

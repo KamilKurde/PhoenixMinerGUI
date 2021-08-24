@@ -11,6 +11,7 @@ import kotlinx.serialization.*
 import miner.Miner
 import miner.MinerData
 import miner.MinerStatus
+import tryOrNull
 import kotlin.random.Random
 import kotlin.random.nextULong
 
@@ -59,15 +60,10 @@ object Settings
 
 	init
 	{
-		try
-		{
+		(tryOrNull {
 			val file = File(folder + File.separator + "settings.json")
 			Json.decodeFromString(file.readText())
-		}
-		catch (e: Exception)
-		{
-			SettingsData(this)
-		}.let { settingsData ->
+		} ?: SettingsData(this)).let { settingsData ->
 			phoenixPath = settingsData.phoenixPath
 			gpus = settingsData.gpus
 			miners = settingsData.miners.map { it.toMiner() }.toTypedArray()
@@ -85,7 +81,8 @@ object Settings
 					delay(1000L)
 				}
 			}
-			catch (e: CancellationException){
+			catch (e: CancellationException)
+			{
 				println("settings killed")
 			}
 

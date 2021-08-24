@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import phoenix.openFileDialog
 import phoenix.phoenixPathIsCorrect
+import tryWithoutCatch
 import ui.material.Tooltip
 
 @ExperimentalCoroutinesApi
@@ -29,8 +30,7 @@ fun Setup()
 			Spacer(modifier = Modifier.height(16.dp))
 			Button(
 				onClick = {
-					try
-					{
+					tryWithoutCatch{
 						(openFileDialog(ComposeWindow(), "choose PhoenixMiner.exe file").absolutePath).let {
 							if (phoenixPathIsCorrect(it))
 							{
@@ -38,9 +38,6 @@ fun Setup()
 								data.Settings.saveSettings()
 							}
 						}
-					}
-					catch (e: Exception)
-					{
 					}
 				},
 				modifier = Modifier.wrapContentSize()

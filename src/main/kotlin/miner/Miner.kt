@@ -14,6 +14,7 @@ import data.Settings
 import data.folder
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
+import tryWithoutCatch
 import java.io.File
 
 @ExperimentalCoroutinesApi
@@ -95,8 +96,7 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 						delay(500L)
 						process("wmic", "process", "where", "name=\"PhoenixMiner.exe\"", "get", "ProcessID",
 								stdout = Redirect.CAPTURE,
-								consumer = {
-									line ->
+								consumer = { line ->
 									if (!line.contains("ProcessId") && line.isNotEmpty())
 									{
 										val id = line.trim().toInt()
@@ -111,7 +111,7 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 					process(file.absolutePath,
 							stdout = Redirect.CAPTURE,
 							destroyForcibly = true,
-							// setting environmental variables like instructed on PhoenixMiner.org
+						// setting environmental variables like instructed on PhoenixMiner.org
 							env = mapOf(
 								"GPU_FORCE_64BIT_PTR" to "0",
 								"GPU_MAX_HEAP_SIZE" to "100",
@@ -126,7 +126,8 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 								}
 								when
 								{
-									line.startsWith("Phoenix Miner")                                       -> {
+									line.startsWith("Phoenix Miner")                                 ->
+									{
 										// Resetting stats, doesn't matter on normal startup, shows empty values on miner reset
 										working = true
 										hashrate = null
@@ -138,18 +139,14 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 											gpu.inUse = true
 										}
 									}
-									line.contains("Generating DAG")                                        -> status = MinerStatus.DagBuilding
-									line.contains("DAG generated")                                         -> status = MinerStatus.Running
+									line.contains("Generating DAG")                                  -> status = MinerStatus.DagBuilding
+									line.contains("DAG generated")                                   -> status = MinerStatus.Running
 									line.startsWith("GPUs power: ") && status == MinerStatus.Running ->
 									{
 										val split = line.split(" ")
 										powerDraw = split[2].toFloat()
-										try
-										{
+										tryWithoutCatch{
 											powerEfficiency = split[4].toInt()
-										}
-										catch (e: Exception)
-										{
 										}
 									}
 									line.startsWith("Eth speed: ") && status == MinerStatus.Running  ->
@@ -178,7 +175,7 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 											currentData = split.drop(2).joinToString(separator = " ")
 										}
 									}
-									line.startsWith("GPU") && status== MinerStatus.Running          ->
+									line.startsWith("GPU") && status == MinerStatus.Running          ->
 									{
 										for (internalId in 1..assignedGpuIds.size + 1)
 										{
@@ -210,7 +207,7 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 										}
 									}
 									// Workaround for phoenix not reporting throttled usage in normal stats
-									line.startsWith("Throttling GPUs") ->
+									line.startsWith("Throttling GPUs")                               ->
 									{
 										val split = line.split(" ")
 										for (internalId in 1..assignedGpuIds.size + 1)
@@ -225,7 +222,7 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 											}
 										}
 									}
-									line.startsWith("miner stopped")                                       ->
+									line.startsWith("miner stopped")                                 ->
 									{
 										working = false
 										status = MinerStatus.Error
