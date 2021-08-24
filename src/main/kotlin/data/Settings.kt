@@ -25,7 +25,9 @@ class SettingsData(
 	val miners: Array<MinerData> = emptyArray()
 )
 {
-	constructor(settings: Settings): this(Settings.phoenixPath, Settings.gpus, Settings.miners.map { it.toMinerData() }.toTypedArray())
+	companion object{
+		fun generateFromSettings() = SettingsData(Settings.phoenixPath, Settings.gpus, Settings.miners.map { it.toMinerData() }.toTypedArray())
+	}
 }
 
 @ExperimentalCoroutinesApi
@@ -63,7 +65,7 @@ object Settings
 		(tryOrNull {
 			val file = File(folder + File.separator + "settings.json")
 			Json.decodeFromString(file.readText())
-		} ?: SettingsData(this)).let { settingsData ->
+		} ?: SettingsData.generateFromSettings()).let { settingsData ->
 			phoenixPath = settingsData.phoenixPath
 			gpus = settingsData.gpus
 			miners = settingsData.miners.map { it.toMiner() }.toTypedArray()
@@ -94,6 +96,6 @@ object Settings
 		File(folder).mkdirs()
 		val file = File(folder + File.separator + "settings.json")
 		file.createNewFile()
-		file.writeText(Json.encodeToString(SettingsData(this@Settings)))
+		file.writeText(Json.encodeToString(SettingsData.generateFromSettings()))
 	}
 }
