@@ -19,6 +19,7 @@ import config.arguments.StringArgument
 import config.arguments.WalletArgument
 import data.Settings
 import kotlinx.coroutines.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import ui.material.MaterialColumn
 import ui.material.MaterialRow
 import miner.Miner
@@ -26,6 +27,7 @@ import ui.MinerControls
 import kotlin.random.Random
 import kotlin.random.nextULong
 
+@ExperimentalSerializationApi
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
 @ExperimentalCoroutinesApi
@@ -72,6 +74,7 @@ fun MinerTable()
 					val id = (1..Int.MAX_VALUE).first { int -> Settings.miners.none { it.id.value == int } }
 					val miner = Miner(
 						"Miner $id", Id(id),
+						false,
 						Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
 						Config.StringParameter(StringArgument.Pool, "eu-eth.hiveon.net:4444"),
 						Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),

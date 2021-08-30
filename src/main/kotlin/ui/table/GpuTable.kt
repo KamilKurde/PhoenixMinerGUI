@@ -11,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.serialization.ExperimentalSerializationApi
 import ui.material.MaterialColumn
 import ui.material.MaterialRow
 
+@ExperimentalSerializationApi
 @ExperimentalAnimationApi
 @ExperimentalCoroutinesApi
 @Composable

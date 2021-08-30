@@ -13,23 +13,27 @@ import config.arguments.StringArgument
 import data.Settings
 import data.folder
 import kotlinx.coroutines.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import tryWithoutCatch
 import java.io.File
 
+@ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 @Serializable
-class MinerData(val name: String = "", val id: Id = Id(1), val settings: Array<String> = emptyArray())
+class MinerData(val name: String = "", val id: Id = Id(1), val mineOnStartup: Boolean = false, val settings: Array<String> = emptyArray())
 {
-	fun toMiner() = Miner(name, id, Parameters(*settings))
+	fun toMiner() = Miner(name, id, mineOnStartup, Parameters(*settings))
 }
 
+@ExperimentalSerializationApi
 @Suppress("BlockingMethodInNonBlockingContext")
 @ExperimentalCoroutinesApi
-class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
+class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, parameters: Parameters)
 {
-	constructor(name: String = "", id: Id = Id(1), vararg parameters: Config): this(name, id, Parameters(*parameters))
+	constructor(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, vararg parameters: Config): this(name, id, startMiningOnStartup, Parameters(*parameters))
 
+	@ExperimentalSerializationApi
 	companion object
 	{
 		fun stopAllMiners()
@@ -41,6 +45,8 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 	var name by mutableStateOf(name)
 
 	var id by mutableStateOf(id)
+
+	var mineOnStartup by mutableStateOf(startMiningOnStartup)
 
 	var parameters by mutableStateOf(parameters)
 
@@ -60,21 +66,25 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 
 	var assignedGpuIds = emptyArray<Id>()
 
-	fun toMinerData() = MinerData(name, id, parameters.toStringArray())
+	fun toMinerData() = MinerData(name, id, mineOnStartup, parameters.toStringArray())
 
 	private val file = File(folder + File.separator + "miner$id.bat")
 
 	fun startMining()
 	{
 		coroutineJob = Job()
-		CoroutineScope(coroutineJob).launch {
-			status = MinerStatus.Connecting
+		CoroutineScope(coroutineJob).launch{
+			// If done on default dispatcher, changing status for miners with Mos
+			withContext(Dispatchers.Main)
+			{
+				status = MinerStatus.Connecting
+			}
 			val formattedSettings = parameters.copy()
 			if (!formattedSettings.any { it is Config.StringParameter && it.configElement == StringArgument.Password })
 			{
 				formattedSettings.add(Config.StringParameter(StringArgument.Password, "x"))
 			}
-			val settingsAsArray = (formattedSettings.map { it.fullParameter } + "-hstats 2" + "-rmode 0").toTypedArray()
+			val settingsAsArray = (formattedSettings.map { it.fullParameter } + "-hstats 2" + "-rmode 0" + "-cdm 0").toTypedArray()
 			val settingsAsString = settingsAsArray.joinToString(separator = " ")
 			file.createNewFile()
 			file.writeText(
@@ -111,7 +121,7 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 					process(file.absolutePath,
 							stdout = Redirect.CAPTURE,
 							destroyForcibly = true,
-						// setting environmental variables like instructed on PhoenixMiner.org
+							// setting environmental variables like instructed on PhoenixMiner.org
 							env = mapOf(
 								"GPU_FORCE_64BIT_PTR" to "0",
 								"GPU_MAX_HEAP_SIZE" to "100",
@@ -145,7 +155,7 @@ class Miner(name: String = "", id: Id = Id(1), parameters: Parameters)
 									{
 										val split = line.split(" ")
 										powerDraw = split[2].toFloat()
-										tryWithoutCatch{
+										tryWithoutCatch {
 											powerEfficiency = split[4].toInt()
 										}
 									}

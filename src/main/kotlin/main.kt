@@ -12,6 +12,7 @@ import androidx.compose.ui.window.rememberWindowState
 import data.Settings
 import gpu.getGpus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.serialization.ExperimentalSerializationApi
 import miner.Miner
 import phoenix.phoenixPathIsCorrect
 import ui.AnimatedVisibilityWithFade
@@ -22,6 +23,7 @@ import ui.theme.AppTheme
 
 val icon @Composable get() = painterResource("icon.ico")
 
+@ExperimentalSerializationApi
 @ExperimentalMaterialApi
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi

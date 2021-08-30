@@ -1,9 +1,11 @@
 package config
 
+import tryOrNull
+
 class Parameters(private var parameters: MutableList<Config> = mutableListOf()): MutableCollection<Config>
 {
 	constructor(vararg parameters: Config): this(parameters.toMutableList())
-	constructor(vararg parameters: String): this(parameters.map { Config(it) }.toMutableList())
+	constructor(vararg parameters: String): this(parameters.mapNotNull { tryOrNull { Config(it) } }.toMutableList())
 
 	fun copy() = Parameters(parameters.map { it.copy() }.toMutableList())
 

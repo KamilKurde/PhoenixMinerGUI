@@ -17,6 +17,7 @@ import kotlin.random.nextULong
 
 val folder = System.getenv("LOCALAPPDATA") + File.separator + "PhoenixMinerGUI"
 
+@ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 @Serializable
 class SettingsData(
@@ -25,11 +26,13 @@ class SettingsData(
 	val miners: Array<MinerData> = emptyArray()
 )
 {
+	@ExperimentalSerializationApi
 	companion object{
 		fun generateFromSettings() = SettingsData(Settings.phoenixPath, Settings.gpus, Settings.miners.map { it.toMinerData() }.toTypedArray())
 	}
 }
 
+@ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 object Settings
 {
@@ -40,11 +43,11 @@ object Settings
 		arrayOf(
 			Miner(
 				"Donate Your Hashpower To The Dev", Id(1),
+				false,
 				Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
 				Config.StringParameter(StringArgument.Pool, "eu-eth.hiveon.net:4444"),
 				Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),
 				Config.BooleanParameter(BooleanArgument.Log, false),
-				Config.NumberParameter(NumberArgument.Cdm, 0),
 				Config.NumberParameter(NumberArgument.Ttli, 80)
 			)
 		)
@@ -54,8 +57,11 @@ object Settings
 
 	fun startMiner(miner: Miner)
 	{
-		miner.status = MinerStatus.Waiting
-		minersToStart.add(miner)
+		if(miner !in minersToStart)
+		{
+			miner.status = MinerStatus.Waiting
+			minersToStart.add(miner)
+		}
 	}
 
 	private val coroutineScope = CoroutineScope(Job())
@@ -69,6 +75,10 @@ object Settings
 			phoenixPath = settingsData.phoenixPath
 			gpus = settingsData.gpus
 			miners = settingsData.miners.map { it.toMiner() }.toTypedArray()
+		}
+
+		miners.filter { it.mineOnStartup }.forEach{
+			startMiner(it)
 		}
 
 		coroutineScope.launch {

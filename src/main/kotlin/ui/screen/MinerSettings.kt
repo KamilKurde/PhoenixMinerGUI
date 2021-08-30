@@ -21,11 +21,17 @@ import androidx.compose.ui.unit.dp
 import config.Parameters
 import data.Settings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.serialization.ExperimentalSerializationApi
 import miner.MinerStatus
 import ui.ParameterUI
 import ui.material.MaterialRow
 import ui.table.TableCell
+import ui.theme.CHECKBOX_WEIGHT
+import ui.theme.DESCRIPTION_WEIGHT
+import ui.theme.NAME_WEIGHT
+import ui.theme.VALUE_WEIGHT
 
+@ExperimentalSerializationApi
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
@@ -82,10 +88,25 @@ fun MinerSettings(miner: Miner)
 		) {
 			stickyHeader {
 				MaterialRow(isHeader = true) {
-					Spacer(modifier = Modifier.weight(0.05f))
-					TableCell("Name", 0.1f, FontWeight.Bold, textAlign = TextAlign.Left)
-					TableCell("Description", 0.6f, FontWeight.Bold, textAlign = TextAlign.Left)
-					TableCell("Value", 0.3f, FontWeight.Bold, textAlign = TextAlign.Right)
+					Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
+					TableCell("Name", NAME_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Left)
+					TableCell("Description", DESCRIPTION_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Left)
+					TableCell("Value", VALUE_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
+				}
+			}
+			// Handling miner startup on program launcb
+			item {
+				MaterialRow {
+					Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
+					TableCell("Mos", NAME_WEIGHT, textAlign = TextAlign.Left)
+					TableCell("Start this miner on program launch", DESCRIPTION_WEIGHT, textAlign = TextAlign.Left)
+					Box(modifier = Modifier.weight(VALUE_WEIGHT)) {
+						Switch(
+							miner.mineOnStartup,
+							{ miner.mineOnStartup = it },
+							modifier = Modifier.fillMaxSize(),
+						)
+					}
 				}
 			}
 			items(parameters.size)

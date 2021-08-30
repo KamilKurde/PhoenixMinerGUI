@@ -13,11 +13,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.serialization.ExperimentalSerializationApi
 import phoenix.openFileDialog
 import phoenix.phoenixPathIsCorrect
 import tryWithoutCatch
 import ui.material.Tooltip
 
+@ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 @Composable
 fun Setup()

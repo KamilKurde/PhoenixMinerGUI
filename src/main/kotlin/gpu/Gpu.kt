@@ -11,10 +11,12 @@ import com.github.pgreze.process.process
 import data.Settings
 import data.folder
 import kotlinx.coroutines.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import miner.MinerStatus
 import java.io.File
 
+@ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 @Serializable
 data class Gpu(val name: String, var id: Id = Id(1))
@@ -39,6 +41,7 @@ data class Gpu(val name: String, var id: Id = Id(1))
 	}
 }
 
+@ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 suspend fun getGpus() = coroutineScope {
 

@@ -13,9 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import data.Settings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.serialization.ExperimentalSerializationApi
 import miner.Miner
 import miner.MinerStatus
 
+@ExperimentalSerializationApi
 @ExperimentalFoundationApi
 @ExperimentalCoroutinesApi
 @Composable

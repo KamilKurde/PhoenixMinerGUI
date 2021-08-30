@@ -19,9 +19,15 @@ import config.SettingsConfig
 import config.Wallet
 import data.Settings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.serialization.ExperimentalSerializationApi
 import ui.material.MaterialRow
 import ui.table.TableCell
+import ui.theme.CHECKBOX_WEIGHT
+import ui.theme.DESCRIPTION_WEIGHT
+import ui.theme.NAME_WEIGHT
+import ui.theme.VALUE_WEIGHT
 
+@ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
@@ -31,10 +37,10 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true)
 		val config = settings.config
 		if (config.required)
 		{
-			Spacer(modifier = Modifier.weight(0.05f))
+			Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
 		}
 		else{
-			Box(modifier = Modifier.weight(0.05f), contentAlignment = Alignment.Center)
+			Box(modifier = Modifier.weight(CHECKBOX_WEIGHT), contentAlignment = Alignment.Center)
 			{
 				Checkbox(
 					settings.enabled,
@@ -42,9 +48,9 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true)
 				)
 			}
 		}
-		TableCell(config.name, 0.1f, textAlign = TextAlign.Left, tooltip = if (displayTooltip) config.name else null)
-		TableCell(config.description, 0.55f, textAlign = TextAlign.Left, tooltip = if (displayTooltip) config.description else null)
-		Box(modifier = Modifier.weight(0.3f)) {
+		TableCell(config.name, NAME_WEIGHT, textAlign = TextAlign.Left, tooltip = if (displayTooltip) config.name else null)
+		TableCell(config.description, DESCRIPTION_WEIGHT, textAlign = TextAlign.Left, tooltip = if (displayTooltip) config.description else null)
+		Box(modifier = Modifier.weight(VALUE_WEIGHT)) {
 			when (config)
 			{
 				is Config.NumberParameter ->
