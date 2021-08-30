@@ -21,7 +21,7 @@ import java.io.File
 @Serializable
 data class Gpu(val name: String, var id: Id = Id(1))
 {
-	var inUse by mutableStateOf(Settings.miners.any { miner -> miner.status != MinerStatus.Offline && miner.assignedGpuIds.any { it == id } })
+	var inUse by mutableStateOf(Settings.miners.any { miner -> (miner.status != MinerStatus.Offline && miner.status != MinerStatus.Waiting ) && miner.assignedGpuIds.any { it == id } })
 
 	var percentage by mutableStateOf<Int?>(null)
 
