@@ -135,7 +135,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true)
 						},
 						isError = errorState,
 						singleLine = true,
-						label = { Text("IDs of GPUs separated by commas, by default all GPUs are used") }
+						label = { Text("IDs of GPUs separated by commas") }
 					)
 				}
 				is Config.BooleanParameter ->
