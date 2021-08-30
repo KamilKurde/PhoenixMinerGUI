@@ -27,7 +27,8 @@ class SettingsData(
 )
 {
 	@ExperimentalSerializationApi
-	companion object{
+	companion object
+	{
 		fun generateFromSettings() = SettingsData(Settings.phoenixPath, Settings.gpus, Settings.miners.map { it.toMinerData() }.toTypedArray())
 	}
 }
@@ -57,7 +58,7 @@ object Settings
 
 	fun startMiner(miner: Miner)
 	{
-		if(miner !in minersToStart)
+		if (miner !in minersToStart)
 		{
 			miner.status = MinerStatus.Waiting
 			minersToStart.add(miner)
@@ -77,7 +78,7 @@ object Settings
 			miners = settingsData.miners.map { it.toMiner() }.toTypedArray()
 		}
 
-		miners.filter { it.mineOnStartup }.forEach{
+		miners.filter { it.mineOnStartup }.forEach {
 			startMiner(it)
 		}
 
@@ -86,9 +87,27 @@ object Settings
 			{
 				while (true)
 				{
-					minersToStart.firstOrNull()?.let {
-						it.startMining()
-						minersToStart.removeFirst()
+					// If done on default dispatcher, program will crash
+					withContext(Dispatchers.Main)
+					{
+						minersToStart.firstOrNull()?.let { miner ->
+							if (
+								when
+								{
+									miner.assignedGpuIds.isNotEmpty() -> miner.assignedGpuIds.none { id -> gpus[id.value - 1].inUse }
+									else -> gpus.none { it.inUse }
+								}
+							)
+							{
+								miner.startMining()
+							}
+							else
+							{
+								miner.status = MinerStatus.Offline
+							}
+
+							minersToStart.removeFirst()
+						}
 					}
 					delay(1000L)
 				}

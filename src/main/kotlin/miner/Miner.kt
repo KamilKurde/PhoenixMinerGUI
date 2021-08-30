@@ -64,7 +64,9 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 	private var coroutineJob = Job()
 
-	var assignedGpuIds = emptyArray<Id>()
+	private val gpusFromConfig get() = parameters.copy().firstOrNull { it is Config.GpusParameter && it.configElement == GpusArgument.Gpus } as Config.GpusParameter?
+
+	var assignedGpuIds = gpusFromConfig?.value ?: Settings.gpus.map { it.id }.toTypedArray()
 
 	fun toMinerData() = MinerData(name, id, mineOnStartup, parameters.toStringArray())
 
@@ -74,7 +76,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 	{
 		coroutineJob = Job()
 		CoroutineScope(coroutineJob).launch{
-			// If done on default dispatcher, changing status for miners with Mos
+			// If done on default dispatcher, changing status for miners with Mos will crash program
 			withContext(Dispatchers.Main)
 			{
 				status = MinerStatus.Connecting
@@ -92,8 +94,6 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 				"\"${Settings.phoenixPath}\" $settingsAsString\n" +
 				"echo miner stopped"
 			)
-			val gpusFromConfig = formattedSettings.firstOrNull { it is Config.GpusParameter && it.configElement == GpusArgument.Gpus } as Config.GpusParameter?
-			assignedGpuIds = gpusFromConfig?.value ?: Settings.gpus.map { it.id }.toTypedArray()
 			assignedGpuIds.forEach {
 				Settings.gpus[it.toInt() - 1].inUse = true
 			}
