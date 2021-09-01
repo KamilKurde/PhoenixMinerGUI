@@ -44,7 +44,6 @@ data class Gpu(val name: String, var id: Id = Id(1))
 @ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 suspend fun getGpus() = coroutineScope {
-
 	val file = File(folder + File.separator + "deviceDiscovery.bat")
 	file.createNewFile()
 	file.writeText(
