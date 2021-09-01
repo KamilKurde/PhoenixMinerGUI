@@ -39,6 +39,10 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		fun stopAllMiners()
 		{
 			Settings.miners.forEach { it.stopMining() }
+			// Kills all other PhoenixMiner instances
+			runBlocking {
+				process("taskkill", "/F", "/IM", "PhoenixMiner.exe", stdout = Redirect.SILENT, stderr = Redirect.SILENT)
+			}
 		}
 	}
 
@@ -60,7 +64,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 	var powerEfficiency by mutableStateOf<Int?>(null)
 
-	var pid: Int? = null
+	private var pid: Int? = null
 
 	private var coroutineJob = Job()
 
@@ -75,12 +79,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 	fun startMining()
 	{
 		coroutineJob = Job()
-		CoroutineScope(coroutineJob).launch{
-			// If done on default dispatcher, changing status for miners with Mos will crash program
-			withContext(Dispatchers.Main)
-			{
-				status = MinerStatus.Connecting
-			}
+		CoroutineScope(coroutineJob).launch {
+			status = MinerStatus.Connecting
 			val formattedSettings = parameters.copy()
 			if (!formattedSettings.any { it is Config.StringParameter && it.configElement == StringArgument.Password })
 			{
@@ -109,10 +109,10 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 								consumer = { line ->
 									if (!line.contains("ProcessId") && line.isNotEmpty())
 									{
-										val id = line.trim().toInt()
-										if (Settings.miners.none { it.pid == id })
+										val pid = line.trim().toInt()
+										if (Settings.miners.none { it.pid == pid })
 										{
-											pid = id
+											this@Miner.pid = pid
 										}
 									}
 								}
@@ -121,7 +121,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 					process(file.absolutePath,
 							stdout = Redirect.CAPTURE,
 							destroyForcibly = true,
-							// setting environmental variables like instructed on PhoenixMiner.org
+						// setting environmental variables like instructed on PhoenixMiner.org
 							env = mapOf(
 								"GPU_FORCE_64BIT_PTR" to "0",
 								"GPU_MAX_HEAP_SIZE" to "100",
@@ -254,7 +254,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			process("taskkill", "/F", "/PID", pid.toString(), stdout = Redirect.SILENT, stderr = Redirect.SILENT)
 			coroutineJob.cancelAndJoin()
 			assignedGpuIds.forEach { id ->
-				Settings.gpus.first { it.id == id }.resetGpuStats()
+				Settings.gpus[id.value - 1].resetGpuStats()
 			}
 			hashrate = null
 			shares = null
