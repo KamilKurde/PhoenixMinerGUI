@@ -78,38 +78,31 @@ object Settings
 			miners = settingsData.miners.map { it.toMiner() }.toTypedArray()
 		}
 
-		miners.filter { it.mineOnStartup }.forEach {
-			startMiner(it)
-		}
-
 		coroutineScope.launch {
 			try
 			{
 				while (true)
 				{
-					// If done on default dispatcher, program will crash
-					withContext(Dispatchers.Main)
-					{
-						minersToStart.firstOrNull()?.let { miner ->
-							if (
-								when
-								{
-									miner.assignedGpuIds.isNotEmpty() -> miner.assignedGpuIds.none { id -> gpus[id.value - 1].inUse }
-									else -> gpus.none { it.inUse }
-								}
-							)
-							{
-								miner.startMining()
-							}
-							else
-							{
-								miner.status = MinerStatus.Offline
-							}
-
-							minersToStart.removeFirst()
-						}
-					}
+					// Waiting for all other components to properly initialize (including UI) and giving timeframe for getting PID of new PhoenixMiner instance
 					delay(1000L)
+					minersToStart.firstOrNull()?.let { miner ->
+						if (
+							when
+							{
+								miner.assignedGpuIds.isNotEmpty() -> miner.assignedGpuIds.none { id -> gpus[id.value - 1].inUse }
+								else                              -> gpus.none { it.inUse }
+							}
+						)
+						{
+							miner.startMining()
+						}
+						else
+						{
+							miner.status = MinerStatus.Offline
+						}
+
+						minersToStart.removeFirst()
+					}
 				}
 			}
 			catch (e: CancellationException)

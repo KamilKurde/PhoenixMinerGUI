@@ -51,6 +51,13 @@ fun main(args: Array<String>) = application {
 							}
 						}?.let { Settings.startMiner(it) }
 					}
+					if (args.contains("/nomos"))
+					{
+						return@launchOnce
+					}
+					Settings.miners.filter { it.mineOnStartup }.forEach {
+						Settings.startMiner(it)
+					}
 					Settings.gpus = getGpus()
 					Settings.saveSettings()
 				}
