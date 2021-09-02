@@ -45,7 +45,10 @@ fun main(args: Array<String>) = application {
 			if (phoenixAvailable)
 			{
 				rememberCoroutineScope().launchOnce {
-					Miner.stopAllMiners()
+					args.ifNoArg("/nokill")
+					{
+						Miner.stopAllMiners()
+					}
 					args.forEach { arg ->
 						Settings.miners.firstOrNull {
 							it.name == arg || tryOrFalse {
