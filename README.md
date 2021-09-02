@@ -35,6 +35,10 @@ Unofficial PhoenixMiner GUI for windows
    * (eg, if you have "My Miner" with ID 1, and "The other miner" with ID 2, and you want to run them both then you can do this like that: "*[Path to PhoenixMinerGUI folder]*\PhoenixMiner GUI.exe "My Miner" 2", this will start PhoenixMiner, and it will 
       automatically start both miners)
 
+## Command line arguments
+* /nomos - use it to temporarily disable MineOnStartup
+* /nokill - use it to disable initial killing of unwanted processes (other PhoenixMiner GUI instances, all PhoenixMiner.exe instances)
+
 ## Notes
 * Keep in mind that this app is in alpha, if you encounter any bugs report them
 * This app uses unfinished UI library called [Desktop Compose](https://www.jetbrains.com/lp/compose/), this means that UI of the app can behave weirdly (e.g. flicker)
