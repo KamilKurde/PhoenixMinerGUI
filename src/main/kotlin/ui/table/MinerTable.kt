@@ -34,36 +34,32 @@ import kotlin.random.nextULong
 @Composable
 fun MinerTable()
 {
-	val nameColumnWeight = 0.25f
-
 	val controlsColumnWeight = 0.05f
-
-	val columnWeight = 0.7f / 6f
 
 	MaterialColumn {
 		// Header
 		MaterialRow(isHeader = true) {
 			Spacer(Modifier.weight(controlsColumnWeight))
-			TableCell(text = "Name", weight = nameColumnWeight, FontWeight.Bold)
-			TableCell(text = "ID", weight = columnWeight, FontWeight.Bold)
-			TableCell(text = "Status", weight = columnWeight, FontWeight.Bold)
-			TableCell(text = "Hashrate", weight = columnWeight, FontWeight.Bold, textAlign = TextAlign.Right)
-			TableCell(text = "Shares", weight = columnWeight, FontWeight.Bold, textAlign = TextAlign.Right)
-			TableCell(text = "Power", weight = columnWeight, FontWeight.Bold, textAlign = TextAlign.Right)
-			TableCell(text = "Efficiency", weight = columnWeight, FontWeight.Bold, textAlign = TextAlign.Right)
+			TableCell(text = "Name", weight = NAME_COLUMN_WEIGHT - controlsColumnWeight, FontWeight.Bold)
+			TableCell(text = "ID", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold)
+			TableCell(text = "Status", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold)
+			TableCell(text = "Hashrate", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
+			TableCell(text = "Shares", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
+			TableCell(text = "Power", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
+			TableCell(text = "Efficiency", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
 		}
 		Column(Modifier.verticalScroll(rememberScrollState(0))) {
 			Settings.miners.sortedBy { it.id.value }.forEach {
 				miner ->
 				MaterialRow(Modifier.fillMaxWidth()) {
 					MinerControls(miner, controlsColumnWeight)
-					TableCell(miner.name, nameColumnWeight)
-					TableCell(miner.id, columnWeight)
-					TableCell(miner.status, columnWeight)
-					TableCell(miner.hashrate?.let { "$it MH/s" }, columnWeight, textAlign = TextAlign.Right)
-					TableCell(miner.shares, tooltip = miner.shares?.let { "${it.valid} Valid/ ${it.stale} Stale/ ${it.rejected} Rejected" }, weight = columnWeight, textAlign = TextAlign.Right)
-					TableCell(miner.powerDraw?.let { "$it W" }, columnWeight, textAlign = TextAlign.Right)
-					TableCell(miner.powerEfficiency?.let { "$it kH/J" }, columnWeight, textAlign = TextAlign.Right)
+					TableCell(miner.name, NAME_COLUMN_WEIGHT - controlsColumnWeight)
+					TableCell(miner.id, DATA_COLUMN_WEIGHT)
+					TableCell(miner.status, DATA_COLUMN_WEIGHT)
+					TableCell(miner.hashrate?.let { "$it MH/s" }, DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
+					TableCell(miner.shares, tooltip = miner.shares?.let { "${it.valid} Valid/ ${it.stale} Stale/ ${it.rejected} Rejected" }, weight = DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
+					TableCell(miner.powerDraw?.let { "$it W" }, DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
+					TableCell(miner.powerEfficiency?.let { "$it kH/J" }, DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
 				}
 			}
 		}
