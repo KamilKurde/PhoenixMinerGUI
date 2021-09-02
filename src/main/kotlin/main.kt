@@ -53,7 +53,7 @@ fun main(args: Array<String>) = application {
 							}
 						}?.let { Settings.startMiner(it) }
 					}
-					if (!args.contains("/nomos"))
+					args.ifNoArg("/nomos")
 					{
 						Settings.miners.filter { it.mineOnStartup }.forEach {
 							Settings.startMiner(it)
