@@ -12,6 +12,7 @@ import config.arguments.GpusArgument
 import config.arguments.StringArgument
 import data.Settings
 import data.folder
+import getPIDsFor
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -104,19 +105,12 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 				{
 					CoroutineScope(Job() + Dispatchers.IO).launch {
 						delay(500L)
-						process("wmic", "process", "where", "name=\"PhoenixMiner.exe\"", "get", "ProcessID",
-								stdout = Redirect.CAPTURE,
-								consumer = { line ->
-									if (!line.contains("ProcessId") && line.isNotEmpty())
-									{
-										val pid = line.trim().toInt()
-										if (Settings.miners.none { it.pid == pid })
-										{
-											this@Miner.pid = pid
-										}
-									}
-								}
-						)
+						getPIDsFor("PhoenixMiner.exe").forEach { pid ->
+							if (Settings.miners.none { it.pid == pid })
+							{
+								this@Miner.pid = pid
+							}
+						}
 					}
 					process(file.absolutePath,
 							stdout = Redirect.CAPTURE,
