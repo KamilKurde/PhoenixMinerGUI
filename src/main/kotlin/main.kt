@@ -12,6 +12,7 @@ import androidx.compose.ui.window.rememberWindowState
 import data.Settings
 import gpu.getGpus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import miner.Miner
 import phoenix.phoenixPathIsCorrect
@@ -52,12 +53,11 @@ fun main(args: Array<String>) = application {
 							}
 						}?.let { Settings.startMiner(it) }
 					}
-					if (args.contains("/nomos"))
+					if (!args.contains("/nomos"))
 					{
-						return@launchOnce
-					}
-					Settings.miners.filter { it.mineOnStartup }.forEach {
-						Settings.startMiner(it)
+						Settings.miners.filter { it.mineOnStartup }.forEach {
+							Settings.startMiner(it)
+						}
 					}
 					Settings.gpus = getGpus()
 					Settings.saveSettings()
