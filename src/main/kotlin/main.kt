@@ -47,6 +47,13 @@ fun main(args: Array<String>) = application {
 				rememberCoroutineScope().launchOnce {
 					args.ifNoArg("/nokill")
 					{
+						// Kills all other PhoenixMiner GUI instances
+						launch {
+							val pid = ProcessHandle.current().pid().toInt()
+							getPIDsFor("PhoenixMiner GUI.exe").minus(pid).forEach {
+								taskKill(it, true)
+							}
+						}
 						Miner.stopAllMiners()
 					}
 					args.forEach { arg ->
