@@ -9,7 +9,7 @@ Unofficial PhoenixMiner GUI for windows
    * if you want to test PhoenixMinerGUI without installing it, download "portable" version. Otherwise, download "installer" version.
 4. Install PhoenixMinerGUI or extract its contents (for installer and portable respectively)
 5. After opening PhoenixMinerGUI for the first time, it will ask you to point to PhoenixMiner.exe file (which you extracted earlier).
-![Setup](../assets/Setup.png?raw=true)
+![Setup](../assets/Setup.jpg?raw=true)
    * After that, PhoenixMinerGUI will check if PhoenixMiner responds correctly
    * PhoenixMinerGUI check for PhoenixMiner.exe on each startup, don't change its name because it's hardcoded into the app
    * All data including PhoenixMiner.exe path is stored in *%localappdata%\PhoenixMinerGUI*
