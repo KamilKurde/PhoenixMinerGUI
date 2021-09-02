@@ -1,6 +1,6 @@
 package config
 
-import tryOrNull
+import functions.tryOrNull
 
 class Parameters(private var parameters: MutableList<Config> = mutableListOf()): MutableCollection<Config>
 {

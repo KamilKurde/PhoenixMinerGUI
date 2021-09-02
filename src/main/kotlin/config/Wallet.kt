@@ -1,6 +1,6 @@
 package config
 
-import containsOnlyGivenChars
+import functions.containsOnlyGivenChars
 import kotlinx.serialization.Serializable
 import kotlin.String
 

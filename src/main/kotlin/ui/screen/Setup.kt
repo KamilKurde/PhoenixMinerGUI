@@ -12,11 +12,12 @@ import androidx.compose.ui.awt.ComposeWindow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import data.Settings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
 import phoenix.openFileDialog
 import phoenix.phoenixPathIsCorrect
-import tryWithoutCatch
+import functions.tryWithoutCatch
 import ui.material.Tooltip
 
 @ExperimentalSerializationApi
@@ -36,8 +37,8 @@ fun Setup()
 						(openFileDialog(ComposeWindow(), "choose PhoenixMiner.exe file").absolutePath).let {
 							if (phoenixPathIsCorrect(it))
 							{
-								data.Settings.phoenixPath = it
-								data.Settings.saveSettings()
+								Settings.phoenixPath = it
+								Settings.saveSettings()
 							}
 						}
 					}

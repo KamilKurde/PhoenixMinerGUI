@@ -1,9 +1,9 @@
 package data
 
+import Gpu
 import androidx.compose.runtime.*
 import config.*
 import config.arguments.*
-import gpu.Gpu
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -11,7 +11,7 @@ import kotlinx.serialization.*
 import miner.Miner
 import miner.MinerData
 import miner.MinerStatus
-import tryOrNull
+import functions.tryOrNull
 import kotlin.random.Random
 import kotlin.random.nextULong
 

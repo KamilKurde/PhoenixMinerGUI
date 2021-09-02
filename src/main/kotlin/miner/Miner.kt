@@ -12,12 +12,12 @@ import config.arguments.GpusArgument
 import config.arguments.StringArgument
 import data.Settings
 import data.folder
-import getPIDsFor
+import functions.getPIDsFor
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import taskKill
-import tryWithoutCatch
+import functions.taskKill
+import functions.tryWithoutCatch
 import java.io.File
 
 @ExperimentalSerializationApi

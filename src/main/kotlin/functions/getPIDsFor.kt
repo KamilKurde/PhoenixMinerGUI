@@ -1,3 +1,5 @@
+package functions
+
 import com.github.pgreze.process.Redirect
 import com.github.pgreze.process.process
 import kotlinx.coroutines.ExperimentalCoroutinesApi
