@@ -16,6 +16,7 @@ import getPIDsFor
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import taskKill
 import tryWithoutCatch
 import java.io.File
 
@@ -42,7 +43,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			Settings.miners.forEach { it.stopMining() }
 			// Kills all other PhoenixMiner instances
 			runBlocking {
-				process("taskkill", "/F", "/IM", "PhoenixMiner.exe", stdout = Redirect.SILENT, stderr = Redirect.SILENT)
+				taskKill("PhoenixMiner.exe", true)
 			}
 		}
 	}
@@ -245,7 +246,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 	{
 		CoroutineScope(Job()).launch {
 			status = MinerStatus.Closing
-			process("taskkill", "/F", "/PID", pid.toString(), stdout = Redirect.SILENT, stderr = Redirect.SILENT)
+			pid?.let { taskKill(it, true) }
 			coroutineJob.cancelAndJoin()
 			assignedGpuIds.forEach { id ->
 				Settings.gpus[id.value - 1].resetGpuStats()
