@@ -7,6 +7,9 @@
 build/
 gradle/
 
+# Build
+distributables/
+
 # Log file
 *.log
 
