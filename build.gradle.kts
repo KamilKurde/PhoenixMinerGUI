@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.github.KamilKurde"
-val currentVersion = "0.2.2"
+val currentVersion = "0.2.3"
 version = currentVersion
 
 repositories {
