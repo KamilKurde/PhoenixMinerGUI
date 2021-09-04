@@ -1,3 +1,4 @@
+import java.io.File
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
@@ -9,6 +10,7 @@ plugins {
 
 group = "com.github.KamilKurde"
 val currentVersion = "0.2.3"
+val appName = "PhoenixMiner GUI"
 version = currentVersion
 
 repositories {
@@ -28,7 +30,7 @@ compose.desktop {
 		mainClass = "MainKt"
 		nativeDistributions {
 			targetFormats(TargetFormat.Exe)
-			packageName = "PhoenixMiner GUI"
+			packageName = appName
 			vendor = "github.com/KamilKurde"
 			description = "GUI for PhoenixMiner"
 			packageVersion = currentVersion
@@ -42,4 +44,56 @@ compose.desktop {
 			}
 		}
 	}
+}
+
+abstract class UpdateVersionFile: DefaultTask()
+{
+	@Input
+	var file = ""
+
+	@Input
+	var version = ""
+
+	@TaskAction
+	fun updateVersion()
+	{
+		File(file).writeText("const val VERSION = \"$version\"")
+	}
+}
+
+tasks.register<UpdateVersionFile>("updateVersionFileToCurrent")
+{
+	file = project.file("src" + File.separator + "main" + File.separator + "kotlin" + File.separator + "version.kt").absolutePath
+	version = currentVersion
+}
+
+tasks.register<UpdateVersionFile>("updateVersionFileToDevelopment")
+{
+	file = project.file("src" + File.separator + "main" + File.separator + "kotlin" + File.separator + "version.kt").absolutePath
+	version = "DEVELOPMENT"
+}
+
+tasks.register<Copy>("copyExe")
+{
+	from(project.projectDir.absolutePath + File.separator + "build" + File.separator + "compose" + File.separator + "binaries" + File.separator + "main" + File.separator + "exe" + File.separator + "$appName-$currentVersion.exe")
+	into(project.projectDir.absolutePath + File.separator + "distributables")
+	rename("(.+)", appName.replace(" ", "") + "-" + currentVersion + "-Installer.exe")
+}
+
+tasks.register<Zip>("zipDistributable")
+{
+	from(project.projectDir.absolutePath + File.separator + "build" + File.separator + "compose" + File.separator + "binaries" + File.separator + "main" + File.separator + "app" + File.separator)
+	archiveFileName.set( appName.replace(" ", "") + "-" + currentVersion + "-Portable.zip")
+	destinationDirectory.set(File(project.projectDir.absolutePath + File.separator + "distributables" + File.separator))
+}
+
+tasks.register<Delete>("cleanDistributablesDir")
+{
+	delete(project.projectDir.absolutePath + File.separator + "distributables")
+}
+
+// Main task to use for building distributables for both installer and portable
+tasks.register<GradleBuild>("bundleDistributables")
+{
+	tasks = listOf("cleanDistributablesDir", "updateVersionFileToCurrent", "createDistributable", "zipDistributable", "packageExe", "copyExe", "updateVersionFileToDevelopment")
 }
