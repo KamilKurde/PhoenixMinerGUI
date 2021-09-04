@@ -1,5 +1,6 @@
 package ui.screen
 
+import VERSION
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
@@ -24,25 +25,27 @@ fun Summary() = Column(modifier = Modifier.fillMaxSize().padding(8.dp), vertical
 	Spacer(Modifier.height(32.dp))
 	MinerTable()
 	Spacer(Modifier.height(32.dp))
-	// This doesn't work without full distributable, distributable gives exe location as its path, while running normally from IDEA program gives project location as its path
-	Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End)
+	Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween)
 	{
-		Text("Launch PhoenixMiner GUI on system startup")
-		Spacer(Modifier.width(16.dp))
-		var enabled by remember { mutableStateOf(Shortcut.exist) }
-		Switch(
-			enabled,
-			{
-				enabled = if (it)
+		Text(VERSION)
+		// This doesn't work without full distributable, distributable gives exe location as its path, while running normally from IDEA program gives project location as its path
+		Row {
+			Text("Launch PhoenixMiner GUI on system startup")
+			Spacer(Modifier.width(16.dp))
+			var enabled by remember { mutableStateOf(Shortcut.exist) }
+			Switch(
+				enabled,
 				{
-					Shortcut.create()
-					true
-				}
-				else
-				{
-					Shortcut.delete()
-					false
-				}
-			})
+					enabled = if (it)
+					{
+						Shortcut.create()
+						true
+					}
+					else
+					{
+						Shortcut.delete()
+						false
+					}
+				}) }
 	}
 }
