@@ -115,7 +115,6 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 					}
 					process(file.absolutePath,
 							stdout = Redirect.CAPTURE,
-							destroyForcibly = true,
 						// setting environmental variables like instructed on PhoenixMiner.org
 							env = mapOf(
 								"GPU_FORCE_64BIT_PTR" to "0",
