@@ -27,15 +27,16 @@ fun RowScope.MinerControls(miner: Miner, weight: Float)
 	val minerRunning = miner.status != MinerStatus.Offline
 	IconButton(
 		{
-				   if (minerRunning)
-				   {
-					   miner.stopMining()
-				   }
-				   else
-				   {
-					   Settings.startMiner(miner)
-				   }
-			   }, modifier = modifier)
+			if (minerRunning)
+			{
+				miner.stopMining()
+			}
+			else
+			{
+				Settings.startMiner(miner)
+			}
+		}, modifier = modifier
+	)
 	{
 		Icon(if (minerRunning) Icons.Rounded.Close else Icons.Rounded.PlayArrow, if (minerRunning) "Stop button" else "Start button", tint = Color.Black)
 	}
