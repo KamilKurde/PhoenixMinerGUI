@@ -20,9 +20,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import config.Parameters
 import data.Settings
+import functions.launchOnce
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
-import miner.MinerStatus
 import ui.ParameterUI
 import ui.material.MaterialRow
 import ui.table.TableCell
@@ -39,6 +39,9 @@ import ui.theme.VALUE_WEIGHT
 @Composable
 fun MinerSettings(miner: Miner)
 {
+	rememberCoroutineScope().launchOnce {
+		miner.stopMining()
+	}
 	Column(
 		modifier = Modifier.fillMaxSize().padding(8.dp)
 	) {
@@ -66,11 +69,6 @@ fun MinerSettings(miner: Miner)
 					miner.name = name.trim()
 					miner.parameters = Parameters(*parameters.filter { it.enabled }.map { it.config }.toTypedArray())
 					Settings.saveSettings()
-					if (miner.status != MinerStatus.Offline)
-					{
-						miner.stopMining()
-						miner.startMining()
-					}
 				}
 			)
 			{
