@@ -81,7 +81,9 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 	fun startMining()
 	{
 		coroutineJob = Job()
-		CoroutineScope(coroutineJob).launch {
+		val coroutineScope = CoroutineScope(coroutineJob + Dispatchers.IO)
+
+		coroutineScope.launch {
 			status = MinerStatus.Connecting
 			val formattedSettings = parameters.copy()
 			if (!formattedSettings.any { it is Config.StringParameter && it.configElement == StringArgument.Password })
@@ -104,7 +106,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			{
 				if (!working)
 				{
-					CoroutineScope(Job() + Dispatchers.IO).launch {
+					coroutineScope.launch {
 						delay(500L)
 						getPIDsFor("PhoenixMiner.exe").forEach { pid ->
 							if (Settings.miners.none { it.pid == pid })
