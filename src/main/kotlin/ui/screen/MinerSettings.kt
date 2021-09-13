@@ -23,6 +23,7 @@ import data.Settings
 import functions.launchOnce
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
+import miner.MinerStatus
 import ui.ParameterUI
 import ui.material.MaterialRow
 import ui.table.TableCell
@@ -39,6 +40,7 @@ import ui.theme.VALUE_WEIGHT
 @Composable
 fun MinerSettings(miner: Miner)
 {
+	val wasWorking by remember { mutableStateOf(miner.status != MinerStatus.Offline) }
 	rememberCoroutineScope().launchOnce {
 		miner.stopMining()
 	}
@@ -53,7 +55,13 @@ fun MinerSettings(miner: Miner)
 			verticalAlignment = Alignment.CenterVertically,
 			modifier = Modifier.fillMaxWidth()
 		) {
-			IconButton({ Settings.minerToEdit = null })
+			IconButton({
+						   if (wasWorking)
+						   {
+							   miner.startMining()
+						   }
+						   Settings.minerToEdit = null
+					   })
 			{
 				Icon(Icons.Rounded.ArrowBack, "Back", tint = Color.Black)
 			}
