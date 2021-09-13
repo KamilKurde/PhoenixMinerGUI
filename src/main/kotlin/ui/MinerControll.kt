@@ -24,7 +24,7 @@ import miner.MinerStatus
 fun RowScope.MinerControls(miner: Miner, weight: Float)
 {
 	val modifier = Modifier.weight(weight / 2)
-	val minerRunning = miner.status != MinerStatus.Offline
+	val minerRunning = miner.status != MinerStatus.Offline && miner.status != MinerStatus.Closing
 	IconButton(
 		{
 			if (minerRunning)
