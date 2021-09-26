@@ -11,8 +11,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import data.Settings
 import functions.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import miner.Miner
 import phoenix.phoenixPathIsCorrect
@@ -31,6 +30,7 @@ val icon @Composable get() = painterResource("icon.ico")
 @ExperimentalComposeUiApi
 @ExperimentalCoroutinesApi
 fun main(args: Array<String>) = application {
+	val phoenixAvailable = phoenixPathIsCorrect(Settings.phoenixPath)
 	Window(
 		title = "PhoenixMiner GUI",
 		icon = icon,
@@ -40,38 +40,39 @@ fun main(args: Array<String>) = application {
 			exitApplication()
 		}
 	) {
-		AppTheme {
-			val phoenixAvailable = phoenixPathIsCorrect(Settings.phoenixPath)
+		rememberCoroutineScope().launchOnce {
 			if (phoenixAvailable)
 			{
-				rememberCoroutineScope().launchOnce {
-					args.ifNoArgCoroutine("/nokill")
+				args.ifNoArgCoroutine("/nokill")
+				{
+					// Kills all other PhoenixMiner GUI instances
+					val pid = ProcessHandle.current().pid().toInt()
+					withContext(Dispatchers.Main)
 					{
-						// Kills all other PhoenixMiner GUI instances
-						val pid = ProcessHandle.current().pid().toInt()
 						getPIDsFor("PhoenixMiner GUI.exe").minus(pid).forEach {
 							taskKill(it, true)
 						}
-						Miner.stopAllMiners()
+						Miner.killAllMiners()
 					}
-					args.forEach { arg ->
-						Settings.miners.firstOrNull {
-							it.name == arg || tryOrFalse {
-								it.id.value == arg.toInt()
-							}
-						}?.let { Settings.startMiner(it) }
-					}
-					args.ifNoArg("/nomos")
-					{
-						Settings.miners.filter { it.mineOnStartup }.forEach {
-							Settings.startMiner(it)
-						}
-					}
-					Settings.gpus = getGpus()
-					Settings.saveSettings()
 				}
+				args.forEach { arg ->
+					Settings.miners.firstOrNull {
+						it.name == arg || tryOrFalse {
+							it.id.value == arg.toInt()
+						}
+					}?.let { Settings.startMiner(it) }
+				}
+				args.ifNoArg("/nomos")
+				{
+					Settings.miners.filter { it.mineOnStartup }.forEach {
+						Settings.startMiner(it)
+					}
+				}
+				Settings.gpus = getGpus()
+				Settings.saveSettings()
 			}
-
+		}
+		AppTheme {
 			AnimatedVisibilityWithFade(visible = !phoenixAvailable)
 			{
 				Setup()
