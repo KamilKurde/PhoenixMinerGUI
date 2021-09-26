@@ -102,9 +102,9 @@ object Settings
 							{
 								miner.status = MinerStatus.Offline
 							}
-
-							minersToStart.removeFirst()
 						}
+
+						minersToStart.removeFirst()
 					}
 				}
 			}
