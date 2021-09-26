@@ -44,9 +44,13 @@ data class Gpu(val name: String, var id: Id = Id(1))
 suspend fun getGpus() = coroutineScope {
 	val file = File(folder + File.separator + "deviceDiscovery.bat")
 	file.createNewFile()
+	val path = withContext(Dispatchers.Main)
+	{
+		Settings.phoenixPath
+	}
 	file.writeText(
 		"echo off\n" +
-		"\"${Settings.phoenixPath}\" -list"
+		"\"$path\" -list"
 	)
 	val gpuList = mutableListOf<Gpu>()
 	process(file.absolutePath, stdout = Redirect.CAPTURE).output.forEach { line ->
