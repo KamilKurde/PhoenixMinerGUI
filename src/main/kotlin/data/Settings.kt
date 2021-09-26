@@ -86,22 +86,25 @@ object Settings
 					// Waiting for all other components to properly initialize (including UI) and giving timeframe for getting PID of new PhoenixMiner instance
 					delay(1000L)
 					minersToStart.firstOrNull()?.let { miner ->
-						if (
-							when
+						if (miner.status == MinerStatus.Waiting)
+						{
+							if (
+								when
+								{
+									miner.assignedGpuIds.isNotEmpty() -> miner.assignedGpuIds.none { id -> gpus[id.value - 1].inUse }
+									else                              -> gpus.none { it.inUse }
+								}
+							)
 							{
-								miner.assignedGpuIds.isNotEmpty() -> miner.assignedGpuIds.none { id -> gpus[id.value - 1].inUse }
-								else                              -> gpus.none { it.inUse }
+								miner.startMining()
 							}
-						)
-						{
-							miner.startMining()
-						}
-						else
-						{
-							miner.status = MinerStatus.Offline
-						}
+							else
+							{
+								miner.status = MinerStatus.Offline
+							}
 
-						minersToStart.removeFirst()
+							minersToStart.removeFirst()
+						}
 					}
 				}
 			}
