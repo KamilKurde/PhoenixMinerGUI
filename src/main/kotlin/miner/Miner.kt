@@ -38,13 +38,18 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 	@ExperimentalSerializationApi
 	companion object
 	{
-		fun stopAllMiners()
+		fun killAllMiners()
 		{
-			Settings.miners.forEach { it.stopMining() }
 			// Kills all other PhoenixMiner instances
 			runBlocking {
 				taskKill("PhoenixMiner.exe", true)
 			}
+		}
+
+		fun stopAllMiners()
+		{
+			Settings.miners.forEach { it.stopMining() }
+			killAllMiners()
 		}
 	}
 
