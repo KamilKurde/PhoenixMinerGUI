@@ -40,10 +40,7 @@ import ui.theme.VALUE_WEIGHT
 @Composable
 fun MinerSettings(miner: Miner)
 {
-	val wasWorking by remember { mutableStateOf(miner.status != MinerStatus.Offline) }
-	rememberCoroutineScope().launchOnce {
-		miner.stopMining()
-	}
+	val wasWorking by remember { mutableStateOf(miner.status != MinerStatus.Offline && miner.status != MinerStatus.Closing) }
 	Column(
 		modifier = Modifier.fillMaxSize().padding(8.dp)
 	) {
@@ -55,13 +52,10 @@ fun MinerSettings(miner: Miner)
 			verticalAlignment = Alignment.CenterVertically,
 			modifier = Modifier.fillMaxWidth()
 		) {
-			IconButton({
-						   if (wasWorking)
-						   {
-							   miner.startMining()
-						   }
-						   Settings.minerToEdit = null
-					   })
+			IconButton(
+				{
+					Settings.minerToEdit = null
+				})
 			{
 				Icon(Icons.Rounded.ArrowBack, "Back", tint = Color.Black)
 			}
@@ -77,6 +71,11 @@ fun MinerSettings(miner: Miner)
 					miner.name = name.trim()
 					miner.parameters = Parameters(*parameters.filter { it.enabled }.map { it.config }.toTypedArray())
 					Settings.saveSettings()
+					if (wasWorking)
+					{
+						miner.stopMining()
+						Settings.startMiner(miner)
+					}
 				}
 			)
 			{
