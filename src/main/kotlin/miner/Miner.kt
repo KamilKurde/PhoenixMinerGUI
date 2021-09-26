@@ -48,7 +48,9 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 		fun stopAllMiners()
 		{
-			Settings.miners.forEach { it.stopMining() }
+			runBlocking {
+				Settings.miners.forEach { it.stopMining() }
+			}
 			killAllMiners()
 		}
 	}
@@ -248,20 +250,18 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		}
 	}
 
-	fun stopMining()
+	suspend fun stopMining()
 	{
-		CoroutineScope(Job()).launch {
-			status = MinerStatus.Closing
-			pid?.let { taskKill(it, true) }
-			coroutineJob.cancelAndJoin()
-			assignedGpuIds.forEach { id ->
-				Settings.gpus[id.value - 1].resetGpuStats()
-			}
-			hashrate = null
-			shares = null
-			powerDraw = null
-			powerEfficiency = null
-			status = MinerStatus.Offline
+		status = MinerStatus.Closing
+		pid?.let { taskKill(it, true) }
+		coroutineJob.cancelAndJoin()
+		assignedGpuIds.forEach { id ->
+			Settings.gpus[id.value - 1].resetGpuStats()
 		}
+		hashrate = null
+		shares = null
+		powerDraw = null
+		powerEfficiency = null
+		status = MinerStatus.Offline
 	}
 }
