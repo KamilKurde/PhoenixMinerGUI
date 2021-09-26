@@ -20,8 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import config.Parameters
 import data.Settings
-import functions.launchOnce
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import miner.MinerStatus
 import ui.ParameterUI
@@ -73,8 +72,10 @@ fun MinerSettings(miner: Miner)
 					Settings.saveSettings()
 					if (wasWorking)
 					{
-						miner.stopMining()
-						Settings.startMiner(miner)
+						CoroutineScope(Job()).launch {
+							miner.stopMining()
+							Settings.startMiner(miner)
+						}
 					}
 				}
 			)

@@ -12,7 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import data.Settings
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import miner.Miner
 import miner.MinerStatus
@@ -29,7 +32,9 @@ fun RowScope.MinerControls(miner: Miner, weight: Float)
 		{
 			if (minerRunning)
 			{
-				miner.stopMining()
+				CoroutineScope(Job()).launch {
+					miner.stopMining()
+				}
 			}
 			else
 			{
