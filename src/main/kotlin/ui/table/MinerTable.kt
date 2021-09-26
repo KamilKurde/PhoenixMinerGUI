@@ -5,6 +5,7 @@ import data.Settings.minerToEdit
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
@@ -32,25 +33,29 @@ import kotlin.random.nextULong
 @ExperimentalFoundationApi
 @ExperimentalCoroutinesApi
 @Composable
-fun MinerTable()
+fun MinerTable(
+	modifier: Modifier = Modifier
+)
 {
 	val controlsColumnWeight = 0.05f
 
-	MaterialColumn {
-		// Header
-		MaterialRow(isHeader = true) {
-			Spacer(Modifier.weight(controlsColumnWeight))
-			TableCell(text = "Name", weight = NAME_COLUMN_WEIGHT - controlsColumnWeight, FontWeight.Bold)
-			TableCell(text = "ID", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold)
-			TableCell(text = "Status", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold)
-			TableCell(text = "Hashrate", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
-			TableCell(text = "Shares", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
-			TableCell(text = "Power", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
-			TableCell(text = "Efficiency", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
-		}
-		Column(Modifier.verticalScroll(rememberScrollState(0))) {
-			Settings.miners.sortedBy { it.id.value }.forEach {
-				miner ->
+	MaterialColumn(modifier) {
+		LazyColumn {
+			stickyHeader {
+				MaterialRow(isHeader = true) {
+					Spacer(Modifier.weight(controlsColumnWeight))
+					TableCell(text = "Name", weight = NAME_COLUMN_WEIGHT - controlsColumnWeight, FontWeight.Bold)
+					TableCell(text = "ID", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold)
+					TableCell(text = "Status", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold)
+					TableCell(text = "Hashrate", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
+					TableCell(text = "Shares", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
+					TableCell(text = "Power", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
+					TableCell(text = "Efficiency", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
+				}
+			}
+			items(Settings.miners.size)
+			{
+				val miner = Settings.miners[it]
 				MaterialRow(Modifier.fillMaxWidth()) {
 					MinerControls(miner, controlsColumnWeight)
 					TableCell(miner.name, NAME_COLUMN_WEIGHT - controlsColumnWeight)
