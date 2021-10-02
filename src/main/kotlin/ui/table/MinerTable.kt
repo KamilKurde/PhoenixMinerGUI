@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import config.Config
 import config.Wallet
 import config.arguments.StringArgument
@@ -24,6 +25,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import ui.material.MaterialColumn
 import ui.material.MaterialRow
 import miner.Miner
+import ui.ConstrainedRow
 import ui.MinerControls
 import kotlin.random.Random
 import kotlin.random.nextULong
@@ -45,12 +47,16 @@ fun MinerTable(
 				MaterialRow(isHeader = true) {
 					Spacer(Modifier.weight(controlsColumnWeight))
 					TableCell(text = "Name", weight = NAME_COLUMN_WEIGHT - controlsColumnWeight, FontWeight.Bold)
-					TableCell(text = "ID", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold)
-					TableCell(text = "Status", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold)
-					TableCell(text = "Hashrate", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
-					TableCell(text = "Shares", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
-					TableCell(text = "Power", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
-					TableCell(text = "Efficiency", weight = DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
+					TableCell(text = "ID", weight = ESSENTIAL_DATA_COLUMN_WEIGHT, FontWeight.Bold)
+					TableCell(text = "Status", weight = ESSENTIAL_DATA_COLUMN_WEIGHT, FontWeight.Bold)
+					ConstrainedRow(
+						Modifier.weight(1f - NAME_COLUMN_WEIGHT - (ESSENTIAL_DATA_COLUMN_WEIGHT * 2)),
+						SIZE_PER_ELEMENT.dp,
+						{ weight -> TableCell(text = "Hashrate", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+						{ weight -> TableCell(text = "Shares", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+						{ weight -> TableCell(text = "Power", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+						{ weight -> TableCell(text = "Efficiency", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
+					)
 				}
 			}
 			items(Settings.miners.size)
@@ -59,12 +65,16 @@ fun MinerTable(
 				MaterialRow(Modifier.fillMaxWidth()) {
 					MinerControls(miner, controlsColumnWeight)
 					TableCell(miner.name, NAME_COLUMN_WEIGHT - controlsColumnWeight)
-					TableCell(miner.id, DATA_COLUMN_WEIGHT)
-					TableCell(miner.status, DATA_COLUMN_WEIGHT)
-					TableCell(miner.hashrate?.let { "$it MH/s" }, DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
-					TableCell(miner.shares, tooltip = miner.shares?.let { "${it.valid} Valid/ ${it.stale} Stale/ ${it.rejected} Rejected" }, weight = DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
-					TableCell(miner.powerDraw?.let { "$it W" }, DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
-					TableCell(miner.powerEfficiency?.let { "$it kH/J" }, DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
+					TableCell(miner.id, ESSENTIAL_DATA_COLUMN_WEIGHT)
+					TableCell(miner.status, ESSENTIAL_DATA_COLUMN_WEIGHT)
+					ConstrainedRow(
+						Modifier.weight(1f - NAME_COLUMN_WEIGHT - (ESSENTIAL_DATA_COLUMN_WEIGHT * 2)),
+						SIZE_PER_ELEMENT.dp,
+						{ weight -> TableCell(miner.hashrate?.let { "$it MH/s" }, weight, textAlign = TextAlign.Right) },
+						{ weight -> TableCell(miner.shares, tooltip = miner.shares?.let { "${it.valid} Valid/ ${it.stale} Stale/ ${it.rejected} Rejected" }, weight = weight, textAlign = TextAlign.Right) },
+						{ weight -> TableCell(miner.powerDraw?.let { "$it W" }, weight, textAlign = TextAlign.Right) },
+						{ weight -> TableCell(miner.powerEfficiency?.let { "$it kH/J" }, weight, textAlign = TextAlign.Right) }
+					)
 				}
 			}
 		}

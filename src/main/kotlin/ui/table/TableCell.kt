@@ -19,7 +19,7 @@ import ui.material.Tooltip
 @Composable
 fun RowScope.TableCell(
 	text: Any?,
-	weight: Float,
+	weight: Float = 1f,
 	fontWeight: FontWeight? = null,
 	textAlign: TextAlign? = null,
 	tooltip: String? = text?.toString()

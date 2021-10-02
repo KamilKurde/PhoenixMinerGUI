@@ -5,15 +5,15 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
+import ui.ConstrainedRow
 import ui.material.MaterialColumn
 import ui.material.MaterialRow
 
@@ -31,12 +31,16 @@ fun GpuTable(
 			stickyHeader {
 				MaterialRow(isHeader = true) {
 					TableCell("Name", NAME_COLUMN_WEIGHT, FontWeight.Bold)
-					TableCell("ID", DATA_COLUMN_WEIGHT, FontWeight.Bold)
-					TableCell("in Use", DATA_COLUMN_WEIGHT, FontWeight.Bold)
-					TableCell("Performance", DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
-					TableCell("Temperature", DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
-					TableCell("Power", DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
-					TableCell("Efficiency", DATA_COLUMN_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
+					TableCell("ID", ESSENTIAL_DATA_COLUMN_WEIGHT, FontWeight.Bold)
+					TableCell("in Use", ESSENTIAL_DATA_COLUMN_WEIGHT, FontWeight.Bold)
+					ConstrainedRow(
+						Modifier.weight(1f - NAME_COLUMN_WEIGHT - (ESSENTIAL_DATA_COLUMN_WEIGHT * 2)),
+						SIZE_PER_ELEMENT.dp,
+						{ weight -> TableCell("Performance", weight, FontWeight.Bold, textAlign = TextAlign.Right) },
+						{ weight -> TableCell("Temperature", weight, FontWeight.Bold, textAlign = TextAlign.Right) },
+						{ weight -> TableCell("Power", weight, FontWeight.Bold, textAlign = TextAlign.Right) },
+						{ weight -> TableCell("Efficiency", weight, FontWeight.Bold, textAlign = TextAlign.Right) }
+					)
 				}
 			}
 
@@ -52,12 +56,16 @@ fun GpuTable(
 				MaterialRow(Modifier.fillMaxWidth()) {
 					val gpu = Settings.gpus[it]
 					TableCell(gpu.name, NAME_COLUMN_WEIGHT)
-					TableCell(gpu.id, DATA_COLUMN_WEIGHT)
-					TableCell(gpu.inUse.toString(), DATA_COLUMN_WEIGHT)
-					TableCell(gpu.percentage?.let { "$it%" }, DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
-					TableCell(gpu.temperature?.let { "$it°C" }, DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
-					TableCell(gpu.powerDraw?.let { "$it W" }, DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
-					TableCell(gpu.powerEfficiency?.let { "$it kH/J" }, DATA_COLUMN_WEIGHT, textAlign = TextAlign.Right)
+					TableCell(gpu.id, ESSENTIAL_DATA_COLUMN_WEIGHT)
+					TableCell(gpu.inUse.toString(), ESSENTIAL_DATA_COLUMN_WEIGHT)
+					ConstrainedRow(
+						Modifier.weight(1f - NAME_COLUMN_WEIGHT - (ESSENTIAL_DATA_COLUMN_WEIGHT * 2)),
+						SIZE_PER_ELEMENT.dp,
+						{ weight -> TableCell(gpu.percentage?.let { "$it%" }, weight, textAlign = TextAlign.Right) },
+						{ weight -> TableCell(gpu.temperature?.let { "$it°C" }, weight, textAlign = TextAlign.Right) },
+						{ weight -> TableCell(gpu.powerDraw?.let { "$it W" }, weight, textAlign = TextAlign.Right) },
+						{ weight -> TableCell(gpu.powerEfficiency?.let { "$it kH/J" }, weight, textAlign = TextAlign.Right) }
+					)
 				}
 			}
 		}
