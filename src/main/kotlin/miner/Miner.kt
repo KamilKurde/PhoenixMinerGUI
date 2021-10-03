@@ -46,12 +46,15 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			}
 		}
 
-		fun stopAllMiners()
+		fun stopAllMiners(killOtherMiners: Boolean = true)
 		{
 			runBlocking {
 				Settings.miners.forEach { it.stopMining() }
+				if (killOtherMiners)
+				{
+					killAllMiners()
+				}
 			}
-			killAllMiners()
 		}
 	}
 

@@ -36,7 +36,7 @@ fun main(args: Array<String>) = application {
 		icon = icon,
 		state = rememberWindowState(width = 1500.dp, height = 720.dp),
 		onCloseRequest = {
-			Miner.stopAllMiners()
+			Miner.stopAllMiners("/nokill" !in args)
 			exitApplication()
 		}
 	) {
