@@ -20,12 +20,13 @@ import ui.material.Tooltip
 fun RowScope.TableCell(
 	text: Any?,
 	weight: Float = 1f,
+	modifier: Modifier = Modifier,
 	fontWeight: FontWeight? = null,
 	textAlign: TextAlign? = null,
 	tooltip: String? = text?.toString()
 ) {
 	BoxWithTooltip(
-		modifier = Modifier.padding(horizontal = 16.dp).weight(weight),
+		modifier = modifier.padding(horizontal = 16.dp).weight(weight),
 		tooltip = {
 			if (tooltip != null)
 			{

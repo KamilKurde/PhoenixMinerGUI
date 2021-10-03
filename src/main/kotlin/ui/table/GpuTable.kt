@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import functions.removeStrings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
 import ui.ConstrainedRow
@@ -30,16 +31,17 @@ fun GpuTable(
 		LazyColumn {
 			stickyHeader {
 				MaterialRow(isHeader = true) {
-					TableCell("Name", NAME_COLUMN_WEIGHT, FontWeight.Bold)
-					TableCell("ID", ESSENTIAL_DATA_COLUMN_WEIGHT, FontWeight.Bold)
-					TableCell("in Use", ESSENTIAL_DATA_COLUMN_WEIGHT, FontWeight.Bold)
+					Spacer(Modifier.width(CONTROLS_COLUMN_SIZE.dp))
 					ConstrainedRow(
-						Modifier.weight(1f - NAME_COLUMN_WEIGHT - (ESSENTIAL_DATA_COLUMN_WEIGHT * 2)),
+						Modifier.weight(1f),
 						SIZE_PER_ELEMENT.dp,
-						{ weight -> TableCell("Performance", weight, FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ weight -> TableCell("Temperature", weight, FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ weight -> TableCell("Power", weight, FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ weight -> TableCell("Efficiency", weight, FontWeight.Bold, textAlign = TextAlign.Right) }
+						{ weight -> TableCell("Name", weight, fontWeight = FontWeight.Bold) },
+						{ weight -> TableCell("ID", weight, fontWeight = FontWeight.Bold) },
+						{ weight -> TableCell("in Use", weight, fontWeight = FontWeight.Bold) },
+						{ weight -> TableCell("Performance", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+						{ weight -> TableCell("Temperature", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+						{ weight -> TableCell("Power", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+						{ weight -> TableCell("Efficiency", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
 					)
 				}
 			}
@@ -55,12 +57,13 @@ fun GpuTable(
 			{
 				MaterialRow(Modifier.fillMaxWidth()) {
 					val gpu = Settings.gpus[it]
-					TableCell(gpu.name, NAME_COLUMN_WEIGHT)
-					TableCell(gpu.id, ESSENTIAL_DATA_COLUMN_WEIGHT)
-					TableCell(gpu.inUse.toString(), ESSENTIAL_DATA_COLUMN_WEIGHT)
+					Spacer(Modifier.width(CONTROLS_COLUMN_SIZE.dp))
 					ConstrainedRow(
-						Modifier.weight(1f - NAME_COLUMN_WEIGHT - (ESSENTIAL_DATA_COLUMN_WEIGHT * 2)),
+						Modifier.weight(1f),
 						SIZE_PER_ELEMENT.dp,
+						{ weight -> TableCell(gpu.name.removeStrings("NVIDIA", "GeForce", "AMD", "Radeon"), weight, tooltip = gpu.name) },
+						{ weight -> TableCell(gpu.id, weight) },
+						{ weight -> TableCell(gpu.inUse.toString(), weight) },
 						{ weight -> TableCell(gpu.percentage?.let { "$it%" }, weight, textAlign = TextAlign.Right) },
 						{ weight -> TableCell(gpu.temperature?.let { "$it°C" }, weight, textAlign = TextAlign.Right) },
 						{ weight -> TableCell(gpu.powerDraw?.let { "$it W" }, weight, textAlign = TextAlign.Right) },

@@ -2,6 +2,7 @@ package ui
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import data.Settings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,9 +26,9 @@ import miner.MinerStatus
 @ExperimentalFoundationApi
 @ExperimentalCoroutinesApi
 @Composable
-fun RowScope.MinerControls(miner: Miner, weight: Float)
+fun RowScope.MinerControls(miner: Miner, size: Int)
 {
-	val modifier = Modifier.weight(weight / 2)
+	val modifier = Modifier.width((size / 2).dp)
 	val minerRunning = miner.status != MinerStatus.Offline && miner.status != MinerStatus.Closing
 	IconButton(
 		{

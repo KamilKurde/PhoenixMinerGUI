@@ -95,9 +95,9 @@ fun MinerSettings(miner: Miner)
 			stickyHeader {
 				MaterialRow(isHeader = true) {
 					Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
-					TableCell("Name", NAME_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Left)
-					TableCell("Description", DESCRIPTION_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Left)
-					TableCell("Value", VALUE_WEIGHT, FontWeight.Bold, textAlign = TextAlign.Right)
+					TableCell("Name", NAME_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Left)
+					TableCell("Description", DESCRIPTION_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Left)
+					TableCell("Value", VALUE_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right)
 				}
 			}
 			// Handling miner startup on program launcb
