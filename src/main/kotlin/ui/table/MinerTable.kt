@@ -1,5 +1,8 @@
 package ui.table
 
+import CONTROLS_COLUMN_SIZE
+import NAME_COLUMN_SIZE
+import SIZE_PER_ELEMENT
 import data.Id
 import data.Settings.minerToEdit
 import androidx.compose.animation.ExperimentalAnimationApi
