@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.github.KamilKurde"
-val currentVersion = "0.3.1"
+val currentVersion = "0.3.2"
 val appName = "PhoenixMiner GUI"
 version = currentVersion
 
