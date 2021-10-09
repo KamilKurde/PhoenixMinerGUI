@@ -1,6 +1,7 @@
 package ui.table
 
 import CONTROLS_COLUMN_SIZE
+import ID_COLUMN_SIZE
 import NAME_COLUMN_SIZE
 import SIZE_PER_ELEMENT
 import data.Id
@@ -37,68 +38,67 @@ import kotlin.random.nextULong
 @ExperimentalCoroutinesApi
 @Composable
 fun MinerTable(
-	modifier: Modifier = Modifier
-)
-{
-	MaterialColumn(modifier) {
-		LazyColumn {
-			stickyHeader {
-				MaterialRow(isHeader = true) {
-					Spacer(Modifier.width(CONTROLS_COLUMN_SIZE.dp))
-					ConstrainedRow(
-						Modifier.weight(1f),
-						SIZE_PER_ELEMENT.dp,
-						{ weight -> TableCell(text = "Name", weight, modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp), fontWeight = FontWeight.Bold) },
-						{ weight -> TableCell(text = "ID", weight = weight, fontWeight = FontWeight.Bold) },
-						{ weight -> TableCell(text = "Status", weight = weight, fontWeight = FontWeight.Bold) },
-						{ weight -> TableCell(text = "Hashrate", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ weight -> TableCell(text = "Shares", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ weight -> TableCell(text = "Power", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ weight -> TableCell(text = "Efficiency", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
-					)
-				}
-			}
-			items(Settings.miners.size)
-			{
-				val miner = Settings.miners[it]
-				MaterialRow(Modifier.fillMaxWidth()) {
-					MinerControls(miner, CONTROLS_COLUMN_SIZE)
-					ConstrainedRow(
-						Modifier.weight(1f),
-						SIZE_PER_ELEMENT.dp,
-						{ weight -> TableCell(miner.name, weight, modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp)) },
-						{ weight -> TableCell(miner.id, weight) },
-						{ weight -> TableCell(miner.status, weight) },
-						{ weight -> TableCell(miner.hashrate?.let { "$it MH/s" }, weight, textAlign = TextAlign.Right) },
-						{ weight -> TableCell(miner.shares, tooltip = miner.shares?.let { "${it.valid} Valid/ ${it.stale} Stale/ ${it.rejected} Rejected" }, weight = weight, textAlign = TextAlign.Right) },
-						{ weight -> TableCell(miner.powerDraw?.let { "$it W" }, weight, textAlign = TextAlign.Right) },
-						{ weight -> TableCell(miner.powerEfficiency?.let { "$it kH/J" }, weight, textAlign = TextAlign.Right) }
-					)
-				}
-			}
-		}
-		Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End)
-		{
-			TextButton(
-				{
-					val id = (1..Int.MAX_VALUE).first { int -> Settings.miners.none { it.id.value == int } }
-					val miner = Miner(
-						"Miner $id", Id(id),
-						false,
-						Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
-						Config.StringParameter(StringArgument.Pool, "eu-eth.hiveon.net:4444"),
-						Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),
-					)
-					minerToEdit = miner
-					CoroutineScope(Job()).launch {
-						delay(1000L)
-						Settings.miners += miner
-					}
-				},
-			)
-			{
-				Text("Create new miner")
-			}
-		}
-	}
+    modifier: Modifier = Modifier
+) {
+    MaterialColumn(modifier) {
+        LazyColumn {
+            stickyHeader {
+                MaterialRow(isHeader = true) {
+                    Spacer(Modifier.width(CONTROLS_COLUMN_SIZE.dp))
+                    TableCell("ID", null, modifier = Modifier.width(ID_COLUMN_SIZE.dp), fontWeight = FontWeight.Bold)
+                    ConstrainedRow(
+                        Modifier.weight(1f),
+                        SIZE_PER_ELEMENT.dp,
+                        { weight -> TableCell(text = "Name", weight, modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp), fontWeight = FontWeight.Bold) },
+                        { weight -> TableCell(text = "Status", weight = weight, fontWeight = FontWeight.Bold) },
+                        { weight -> TableCell(text = "Hashrate", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+                        { weight -> TableCell(text = "Shares", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+                        { weight -> TableCell(text = "Power", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+                        { weight -> TableCell(text = "Efficiency", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
+                    )
+                }
+            }
+            items(Settings.miners.size)
+            {
+                val miner = Settings.miners[it]
+                MaterialRow(Modifier.fillMaxWidth()) {
+                    MinerControls(miner, CONTROLS_COLUMN_SIZE)
+                    TableCell(miner.id, null, modifier = Modifier.width(ID_COLUMN_SIZE.dp))
+                    ConstrainedRow(
+                        Modifier.weight(1f),
+                        SIZE_PER_ELEMENT.dp,
+                        { weight -> TableCell(miner.name, weight, modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp)) },
+                        { weight -> TableCell(miner.status, weight) },
+                        { weight -> TableCell(miner.hashrate?.let { "$it MH/s" }, weight, textAlign = TextAlign.Right) },
+                        { weight -> TableCell(miner.shares, tooltip = miner.shares?.let { "${it.valid} Valid/ ${it.stale} Stale/ ${it.rejected} Rejected" }, weight = weight, textAlign = TextAlign.Right) },
+                        { weight -> TableCell(miner.powerDraw?.let { "$it W" }, weight, textAlign = TextAlign.Right) },
+                        { weight -> TableCell(miner.powerEfficiency?.let { "$it kH/J" }, weight, textAlign = TextAlign.Right) }
+                    )
+                }
+            }
+        }
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End)
+        {
+            TextButton(
+                {
+                    val id = (1..Int.MAX_VALUE).first { int -> Settings.miners.none { it.id.value == int } }
+                    val miner = Miner(
+                        "Miner $id", Id(id),
+                        false,
+                        Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
+                        Config.StringParameter(StringArgument.Pool, "eu-eth.hiveon.net:4444"),
+                        Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),
+                    )
+                    minerToEdit = miner
+                    CoroutineScope(Job()).launch {
+                        delay(1000L)
+                        Settings.miners += miner
+                    }
+                },
+            )
+            {
+                Text("Create new miner")
+            }
+        }
+    }
 }

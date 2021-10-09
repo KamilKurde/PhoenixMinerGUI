@@ -18,33 +18,35 @@ import ui.material.Tooltip
 @ExperimentalAnimationApi
 @Composable
 fun RowScope.TableCell(
-	text: Any?,
-	weight: Float = 1f,
-	modifier: Modifier = Modifier,
-	fontWeight: FontWeight? = null,
-	textAlign: TextAlign? = null,
-	tooltip: String? = text?.toString()
+    text: Any?,
+    weight: Float? = 1f,
+    modifier: Modifier = Modifier,
+    fontWeight: FontWeight? = null,
+    textAlign: TextAlign? = null,
+    tooltip: String? = text?.toString()
 ) {
-	BoxWithTooltip(
-		modifier = modifier.padding(horizontal = 16.dp).weight(weight),
-		tooltip = {
-			if (tooltip != null)
-			{
-				Tooltip(tooltip)
-			}
-	})
-	{
-		AnimatedContent(text?.toString() ?: "-") {
-			targetState ->
-			Text(
-				text = targetState,
-				maxLines = 1,
-				overflow = TextOverflow.Ellipsis,
-				fontWeight = fontWeight,
-				modifier = Modifier.fillMaxWidth().padding(16.dp),
-				textAlign = textAlign
-			)
-		}
+    var modifier = modifier.padding(horizontal = 16.dp)
+    weight?.let {
+        modifier = modifier.weight(it)
+    }
+    BoxWithTooltip(
+        modifier = modifier,
+        tooltip = {
+            if (tooltip != null) {
+                Tooltip(tooltip)
+            }
+        })
+    {
+        AnimatedContent(text?.toString() ?: "-") { targetState ->
+            Text(
+                text = targetState,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = fontWeight,
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                textAlign = textAlign
+            )
+        }
 
-	}
+    }
 }
