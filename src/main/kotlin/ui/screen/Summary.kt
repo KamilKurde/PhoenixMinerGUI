@@ -27,11 +27,11 @@ fun Summary() = Column(modifier = Modifier.fillMaxSize().padding(8.dp), vertical
     Column(modifier = Modifier.fillMaxWidth().height(SPACERS_HEIGHT.dp), verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally) {
         Text("GPUs", fontWeight = FontWeight.Bold)
     }
-    GpuTable()
+    GpuTable(Modifier.weight(1f, false))
     Column(modifier = Modifier.fillMaxWidth().height(SPACERS_HEIGHT.dp), verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally) {
         Text("Miners", fontWeight = FontWeight.Bold)
     }
-    MinerTable()
+    MinerTable(Modifier.weight(1f, false))
     Spacer(Modifier.height(SPACERS_HEIGHT.dp))
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween)
     {
