@@ -67,7 +67,7 @@ fun MinerTable(
                     ConstrainedRow(
                         Modifier.weight(1f),
                         SIZE_PER_ELEMENT.dp,
-                        { weight -> TableCell(miner.name, weight, modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp)) },
+                        { weight -> TableCell(miner.name, weight, tooltip = miner.name + (miner.pid?.let { ", PID: $it" } ?: ""), modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp)) },
                         { weight -> TableCell(miner.status, weight) },
                         { weight -> TableCell(miner.hashrate?.let { "$it MH/s" }, weight, textAlign = TextAlign.Right) },
                         { weight -> TableCell(miner.shares, tooltip = miner.shares?.let { "${it.valid} Valid/ ${it.stale} Stale/ ${it.rejected} Rejected" }, weight = weight, textAlign = TextAlign.Right) },
