@@ -76,7 +76,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 	var powerEfficiency by mutableStateOf<Int?>(null)
 
-	private var pid: Int? = null
+	var pid by mutableStateOf<Int?>(null)
 
 	private var coroutineJob = Job()
 
@@ -113,10 +113,12 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			}
 			coroutineScope.launch {
 				delay(500L)
-				getPIDsFor("PhoenixMiner.exe").forEach { pid ->
+				for (pid in getPIDsFor("PhoenixMiner.exe"))
+				{
 					if (Settings.miners.none { it.pid == pid })
 					{
 						this@Miner.pid = pid
+						break
 					}
 				}
 			}
