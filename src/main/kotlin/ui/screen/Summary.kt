@@ -33,25 +33,28 @@ fun Summary() = Column(modifier = Modifier.fillMaxSize().padding(8.dp), vertical
     }
     MinerTable(Modifier.weight(1f, false))
     Spacer(Modifier.height(SPACERS_HEIGHT.dp))
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween)
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically)
     {
         Text(VERSION)
         // This doesn't work without full distributable, distributable gives exe location as its path, while running normally from IDEA program gives project location as its path
-        Row {
-            Text("Launch PhoenixMiner GUI on system startup")
-            Spacer(Modifier.width(16.dp))
-            var enabled by remember { mutableStateOf(Shortcut.exist) }
-            Switch(
-                enabled,
-                {
-                    enabled = if (it) {
-                        Shortcut.create()
-                        true
-                    } else {
-                        Shortcut.delete()
-                        false
-                    }
-                })
+        if (VERSION != "DEVELOPMENT")
+        {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Launch PhoenixMiner GUI on system startup")
+                Spacer(Modifier.width(16.dp))
+                var enabled by remember { mutableStateOf(Shortcut.exist) }
+                Switch(
+                    enabled,
+                    {
+                        enabled = if (it) {
+                            Shortcut.create()
+                            true
+                        } else {
+                            Shortcut.delete()
+                            false
+                        }
+                    })
+            }
         }
     }
 }
