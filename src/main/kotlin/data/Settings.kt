@@ -46,7 +46,7 @@ object Settings
 				"Donate Your Hashpower To The Dev", Id(1),
 				false,
 				Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
-				Config.StringParameter(StringArgument.Pool, "eu-eth.hiveon.net:4444"),
+				Config.StringParameter(StringArgument.Pool, "eu1.ethermine.org:4444"),
 				Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),
 				Config.BooleanParameter(BooleanArgument.Log, false),
 				Config.NumberParameter(NumberArgument.Ttli, 80)
