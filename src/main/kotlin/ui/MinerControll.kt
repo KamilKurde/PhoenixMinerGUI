@@ -26,7 +26,7 @@ import miner.MinerStatus
 @ExperimentalFoundationApi
 @ExperimentalCoroutinesApi
 @Composable
-fun RowScope.MinerControls(miner: Miner, size: Int)
+fun MinerControls(miner: Miner, size: Int)
 {
 	val modifier = Modifier.width((size / 2).dp)
 	val minerRunning = miner.status != MinerStatus.Offline && miner.status != MinerStatus.Closing

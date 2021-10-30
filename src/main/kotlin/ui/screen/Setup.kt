@@ -1,7 +1,8 @@
 package ui.screen
 
-import androidx.compose.foundation.BoxWithTooltip
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -13,18 +14,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import data.Settings
+import functions.tryWithoutCatch
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
 import phoenix.openFileDialog
 import phoenix.phoenixPathIsCorrect
-import functions.tryWithoutCatch
 import ui.material.Tooltip
 
 @ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 @Composable
-fun Setup()
-{
+fun Setup() {
 	Column(modifier = Modifier.fillMaxSize().padding(8.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
 		Image(painterResource("icon.png"), "PhoenixMiner GUI Icon", Modifier.weight(0.75f), contentScale = ContentScale.Inside)
 		Spacer(modifier = Modifier.height(16.dp))
@@ -33,10 +33,9 @@ fun Setup()
 			Spacer(modifier = Modifier.height(16.dp))
 			Button(
 				onClick = {
-					tryWithoutCatch{
+					tryWithoutCatch {
 						(openFileDialog(ComposeWindow(), "choose PhoenixMiner.exe file").absolutePath).let {
-							if (phoenixPathIsCorrect(it))
-							{
+							if (phoenixPathIsCorrect(it)) {
 								Settings.phoenixPath = it
 								Settings.saveSettings()
 							}
@@ -46,10 +45,14 @@ fun Setup()
 				modifier = Modifier.wrapContentSize()
 			)
 			{
-				BoxWithTooltip({
-								   Tooltip("This version was tested for PhoenixMiner 5.7b however it should work with newer version as well")
-							   })
-				{ Text("Choose File") }
+				TooltipArea(
+					{
+					Tooltip("This version was tested for PhoenixMiner 5.7b however it should work with newer version as well")
+					}
+				)
+				{
+					Text("Choose File")
+				}
 			}
 		}
 	}

@@ -1,21 +1,22 @@
 import java.io.File
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.compose.jetbrainsCompose
 
 plugins {
-	kotlin("jvm") version "1.5.21"
-	id("org.jetbrains.compose") version "1.0.0-alpha3"
+	kotlin("jvm") version "1.5.31"
+	id("org.jetbrains.compose") version "1.0.0-beta5"
 	kotlin("plugin.serialization") version "1.5.20"
 }
 
 group = "com.github.KamilKurde"
-val currentVersion = "0.3.5"
+val currentVersion = "0.3.6"
 val appName = "PhoenixMiner GUI"
 version = currentVersion
 
 repositories {
 	mavenCentral()
-	maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+	jetbrainsCompose()
 	google()
 }
 
