@@ -38,12 +38,12 @@ fun GpuTable(
                     ConstrainedRow(
                         Modifier.weight(1f),
                         SIZE_PER_ELEMENT.dp,
-                        { weight -> TableCell("Name", weight, fontWeight = FontWeight.Bold) },
-                        { weight -> TableCell("in Use", weight, fontWeight = FontWeight.Bold) },
-                        { weight -> TableCell("Performance", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-                        { weight -> TableCell("Temperature", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-                        { weight -> TableCell("Power", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-                        { weight -> TableCell("Efficiency", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
+                        { TableCell("Name", fontWeight = FontWeight.Bold) },
+                        { TableCell("in Use", fontWeight = FontWeight.Bold) },
+                        { TableCell("Performance", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+                        { TableCell("Temperature", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+                        { TableCell("Power", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+                        { TableCell("Efficiency", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
                     )
                 }
             }
@@ -63,12 +63,12 @@ fun GpuTable(
                     ConstrainedRow(
                         Modifier.weight(1f),
                         SIZE_PER_ELEMENT.dp,
-                        { weight -> TableCell(gpu.name.removeStrings("NVIDIA", "GeForce", "AMD", "Radeon"), weight, tooltip = gpu.name) },
-                        { weight -> TableCell(gpu.inUse.toString(), weight) },
-                        { weight -> TableCell(gpu.percentage?.let { "$it%" }, weight, textAlign = TextAlign.Right) },
-                        { weight -> TableCell(gpu.temperature?.let { "$it°C" }, weight, textAlign = TextAlign.Right) },
-                        { weight -> TableCell(gpu.powerDraw?.let { "$it W" }, weight, textAlign = TextAlign.Right) },
-                        { weight -> TableCell(gpu.powerEfficiency?.let { "$it kH/J" }, weight, textAlign = TextAlign.Right) }
+                        { TableCell(gpu.name.removeStrings("NVIDIA", "GeForce", "AMD", "Radeon"), tooltip = gpu.name) },
+                        { TableCell(gpu.inUse.toString()) },
+                        { TableCell(gpu.percentage?.let { "$it%" }, textAlign = TextAlign.Right) },
+                        { TableCell(gpu.temperature?.let { "$it°C" }, textAlign = TextAlign.Right) },
+                        { TableCell(gpu.powerDraw?.let { "$it W" }, textAlign = TextAlign.Right) },
+                        { TableCell(gpu.powerEfficiency?.let { "$it kH/J" }, textAlign = TextAlign.Right) }
                     )
                 }
             }

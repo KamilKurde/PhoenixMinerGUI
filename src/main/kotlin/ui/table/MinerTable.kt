@@ -49,12 +49,12 @@ fun MinerTable(
                     ConstrainedRow(
                         Modifier.weight(1f),
                         SIZE_PER_ELEMENT.dp,
-                        { weight -> TableCell(text = "Name", weight, modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp), fontWeight = FontWeight.Bold) },
-                        { weight -> TableCell(text = "Status", weight = weight, fontWeight = FontWeight.Bold) },
-                        { weight -> TableCell(text = "Hashrate", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-                        { weight -> TableCell(text = "Shares", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-                        { weight -> TableCell(text = "Power", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-                        { weight -> TableCell(text = "Efficiency", weight, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
+                        { TableCell(text = "Name", modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp), fontWeight = FontWeight.Bold) },
+                        { TableCell(text = "Status", fontWeight = FontWeight.Bold) },
+                        { TableCell(text = "Hashrate", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+                        { TableCell(text = "Shares", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+                        { TableCell(text = "Power", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+                        { TableCell(text = "Efficiency", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
                     )
                 }
             }
@@ -67,12 +67,12 @@ fun MinerTable(
                     ConstrainedRow(
                         Modifier.weight(1f),
                         SIZE_PER_ELEMENT.dp,
-                        { weight -> TableCell(miner.name, weight, tooltip = miner.name + (miner.pid?.let { ", PID: $it" } ?: ""), modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp)) },
-                        { weight -> TableCell(miner.status, weight) },
-                        { weight -> TableCell(miner.hashrate?.let { "$it MH/s" }, weight, textAlign = TextAlign.Right) },
-                        { weight -> TableCell(miner.shares, tooltip = miner.shares?.let { "${it.valid} Valid/ ${it.stale} Stale/ ${it.rejected} Rejected" }, weight = weight, textAlign = TextAlign.Right) },
-                        { weight -> TableCell(miner.powerDraw?.let { "$it W" }, weight, textAlign = TextAlign.Right) },
-                        { weight -> TableCell(miner.powerEfficiency?.let { "$it kH/J" }, weight, textAlign = TextAlign.Right) }
+                        { TableCell(miner.name, tooltip = miner.name + (miner.pid?.let { ", PID: $it" } ?: ""), modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp)) },
+                        { TableCell(miner.status) },
+                        { TableCell(miner.hashrate?.let { "$it MH/s" }, textAlign = TextAlign.Right) },
+                        { TableCell(miner.shares, tooltip = miner.shares?.let { "${it.valid} Valid/ ${it.stale} Stale/ ${it.rejected} Rejected" }, textAlign = TextAlign.Right) },
+                        { TableCell(miner.powerDraw?.let { "$it W" }, textAlign = TextAlign.Right) },
+                        { TableCell(miner.powerEfficiency?.let { "$it kH/J" }, textAlign = TextAlign.Right) }
                     )
                 }
             }

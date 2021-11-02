@@ -2,7 +2,6 @@ package ui.table
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +27,7 @@ fun RowScope.TableCell(
 ) {
 	var modifier = modifier.padding(horizontal = 16.dp)
 	weight?.let {
-		modifier = modifier.weight(it)
+		modifier = modifier.weight(it, false)
 	}
 	TooltipArea({
 		if (tooltip != null) {
