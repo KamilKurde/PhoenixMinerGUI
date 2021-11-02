@@ -11,7 +11,7 @@ object Shortcut {
 
 	val exeLocation get(): String = File("PhoenixMiner GUI.exe").absolutePath
 
-	val exist get() = File(location).readLines().any { it.contains(exeLocation) }
+	val exist get() = File(location).exists()
 
 	fun delete() = File(location).delete()
 
