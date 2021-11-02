@@ -100,7 +100,7 @@ fun MinerSettings(miner: Miner)
 					TableCell("Value", VALUE_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right)
 				}
 			}
-			// Handling miner startup on program launcb
+			// Handling miner startup on program launch
 			item {
 				MaterialRow {
 					Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
