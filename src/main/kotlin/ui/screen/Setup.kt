@@ -46,7 +46,7 @@ fun Setup() {
 			{
 				TooltipArea(
 					{
-					Tooltip("This version was tested for PhoenixMiner 5.7b however it should work with newer version as well")
+					Tooltip("This version was tested for PhoenixMiner 5.8c however it should work with newer version as well")
 					}
 				)
 				{
