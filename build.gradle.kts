@@ -5,12 +5,12 @@ import org.jetbrains.compose.jetbrainsCompose
 
 plugins {
 	kotlin("jvm") version "1.5.31"
-	id("org.jetbrains.compose") version "1.0.0-beta5"
+	id("org.jetbrains.compose") version "1.0.0"
 	kotlin("plugin.serialization") version "1.5.20"
 }
 
 group = "com.github.KamilKurde"
-val currentVersion = "0.3.9"
+val currentVersion = "0.4.0"
 val appName = "PhoenixMiner GUI"
 version = currentVersion
 
@@ -23,7 +23,7 @@ repositories {
 dependencies {
 	implementation(compose.desktop.currentOs)
 	implementation("com.github.pgreze:kotlin-process:1.3.1")
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
 }
 
 compose.desktop {

@@ -1,53 +1,51 @@
 package ui
 
+import ID_COLUMN_SIZE
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import data.Settings
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import miner.Miner
 import miner.MinerStatus
+import ui.table.TableCell
 
+@ExperimentalAnimationApi
 @ExperimentalSerializationApi
 @ExperimentalFoundationApi
 @ExperimentalCoroutinesApi
 @Composable
-fun MinerControls(miner: Miner, size: Int)
-{
+fun RowScope.MinerControls(miner: Miner, size: Int) {
 	val modifier = Modifier.width((size / 2).dp)
 	val minerRunning = miner.status != MinerStatus.Offline && miner.status != MinerStatus.Closing
-	IconButton(
-		{
-			if (minerRunning)
+	Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.Start) {
+		TableCell(miner.id, modifier = Modifier.width(ID_COLUMN_SIZE.dp))
+		IconButton(
 			{
-				CoroutineScope(Job()).launch {
-					miner.stopMining()
+				if (minerRunning) {
+					CoroutineScope(Job()).launch {
+						miner.stopMining()
+					}
+				} else {
+					Settings.startMiner(miner)
 				}
-			}
-			else
-			{
-				Settings.startMiner(miner)
-			}
-		}, modifier = modifier
-	)
-	{
-		Icon(if (minerRunning) Icons.Rounded.Close else Icons.Rounded.PlayArrow, if (minerRunning) "Stop button" else "Start button", tint = Color.Black)
-	}
-	IconButton({ Settings.minerToEdit = miner }, modifier = modifier)
-	{
-		Icon(Icons.Rounded.Settings, "Edit", tint = Color.Black)
+			}, modifier = modifier
+		)
+		{
+			Icon(if (minerRunning) Icons.Rounded.Close else Icons.Rounded.PlayArrow, if (minerRunning) "Stop button" else "Start button", tint = Color.Black)
+		}
+		IconButton({ Settings.minerToEdit = miner }, modifier = modifier)
+		{
+			Icon(Icons.Rounded.Settings, "Edit", tint = Color.Black)
+		}
 	}
 }

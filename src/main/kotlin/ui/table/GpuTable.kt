@@ -32,11 +32,10 @@ fun GpuTable(
         LazyColumn {
             stickyHeader {
                 MaterialRow(isHeader = true) {
-                    Spacer(Modifier.width(CONTROLS_COLUMN_SIZE.dp))
-                    TableCell("ID", null, modifier = Modifier.width(ID_COLUMN_SIZE.dp), fontWeight = FontWeight.Bold)
                     ConstrainedRow(
                         Modifier.weight(1f),
                         SIZE_PER_ELEMENT.dp,
+                        {TableCell("ID", fontWeight = FontWeight.Bold) },
                         { TableCell("Name", fontWeight = FontWeight.Bold) },
                         { TableCell("in Use", fontWeight = FontWeight.Bold) },
                         { TableCell("Performance", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
@@ -57,13 +56,12 @@ fun GpuTable(
             {
                 MaterialRow(Modifier.fillMaxWidth()) {
                     val gpu = Settings.gpus[it]
-                    Spacer(Modifier.width(CONTROLS_COLUMN_SIZE.dp))
-                    TableCell(gpu.id, null, modifier = Modifier.width(ID_COLUMN_SIZE.dp))
                     val namesToRemove = listOf("NVIDIA", "GeForce", "AMD", "Radeon")
                     val nameWithoutKeywords = gpu.name.substring(namesToRemove.maxOf { gpu.name.indexOf(it, ignoreCase = true) + it.length })
                     ConstrainedRow(
                         Modifier.weight(1f),
                         SIZE_PER_ELEMENT.dp,
+                        { TableCell(gpu.id) },
                         { TableCell(nameWithoutKeywords, tooltip = gpu.name) },
                         { TableCell(gpu.inUse.toString()) },
                         { TableCell(gpu.percentage?.let { "$it%" }, textAlign = TextAlign.Right) },
