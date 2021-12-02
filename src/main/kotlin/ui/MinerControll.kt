@@ -41,7 +41,7 @@ fun RowScope.MinerControls(miner: Miner, size: Int) {
 			}, modifier = modifier
 		)
 		{
-			Icon(if (minerRunning) Icons.Rounded.Close else Icons.Rounded.PlayArrow, if (minerRunning) "Stop button" else "Start button", tint = Color.Black)
+			Icon(if (minerRunning) Icons.Rounded.Stop else Icons.Rounded.PlayArrow, if (minerRunning) "Stop button" else "Start button", tint = Color.Black)
 		}
 		IconButton({ Settings.minerToEdit = miner }, modifier = modifier)
 		{
