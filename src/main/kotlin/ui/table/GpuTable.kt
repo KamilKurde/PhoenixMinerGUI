@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import functions.removeStrings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
 import ui.ConstrainedRow
@@ -60,10 +59,12 @@ fun GpuTable(
                     val gpu = Settings.gpus[it]
                     Spacer(Modifier.width(CONTROLS_COLUMN_SIZE.dp))
                     TableCell(gpu.id, null, modifier = Modifier.width(ID_COLUMN_SIZE.dp))
+                    val namesToRemove = listOf("NVIDIA", "GeForce", "AMD", "Radeon")
+                    val nameWithoutKeywords = gpu.name.substring(namesToRemove.maxOf { gpu.name.indexOf(it, ignoreCase = true) + it.length })
                     ConstrainedRow(
                         Modifier.weight(1f),
                         SIZE_PER_ELEMENT.dp,
-                        { TableCell(gpu.name.removeStrings("NVIDIA", "GeForce", "AMD", "Radeon"), tooltip = gpu.name) },
+                        { TableCell(nameWithoutKeywords, tooltip = gpu.name) },
                         { TableCell(gpu.inUse.toString()) },
                         { TableCell(gpu.percentage?.let { "$it%" }, textAlign = TextAlign.Right) },
                         { TableCell(gpu.temperature?.let { "$it°C" }, textAlign = TextAlign.Right) },
