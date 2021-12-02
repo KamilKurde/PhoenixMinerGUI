@@ -1,7 +1,6 @@
 package ui.screen
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.TooltipArea
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -20,6 +19,7 @@ import phoenix.openFileDialog
 import phoenix.phoenixPathIsCorrect
 import ui.material.Tooltip
 
+@ExperimentalFoundationApi
 @ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 @Composable
@@ -46,7 +46,7 @@ fun Setup() {
 			{
 				TooltipArea(
 					{
-					Tooltip("This version was tested for PhoenixMiner 5.8c however it should work with newer version as well")
+					Tooltip("This version was tested for PhoenixMiner 5.9d however it should work with newer version as well")
 					}
 				)
 				{
