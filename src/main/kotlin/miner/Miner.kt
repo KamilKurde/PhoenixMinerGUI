@@ -88,6 +88,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 	private val file = File(folder + File.separator + "miner$id.bat")
 
+	private fun log(message: String) = println("Miner $id: $message")
+
 	fun startMining()
 	{
 		coroutineJob = Job()
@@ -113,13 +115,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			}
 			coroutineScope.launch {
 				delay(500L)
-				for (pid in getPIDsFor("PhoenixMiner.exe"))
-				{
-					if (Settings.miners.none { it.pid == pid })
-					{
-						this@Miner.pid = pid
-						break
-					}
+				pid = getPIDsFor("PhoenixMiner.exe").first {
+					Settings.miners.none { miner -> miner.pid == it }
 				}
 			}
 			process(
@@ -136,7 +133,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 				consumer = { line ->
 					if (line.isNotBlank())
 					{
-						println("Miner $id: $line")
+						log(line)
 					}
 					when
 					{
@@ -252,7 +249,13 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 	suspend fun stopMining()
 	{
+		val previousStatus = status
 		status = MinerStatus.Closing
+		while (pid == null && previousStatus != MinerStatus.Waiting)
+		{
+			delay(200L)
+			log("PID for miner wasn't obtained, waiting")
+		}
 		pid?.let { taskKill(it, true) }
 		coroutineJob.cancelAndJoin()
 		assignedGpuIds.forEach { id ->
