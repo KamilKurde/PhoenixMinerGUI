@@ -251,7 +251,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 	{
 		val previousStatus = status
 		status = MinerStatus.Closing
-		while (pid == null && previousStatus != MinerStatus.Waiting)
+		while (pid == null && (previousStatus != MinerStatus.Waiting && previousStatus != MinerStatus.Offline))
 		{
 			delay(200L)
 			log("PID for miner wasn't obtained, waiting")
