@@ -1,25 +1,29 @@
 @file:Suppress("BlockingMethodInNonBlockingContext")
 
-import data.Id
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import com.github.pgreze.process.Redirect
 import com.github.pgreze.process.process
-import data.Settings
-import data.folder
+import data.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import miner.MinerStatus
 import java.io.File
 
 @ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 @Serializable
-data class Gpu(val name: String, var id: Id = Id(1))
-{
-	var inUse by mutableStateOf(Settings.miners.any { miner -> (miner.status != MinerStatus.Offline && miner.status != MinerStatus.Waiting ) && miner.assignedGpuIds.any { it == id } })
+data class Gpu(val name: String, var id: Id = Id(1)) {
+	val inUse get(): Boolean {
+		val isUsed = Settings.miners.filter { it.isActive }.any { miner -> miner.assignedGpuIds.any { it == id } }
+		if (!isUsed)
+		{
+			powerEfficiency = null
+			powerDraw = null
+			percentage = null
+			temperature = null
+		}
+		return isUsed
+	}
 
 	var percentage by mutableStateOf<Int?>(null)
 
@@ -28,15 +32,6 @@ data class Gpu(val name: String, var id: Id = Id(1))
 	var powerDraw by mutableStateOf<Int?>(null)
 
 	var powerEfficiency by mutableStateOf<Int?>(null)
-
-	fun resetGpuStats()
-	{
-		powerEfficiency = null
-		powerDraw = null
-		percentage = null
-		temperature = null
-		inUse = false
-	}
 }
 
 @ExperimentalSerializationApi
@@ -50,12 +45,11 @@ suspend fun getGpus() = coroutineScope {
 	}
 	file.writeText(
 		"echo off\n" +
-		"\"$path\" -list"
+				"\"$path\" -list"
 	)
 	val gpuList = mutableListOf<Gpu>()
 	process(file.absolutePath, stdout = Redirect.CAPTURE).output.forEach { line ->
-		if (line.startsWith("GPU"))
-		{
+		if (line.startsWith("GPU")) {
 			val splitLine = line.split(" ")
 			val index = line.indexOf("(pcie")
 			gpuList.add(

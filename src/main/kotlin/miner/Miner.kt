@@ -68,6 +68,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 	var status by mutableStateOf(MinerStatus.Offline)
 
+	val isActive get() = status != MinerStatus.Offline && status != MinerStatus.Waiting
+
 	var hashrate by mutableStateOf<Float?>(null)
 
 	var shares by mutableStateOf<Shares?>(null)
@@ -110,9 +112,6 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 				"\"${Settings.phoenixPath}\" $settingsAsString\n" +
 				"echo miner stopped"
 			)
-			assignedGpuIds.forEach {
-				Settings.gpus[it.toInt() - 1].inUse = true
-			}
 			coroutineScope.launch {
 				delay(500L)
 				pid = getPIDsFor("PhoenixMiner.exe").first {
@@ -137,13 +136,6 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 					}
 					when
 					{
-						line.startsWith("Phoenix Miner")                                 ->
-						{
-							assignedGpuIds.forEach { id ->
-								val gpu = Settings.gpus.first { it.id == id }
-								gpu.inUse = true
-							}
-						}
 						line.contains("Generating DAG")                                  -> status = MinerStatus.DagBuilding
 						line.contains("DAG generated")                                   -> status = MinerStatus.Running
 						line.startsWith("GPUs power: ") && status == MinerStatus.Running ->
@@ -234,11 +226,6 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 							hashrate = null
 							powerDraw = null
 							powerEfficiency = null
-							assignedGpuIds.forEach { id ->
-								val gpu = Settings.gpus.first { it.id == id }
-								gpu.resetGpuStats()
-								gpu.inUse = false
-							}
 							Settings.startMiner(this@Miner)
 						}
 					}
@@ -258,9 +245,6 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		}
 		pid?.let { taskKill(it, true) }
 		coroutineJob.cancelAndJoin()
-		assignedGpuIds.forEach { id ->
-			Settings.gpus[id.value - 1].resetGpuStats()
-		}
 		hashrate = null
 		shares = null
 		powerDraw = null
