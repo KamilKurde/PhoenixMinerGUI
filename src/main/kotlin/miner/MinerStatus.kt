@@ -1,12 +1,10 @@
 package miner
 
-enum class MinerStatus
-{
+enum class MinerStatus {
 	Offline,
 	Waiting,
 	Connecting,
-	DagBuilding
-	{
+	DagBuilding {
 		override fun toString() = "Building DAG"
 	},
 	Running,

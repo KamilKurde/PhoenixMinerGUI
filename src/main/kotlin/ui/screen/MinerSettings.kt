@@ -1,7 +1,6 @@
 package ui.screen
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import miner.Miner
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -22,23 +21,21 @@ import config.Parameters
 import data.Settings
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
+import miner.Miner
 import miner.MinerStatus
 import ui.ParameterUI
 import ui.material.MaterialRow
 import ui.table.TableCell
-import ui.theme.CHECKBOX_WEIGHT
-import ui.theme.DESCRIPTION_WEIGHT
-import ui.theme.NAME_WEIGHT
-import ui.theme.VALUE_WEIGHT
+import ui.theme.*
 
+@Suppress("FunctionName")
 @ExperimentalSerializationApi
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @ExperimentalCoroutinesApi
 @Composable
-fun MinerSettings(miner: Miner)
-{
+fun MinerSettings(miner: Miner) {
 	val wasWorking by remember { mutableStateOf(miner.status != MinerStatus.Offline && miner.status != MinerStatus.Closing) }
 	Column(
 		modifier = Modifier.fillMaxSize().padding(8.dp)
@@ -70,8 +67,7 @@ fun MinerSettings(miner: Miner)
 					miner.name = name.trim()
 					miner.parameters = Parameters(*parameters.filter { it.enabled }.map { it.config }.toTypedArray())
 					Settings.saveSettings()
-					if (wasWorking)
-					{
+					if (wasWorking) {
 						CoroutineScope(Job()).launch {
 							miner.stopMining()
 							Settings.startMiner(miner)
@@ -122,8 +118,8 @@ fun MinerSettings(miner: Miner)
 			item {
 				Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
 					IconButton({
-								   deletionAlert = true
-							   })
+						deletionAlert = true
+					})
 					{
 						Icon(Icons.Rounded.Delete, "Delete Button", tint = Color.Red)
 					}
@@ -131,8 +127,7 @@ fun MinerSettings(miner: Miner)
 			}
 		}
 
-		if (deletionAlert)
-		{
+		if (deletionAlert) {
 			AlertDialog(
 				modifier = Modifier.width(400.dp),
 				onDismissRequest = { deletionAlert = false },

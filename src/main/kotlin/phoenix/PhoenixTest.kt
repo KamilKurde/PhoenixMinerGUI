@@ -7,10 +7,8 @@ import kotlinx.coroutines.runBlocking
 import java.io.File
 
 @ExperimentalCoroutinesApi
-fun phoenixPathIsCorrect(path: String): Boolean
-{
-	if (path.split(File.separator).last() != "PhoenixMiner.exe")
-	{
+fun phoenixPathIsCorrect(path: String): Boolean {
+	if (path.split(File.separator).last() != "PhoenixMiner.exe") {
 		return false
 	}
 	return runBlocking { process(path, "-h", stdout = Redirect.CAPTURE).output[0].startsWith("Phoenix Miner") }

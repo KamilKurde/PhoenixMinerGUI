@@ -1,60 +1,45 @@
 package ui
 
-import data.Id
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import config.Config
-import config.SettingsConfig
-import config.Wallet
+import config.*
+import data.Id
 import data.Settings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.serialization.ExperimentalSerializationApi
 import ui.material.MaterialRow
 import ui.table.TableCell
-import ui.theme.CHECKBOX_WEIGHT
-import ui.theme.DESCRIPTION_WEIGHT
-import ui.theme.NAME_WEIGHT
-import ui.theme.VALUE_WEIGHT
+import ui.theme.*
 
+@Suppress("FunctionName")
 @ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 @ExperimentalAnimationApi
 @Composable
-fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true)
-{
+fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
 	MaterialRow {
 		val config = settings.config
-		if (config.required)
-		{
+		if (config.required) {
 			Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
-		}
-		else{
+		} else {
 			Box(modifier = Modifier.weight(CHECKBOX_WEIGHT), contentAlignment = Alignment.Center)
 			{
 				Checkbox(
 					settings.enabled,
-					{settings.enabled = it}
+					{ settings.enabled = it }
 				)
 			}
 		}
 		TableCell(config.name, NAME_WEIGHT, textAlign = TextAlign.Left, tooltip = if (displayTooltip) config.name else null)
 		TableCell(config.description, DESCRIPTION_WEIGHT, textAlign = TextAlign.Left, tooltip = if (displayTooltip) config.description else null)
 		Box(modifier = Modifier.weight(VALUE_WEIGHT)) {
-			when (config)
-			{
-				is Config.NumberParameter ->
-				{
+			when (config) {
+				is Config.NumberParameter -> {
 					var temporalValue by remember { mutableStateOf(config.valueAsString) }
 					var errorState by remember { mutableStateOf(false) }
 					TextField(
@@ -62,21 +47,15 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true)
 						modifier = Modifier.fillMaxSize(),
 						onValueChange = {
 							temporalValue = it
-							try
-							{
+							try {
 								val int = temporalValue.toInt()
-								if (int in config.element.range)
-								{
+								if (int in config.element.range) {
 									config.value = int
 									errorState = false
-								}
-								else
-								{
+								} else {
 									errorState = true
 								}
-							}
-							catch (e: Exception)
-							{
+							} catch (e: Exception) {
 								errorState = true
 							}
 						},
@@ -85,8 +64,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true)
 						label = { Text("Numeric value") }
 					)
 				}
-				is Config.WalletParameter ->
-				{
+				is Config.WalletParameter -> {
 					var temporalValue by remember { mutableStateOf(config.valueAsString) }
 					var errorState by remember { mutableStateOf(false) }
 					TextField(
@@ -94,13 +72,10 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true)
 						modifier = Modifier.fillMaxSize(),
 						onValueChange = {
 							temporalValue = it
-							try
-							{
+							try {
 								config.value = Wallet(temporalValue)
 								errorState = false
-							}
-							catch (e: Exception)
-							{
+							} catch (e: Exception) {
 								errorState = true
 							}
 						},
@@ -109,27 +84,21 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true)
 						label = { Text("Wallet address") }
 					)
 				}
-				is Config.GpusParameter ->
-				{
+				is Config.GpusParameter -> {
 					var temporalValue by remember { mutableStateOf(config.valueAsString) }
 					var errorState by remember { mutableStateOf(false) }
 					TextField(
 						value = temporalValue,
 						modifier = Modifier.fillMaxSize(),
-						onValueChange = {
-							newValue ->
+						onValueChange = { newValue ->
 							temporalValue = newValue
-							try
-							{
+							try {
 								val ids = temporalValue.split(",").map { Id(it.toInt()) }.toTypedArray()
-								if (ids.all { id -> Settings.gpus.any { gpu -> gpu.id == id } })
-								{
+								if (ids.all { id -> Settings.gpus.any { gpu -> gpu.id == id } }) {
 									config.value = ids
 									errorState = false
 								}
-							}
-							catch (e: Exception)
-							{
+							} catch (e: Exception) {
 								errorState = true
 							}
 						},
@@ -138,16 +107,14 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true)
 						label = { Text("IDs of GPUs separated by commas") }
 					)
 				}
-				is Config.BooleanParameter ->
-				{
+				is Config.BooleanParameter -> {
 					Switch(
 						config.value,
 						{ config.value = it },
 						modifier = Modifier.fillMaxSize(),
 					)
 				}
-				is Config.StringParameter ->
-				{
+				is Config.StringParameter -> {
 					TextField(
 						value = config.value,
 						modifier = Modifier.fillMaxSize(),

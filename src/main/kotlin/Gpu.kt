@@ -13,17 +13,17 @@ import java.io.File
 @ExperimentalCoroutinesApi
 @Serializable
 data class Gpu(val name: String, var id: Id = Id(1)) {
-	val inUse get(): Boolean {
-		val isUsed = Settings.miners.filter { it.isActive }.any { miner -> miner.assignedGpuIds.any { it == id } }
-		if (!isUsed)
-		{
-			powerEfficiency = null
-			powerDraw = null
-			percentage = null
-			temperature = null
+	val inUse
+		get(): Boolean {
+			val isUsed = Settings.miners.filter { it.isActive }.any { miner -> miner.assignedGpuIds.any { it == id } }
+			if (!isUsed) {
+				powerEfficiency = null
+				powerDraw = null
+				percentage = null
+				temperature = null
+			}
+			return isUsed
 		}
-		return isUsed
-	}
 
 	var percentage by mutableStateOf<Int?>(null)
 

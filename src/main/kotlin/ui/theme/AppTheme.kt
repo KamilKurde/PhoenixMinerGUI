@@ -36,10 +36,11 @@ private val lightColors = lightColors(
 	onError = OnError,
 )*/
 
+@Suppress("FunctionName")
 @ExperimentalCoroutinesApi
 @Composable
-fun AppTheme(content: @Composable () -> Unit)
-{
+fun AppTheme(content: @Composable () -> Unit) {
 	MaterialTheme(
-		colors = lightColors, content = content)
+		colors = lightColors, content = content
+	)
 }

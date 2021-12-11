@@ -19,6 +19,7 @@ import miner.Miner
 import miner.MinerStatus
 import ui.table.TableCell
 
+@Suppress("FunctionName")
 @ExperimentalAnimationApi
 @ExperimentalSerializationApi
 @ExperimentalFoundationApi

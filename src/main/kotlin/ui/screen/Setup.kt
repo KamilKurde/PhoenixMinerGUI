@@ -19,6 +19,7 @@ import phoenix.openFileDialog
 import phoenix.phoenixPathIsCorrect
 import ui.material.Tooltip
 
+@Suppress("FunctionName")
 @ExperimentalFoundationApi
 @ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
@@ -46,7 +47,7 @@ fun Setup() {
 			{
 				TooltipArea(
 					{
-					Tooltip("This version was tested for PhoenixMiner 5.9d however it should work with newer version as well")
+						Tooltip("This version was tested for PhoenixMiner 5.9d however it should work with newer version as well")
 					}
 				)
 				{

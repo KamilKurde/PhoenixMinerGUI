@@ -1,57 +1,45 @@
 package miner
 
-import data.Id
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import com.github.pgreze.process.Redirect
 import com.github.pgreze.process.process
 import config.Config
 import config.Parameters
 import config.arguments.GpusArgument
 import config.arguments.StringArgument
-import data.Settings
-import data.folder
-import functions.getPIDsFor
+import data.*
+import functions.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import functions.taskKill
-import functions.tryWithoutCatch
 import java.io.File
 
 @ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 @Serializable
-class MinerData(val name: String = "", val id: Id = Id(1), val mineOnStartup: Boolean = false, val settings: Array<String> = emptyArray())
-{
+class MinerData(val name: String = "", val id: Id = Id(1), val mineOnStartup: Boolean = false, val settings: Array<String> = emptyArray()) {
 	fun toMiner() = Miner(name, id, mineOnStartup, Parameters(*settings))
 }
 
 @ExperimentalSerializationApi
 @Suppress("BlockingMethodInNonBlockingContext")
 @ExperimentalCoroutinesApi
-class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, parameters: Parameters)
-{
-	constructor(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, vararg parameters: Config): this(name, id, startMiningOnStartup, Parameters(*parameters))
+class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, parameters: Parameters) {
+	constructor(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, vararg parameters: Config) : this(name, id, startMiningOnStartup, Parameters(*parameters))
 
 	@ExperimentalSerializationApi
-	companion object
-	{
-		fun killAllMiners()
-		{
+	companion object {
+		fun killAllMiners() {
 			// Kills all other PhoenixMiner instances
 			runBlocking {
 				taskKill("PhoenixMiner.exe", true)
 			}
 		}
 
-		fun stopAllMiners(killOtherMiners: Boolean = true)
-		{
+		fun stopAllMiners(killOtherMiners: Boolean = true) {
 			runBlocking {
 				Settings.miners.forEach { it.stopMining() }
-				if (killOtherMiners)
-				{
+				if (killOtherMiners) {
 					killAllMiners()
 				}
 			}
@@ -92,16 +80,14 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 	private fun log(message: String) = println("Miner $id: $message")
 
-	fun startMining()
-	{
+	fun startMining() {
 		coroutineJob = Job()
 		val coroutineScope = CoroutineScope(coroutineJob + Dispatchers.IO)
 
 		coroutineScope.launch {
 			status = MinerStatus.Connecting
 			val formattedSettings = parameters.copy()
-			if (!formattedSettings.any { it is Config.StringParameter && it.configElement == StringArgument.Password })
-			{
+			if (!formattedSettings.any { it is Config.StringParameter && it.configElement == StringArgument.Password }) {
 				formattedSettings.add(Config.StringParameter(StringArgument.Password, "x"))
 			}
 			val settingsAsArray = (formattedSettings.map { it.fullParameter } + "-hstats 2" + "-rmode 0" + "-cdm 0").toTypedArray()
@@ -109,8 +95,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			file.createNewFile()
 			file.writeText(
 				"@echo off\n" +
-				"\"${Settings.phoenixPath}\" $settingsAsString\n" +
-				"echo miner stopped"
+						"\"${Settings.phoenixPath}\" $settingsAsString\n" +
+						"echo miner stopped"
 			)
 			coroutineScope.launch {
 				delay(500L)
@@ -130,41 +116,33 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 					"GPU_SINGLE_ALLOC_PERCENT" to "100"
 				),
 				consumer = { line ->
-					if (line.isNotBlank())
-					{
+					if (line.isNotBlank()) {
 						log(line)
 					}
-					when
-					{
-						line.contains("Generating DAG")                                  -> status = MinerStatus.DagBuilding
-						line.contains("DAG generated")                                   -> status = MinerStatus.Running
-						line.startsWith("GPUs power: ") && status == MinerStatus.Running ->
-						{
+					when {
+						line.contains("Generating DAG") -> status = MinerStatus.DagBuilding
+						line.contains("DAG generated") -> status = MinerStatus.Running
+						line.startsWith("GPUs power: ") && status == MinerStatus.Running -> {
 							val split = line.split(" ")
 							powerDraw = split[2].toFloat()
 							tryWithoutCatch {
 								powerEfficiency = split[4].toInt()
 							}
 						}
-						line.startsWith("Eth speed: ") && status == MinerStatus.Running  ->
-						{
+						line.startsWith("Eth speed: ") && status == MinerStatus.Running -> {
 							var currentData = line.removePrefix("Eth speed: ")
-							while (currentData.isNotEmpty())
-							{
+							while (currentData.isNotEmpty()) {
 								val split = currentData.split(" ")
-								when
-								{
-									split[1] == "MH/s,"   -> hashrate = split[0].toFloat()
-									split[0] == "shares:" ->
-									{
+								when {
+									split[1] == "MH/s," -> hashrate = split[0].toFloat()
+									split[0] == "shares:" -> {
 										val sharesList = split[1].removeSuffix(",").split("/").map { it.toInt() }.toTypedArray()
 										shares?.apply {
 											valid = sharesList[0]
 											stale = sharesList[1]
 											rejected = sharesList[2]
 										}
-										if (shares == null)
-										{
+										if (shares == null) {
 											shares = Shares(sharesList)
 										}
 									}
@@ -172,24 +150,17 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 								currentData = split.drop(2).joinToString(separator = " ")
 							}
 						}
-						line.startsWith("GPU") && status == MinerStatus.Running          ->
-						{
-							for (internalId in 1..assignedGpuIds.size + 1)
-							{
-								if (line.startsWith("GPU$internalId") && !(line.startsWith("GPU$internalId: Using") || line.startsWith("GPU$internalId: DAG")))
-								{
+						line.startsWith("GPU") && status == MinerStatus.Running -> {
+							for (internalId in 1..assignedGpuIds.size + 1) {
+								if (line.startsWith("GPU$internalId") && !(line.startsWith("GPU$internalId: Using") || line.startsWith("GPU$internalId: DAG"))) {
 									val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId - 1] }
 									val gpu = Settings.gpus[gpuSettingsIndex]
 									val splitLine = line.split(" ")
-									if (line.startsWith("GPU$internalId: cclock"))
-									{
+									if (line.startsWith("GPU$internalId: cclock")) {
 										gpu.powerEfficiency = splitLine[splitLine.size - 2].toInt()
-									}
-									else
-									{
+									} else {
 										var splitLineMultiGpu = splitLine
-										while (splitLineMultiGpu.isNotEmpty())
-										{
+										while (splitLineMultiGpu.isNotEmpty()) {
 											val currentGpu = Settings.gpus.first { it.id == assignedGpuIds[splitLineMultiGpu[0].removePrefix("GPU").removeSuffix(":").toInt() - 1] }
 
 											currentGpu.temperature = splitLineMultiGpu[1].removeSuffix("C").toInt()
@@ -204,14 +175,11 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 							}
 						}
 						// Workaround for phoenix not reporting throttled usage in normal stats
-						line.startsWith("Throttling GPUs")                               ->
-						{
+						line.startsWith("Throttling GPUs") -> {
 							val split = line.split(" ")
-							for (internalId in 1..assignedGpuIds.size + 1)
-							{
+							for (internalId in 1..assignedGpuIds.size + 1) {
 								split.forEachIndexed { index, string ->
-									if (string == "GPU$internalId")
-									{
+									if (string == "GPU$internalId") {
 										val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId - 1] }
 										val gpu = Settings.gpus[gpuSettingsIndex]
 										gpu.percentage = split[index + 1].removeSuffix(",").removePrefix("(").removeSuffix("%)").toInt()
@@ -219,8 +187,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 								}
 							}
 						}
-						line.startsWith("miner stopped")                                 ->
-						{
+						line.startsWith("miner stopped") -> {
 							status = MinerStatus.Error
 							pid = null
 							hashrate = null
@@ -234,12 +201,10 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		}
 	}
 
-	suspend fun stopMining()
-	{
+	suspend fun stopMining() {
 		val previousStatus = status
 		status = MinerStatus.Closing
-		while (pid == null && (previousStatus != MinerStatus.Waiting && previousStatus != MinerStatus.Offline))
-		{
+		while (pid == null && (previousStatus != MinerStatus.Waiting && previousStatus != MinerStatus.Offline)) {
 			delay(200L)
 			log("PID for miner wasn't obtained, waiting")
 		}

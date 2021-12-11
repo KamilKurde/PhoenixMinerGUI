@@ -2,16 +2,15 @@ package data
 
 import Gpu
 import androidx.compose.runtime.*
-import config.*
+import config.Config
+import config.Wallet
 import config.arguments.*
-import kotlinx.coroutines.*
-import kotlinx.serialization.json.Json
-import java.io.File
-import kotlinx.serialization.*
-import miner.Miner
-import miner.MinerData
-import miner.MinerStatus
 import functions.tryOrNull
+import kotlinx.coroutines.*
+import kotlinx.serialization.*
+import kotlinx.serialization.json.Json
+import miner.*
+import java.io.File
 import kotlin.random.Random
 import kotlin.random.nextULong
 
@@ -24,19 +23,16 @@ class SettingsData(
 	val phoenixPath: String = "",
 	val gpus: Array<Gpu> = emptyArray(),
 	val miners: Array<MinerData> = emptyArray()
-)
-{
+) {
 	@ExperimentalSerializationApi
-	companion object
-	{
+	companion object {
 		fun generateFromSettings() = SettingsData(Settings.phoenixPath, Settings.gpus, Settings.miners.map { it.toMinerData() }.toTypedArray())
 	}
 }
 
 @ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
-object Settings
-{
+object Settings {
 	var phoenixPath by mutableStateOf("")
 	var gpus by mutableStateOf(emptyArray<Gpu>())
 	var minerToEdit by mutableStateOf<Miner?>(null)
@@ -56,10 +52,8 @@ object Settings
 
 	private val minersToStart = mutableListOf<Miner>()
 
-	fun startMiner(miner: Miner)
-	{
-		if (miner !in minersToStart)
-		{
+	fun startMiner(miner: Miner) {
+		if (miner !in minersToStart) {
 			miner.status = MinerStatus.Waiting
 			minersToStart.add(miner)
 		}
@@ -67,8 +61,7 @@ object Settings
 
 	private val coroutineScope = CoroutineScope(Job())
 
-	init
-	{
+	init {
 		(tryOrNull {
 			val file = File(folder + File.separator + "settings.json")
 			Json.decodeFromString(file.readText())
@@ -79,44 +72,34 @@ object Settings
 		}
 
 		coroutineScope.launch {
-			try
-			{
-				while (true)
-				{
+			try {
+				while (true) {
 					// Waiting for all other components to properly initialize (including UI) and giving timeframe for getting PID of new PhoenixMiner instance
 					delay(1000L)
 					minersToStart.firstOrNull()?.let { miner ->
-						if (miner.status == MinerStatus.Waiting)
-						{
+						if (miner.status == MinerStatus.Waiting) {
 							if (
-								when
-								{
+								when {
 									miner.assignedGpuIds.isNotEmpty() -> miner.assignedGpuIds.none { id -> gpus[id.value - 1].inUse }
-									else                              -> gpus.none { it.inUse }
+									else -> gpus.none { it.inUse }
 								}
-							)
-							{
+							) {
 								miner.startMining()
-							}
-							else
-							{
+							} else {
 								miner.status = MinerStatus.Offline
 							}
 						}
 						minersToStart.removeFirst()
 					}
 				}
-			}
-			catch (e: CancellationException)
-			{
+			} catch (e: CancellationException) {
 				println("settings killed")
 			}
 
 		}
 	}
 
-	fun saveSettings()
-	{
+	fun saveSettings() {
 		File(folder).mkdirs()
 		val file = File(folder + File.separator + "settings.json")
 		file.createNewFile()

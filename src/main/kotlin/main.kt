@@ -1,24 +1,21 @@
-import data.Settings.minerToEdit
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.window.*
 import data.Settings
+import data.Settings.minerToEdit
 import functions.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import miner.Miner
 import phoenix.phoenixPathIsCorrect
 import ui.AnimatedVisibilityWithFade
-import ui.screen.MinerSettings
-import ui.screen.Setup
-import ui.screen.Summary
+import ui.screen.*
 import ui.theme.AppTheme
 
 val icon @Composable get() = painterResource("icon.ico")
@@ -41,8 +38,7 @@ fun main(args: Array<String>) = application {
 		}
 	) {
 		rememberCoroutineScope().launchOnce {
-			if (phoenixAvailable)
-			{
+			if (phoenixAvailable) {
 				args.ifNoArgCoroutine("/nokill")
 				{
 					// Kills all other PhoenixMiner GUI instances

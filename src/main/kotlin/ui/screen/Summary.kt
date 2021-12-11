@@ -18,6 +18,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import ui.table.GpuTable
 import ui.table.MinerTable
 
+@Suppress("FunctionName")
 @ExperimentalSerializationApi
 @ExperimentalCoroutinesApi
 @ExperimentalAnimationApi

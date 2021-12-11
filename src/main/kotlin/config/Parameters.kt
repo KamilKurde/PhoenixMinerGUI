@@ -2,10 +2,9 @@ package config
 
 import functions.tryOrNull
 
-class Parameters(private var parameters: MutableList<Config> = mutableListOf()): MutableCollection<Config>
-{
-	constructor(vararg parameters: Config): this(parameters.toMutableList())
-	constructor(vararg parameters: String): this(parameters.mapNotNull { tryOrNull { Config(it) } }.toMutableList())
+class Parameters(private var parameters: MutableList<Config> = mutableListOf()) : MutableCollection<Config> {
+	constructor(vararg parameters: Config) : this(parameters.toMutableList())
+	constructor(vararg parameters: String) : this(parameters.mapNotNull { tryOrNull { Config(it) } }.toMutableList())
 
 	fun copy() = Parameters(parameters.map { it.copy() }.toMutableList())
 
@@ -22,10 +21,8 @@ class Parameters(private var parameters: MutableList<Config> = mutableListOf()):
 
 	override fun isEmpty() = parameters.isEmpty()
 
-	override fun add(element: Config): Boolean
-	{
-		if (contains(element))
-		{
+	override fun add(element: Config): Boolean {
+		if (contains(element)) {
 			return false
 		}
 		return parameters.add(element)
@@ -51,29 +48,22 @@ class Parameters(private var parameters: MutableList<Config> = mutableListOf()):
 
 	operator fun get(parameter: CommandlineArgument) = get(parameter.parameter)
 
-	operator fun set(index: Int, config: Config)
-	{
-		if (!contains(config.parameter))
-		{
+	operator fun set(index: Int, config: Config) {
+		if (!contains(config.parameter)) {
 			parameters[index] = config
 		}
 	}
 
-	operator fun set(parameter: String, config: Config)
-	{
+	operator fun set(parameter: String, config: Config) {
 		val index = parameters.indexOfFirst { it.parameter == parameter }
-		if (index >= 0)
-		{
+		if (index >= 0) {
 			parameters[index] = config
-		}
-		else
-		{
+		} else {
 			parameters.add(config)
 		}
 	}
 
-	fun allConfigs(): Array<SettingsConfig>
-	{
+	fun allConfigs(): Array<SettingsConfig> {
 		val allConfigs = Config.possibleConfigs.map { commandLineArgument ->
 			val config = parameters.firstOrNull { it.parameter == commandLineArgument }
 			if (config != null) SettingsConfig(config, true) else SettingsConfig(Config(commandLineArgument), false)

@@ -31,6 +31,7 @@ import ui.material.MaterialRow
 import kotlin.random.Random
 import kotlin.random.nextULong
 
+@Suppress("FunctionName")
 @ExperimentalSerializationApi
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
