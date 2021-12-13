@@ -80,7 +80,7 @@ tasks.register<Copy>("copyExe")
 {
 	from(project.projectDir.absolutePath + File.separator + "build" + File.separator + "compose" + File.separator + "binaries" + File.separator + "main" + File.separator + "exe" + File.separator + "$appName-$currentVersion.exe")
 	into(project.projectDir.absolutePath + File.separator + "distributables")
-	rename("(.+)", appName.replace(" ", "") + "-" + currentVersion + "-Installer.exe")
+	rename("(.+)", appName.replace(" ", "") + "-" + currentVersion + "-Setup.exe")
 }
 
 tasks.register<Zip>("zipDistributable")
