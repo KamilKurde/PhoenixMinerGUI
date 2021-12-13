@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.Dp
 
 @Suppress("FunctionName")
 @Composable
-fun ConstrainedRow(modifier: Modifier = Modifier, sizePerElement: Dp, vararg elements: @Composable RowScope.() -> Unit) {
+fun ConstrainedRow(modifier: Modifier = Modifier, sizePerElement: Dp, vararg elements: @Composable () -> Unit) {
 	BoxWithConstraints(modifier = modifier) {
 		val numberOfItems = (maxWidth / sizePerElement).toInt()
 		Row {
