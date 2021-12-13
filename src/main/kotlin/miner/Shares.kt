@@ -9,5 +9,4 @@ class Shares(valid: Int, stale: Int, rejected: Int) {
 	override fun toString() = "$valid/$stale/$rejected"
 
 	constructor(shares: Array<Int>) : this(shares[0], shares[1], shares[2])
-	//constructor(fromString: String): this(fromString.split("/").map { it.toInt() }.toTypedArray())
 }
