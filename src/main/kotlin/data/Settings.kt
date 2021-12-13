@@ -80,7 +80,7 @@ object Settings {
 						if (miner.status == MinerStatus.Waiting) {
 							if (
 								when {
-									miner.assignedGpuIds.isNotEmpty() -> miner.assignedGpuIds.none { id -> gpus[id.value - 1].inUse }
+									miner.assignedGpuIds.isNotEmpty() -> miner.assignedGpuIds.none { id -> gpus[id.value].inUse }
 									else -> gpus.none { it.inUse }
 								}
 							) {

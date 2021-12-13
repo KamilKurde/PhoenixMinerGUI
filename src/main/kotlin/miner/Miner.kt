@@ -90,7 +90,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			if (!formattedSettings.any { it is Config.StringParameter && it.configElement == StringArgument.Password }) {
 				formattedSettings.add(Config.StringParameter(StringArgument.Password, "x"))
 			}
-			val settingsAsArray = (formattedSettings.map { it.fullParameter } + "-hstats 2" + "-rmode 0" + "-cdm 0" + "-fret 1000").toTypedArray()
+			val settingsAsArray = (formattedSettings.map { it.fullParameter } + "-hstats 2" + "-rmode 0" + "-cdm 0" + "-fret 1000" + "-gbase 0").toTypedArray()
 			val settingsAsString = settingsAsArray.joinToString(separator = " ")
 			file.createNewFile()
 			file.writeText(

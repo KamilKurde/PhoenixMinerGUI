@@ -79,7 +79,7 @@ fun MinerTable(
 		{
 			TextButton(
 				{
-					val id = (1..Int.MAX_VALUE).first { int -> Settings.miners.none { it.id.value == int } }
+					val id = (0..Int.MAX_VALUE).first { int -> Settings.miners.none { it.id.value == int } }
 					val miner = Miner(
 						"Miner $id", Id(id),
 						false,

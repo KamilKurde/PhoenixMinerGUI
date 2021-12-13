@@ -45,7 +45,7 @@ suspend fun getGpus() = coroutineScope {
 	}
 	file.writeText(
 		"echo off\n" +
-				"\"$path\" -list"
+				"\"$path\" -list -gbase 0"
 	)
 	val gpuList = mutableListOf<Gpu>()
 	process(file.absolutePath, stdout = Redirect.CAPTURE).output.forEach { line ->

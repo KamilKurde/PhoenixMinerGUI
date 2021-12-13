@@ -12,25 +12,18 @@ object IdSerializer : KSerializer<Id> {
 	override fun deserialize(decoder: Decoder) = Id(decoder.decodeInt())
 
 	override fun serialize(encoder: Encoder, value: Id) {
-		encoder.encodeInt(value.toInt())
+		encoder.encodeInt(value.value)
 	}
 }
 
 
 @Suppress("EqualsOrHashCode")
-@Serializable(with = IdSerializer::class)
-class Id(val value: Int) {
+@JvmInline
+@Serializable(IdSerializer::class)
+value class Id(val value: Int) {
 	init {
-		require(value > 0) { "Id in phoenix miner cannot be lower than 1" }
+		require(value >= 0) { "Id in phoenix miner cannot be lower than 0" }
 	}
-
-	fun toInt() = value
 
 	override fun toString() = value.toString()
-
-	override fun equals(other: Any?) = when (other) {
-		is Id -> value == other.value
-		is Int -> value == other
-		else -> false
-	}
 }
