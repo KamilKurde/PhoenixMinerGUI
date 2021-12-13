@@ -62,6 +62,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 	var shares by mutableStateOf<Shares?>(null)
 
+	var time by mutableStateOf<Time?>(null)
+
 	var powerDraw by mutableStateOf<Float?>(null)
 
 	var powerEfficiency by mutableStateOf<Int?>(null)
@@ -131,13 +133,14 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 						}
 						line.startsWith("Eth: Could not connect to") -> status = MinerStatus.ConnectionError
 						line.startsWith("Eth speed: ") && status == MinerStatus.Running -> {
-							var currentData = line.removePrefix("Eth speed: ")
-							while (currentData.isNotEmpty()) {
-								val split = currentData.split(" ")
+							line.removePrefix("Eth speed: ").split(", ").forEach {
+								val (first, second) = it.split(" ")
 								when {
-									split[1] == "MH/s," -> hashrate = split[0].toFloat()
-									split[0] == "shares:" -> {
-										val sharesList = split[1].removeSuffix(",").split("/").map { it.toInt() }.toTypedArray()
+									second == "MH/s" -> {
+										hashrate = first.toFloat()
+									}
+									first == "shares:" -> {
+										val sharesList = second.removeSuffix(",").split("/").map { it.toInt() }.toTypedArray()
 										shares?.apply {
 											valid = sharesList[0]
 											stale = sharesList[1]
@@ -147,14 +150,22 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 											shares = Shares(sharesList)
 										}
 									}
+									first == "time:" -> {
+										time?.totalTime = second
+										if (time == null) {
+											time = Time(second)
+										}
+										assignedGpuIds.map { id -> Settings.gpus[id.value] }.forEach { gpu ->
+											gpu.time = time
+										}
+									}
 								}
-								currentData = split.drop(2).joinToString(separator = " ")
 							}
 						}
 						line.startsWith("GPU") && status == MinerStatus.Running -> {
-							for (internalId in 1..assignedGpuIds.size + 1) {
+							for (internalId in assignedGpuIds.indices) {
 								if (line.startsWith("GPU$internalId") && !(line.startsWith("GPU$internalId: Using") || line.startsWith("GPU$internalId: DAG"))) {
-									val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId - 1] }
+									val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId] }
 									val gpu = Settings.gpus[gpuSettingsIndex]
 									val splitLine = line.split(" ")
 									if (line.startsWith("GPU$internalId: cclock")) {
@@ -162,7 +173,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 									} else {
 										var splitLineMultiGpu = splitLine
 										while (splitLineMultiGpu.isNotEmpty()) {
-											val currentGpu = Settings.gpus.first { it.id == assignedGpuIds[splitLineMultiGpu[0].removePrefix("GPU").removeSuffix(":").toInt() - 1] }
+											val currentGpu = Settings.gpus.first { it.id == assignedGpuIds[splitLineMultiGpu[0].removePrefix("GPU").removeSuffix(":").toInt()] }
 
 											currentGpu.temperature = splitLineMultiGpu[1].removeSuffix("C").toInt()
 											currentGpu.percentage = splitLineMultiGpu[2].removeSuffix("%").toInt()

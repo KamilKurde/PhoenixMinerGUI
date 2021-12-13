@@ -39,6 +39,7 @@ fun GpuTable(
 						{ TableCell("in Use", fontWeight = FontWeight.Bold) },
 						{ TableCell("Performance", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
 						{ TableCell("Temperature", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+						{ TableCell("Time", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
 						{ TableCell("Power", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
 						{ TableCell("Efficiency", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
 					)
@@ -65,6 +66,7 @@ fun GpuTable(
 						{ TableCell(gpu.inUse.toString()) },
 						{ TableCell(gpu.percentage?.let { "$it%" }, textAlign = TextAlign.Right) },
 						{ TableCell(gpu.temperature?.let { "$it°C" }, textAlign = TextAlign.Right) },
+						{ TableCell(gpu.time, textAlign = TextAlign.Right) },
 						{ TableCell(gpu.powerDraw?.let { "$it W" }, textAlign = TextAlign.Right) },
 						{ TableCell(gpu.powerEfficiency?.let { "$it kH/J" }, textAlign = TextAlign.Right) }
 					)

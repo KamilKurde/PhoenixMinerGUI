@@ -17,10 +17,11 @@ data class Gpu(val name: String, var id: Id = Id(1)) {
 		get(): Boolean {
 			val isUsed = Settings.miners.filter { it.isActive }.any { miner -> miner.assignedGpuIds.any { it == id } }
 			if (!isUsed) {
-				powerEfficiency = null
-				powerDraw = null
 				percentage = null
 				temperature = null
+				time = null
+				powerDraw = null
+				powerEfficiency = null
 			}
 			return isUsed
 		}
@@ -28,6 +29,8 @@ data class Gpu(val name: String, var id: Id = Id(1)) {
 	var percentage by mutableStateOf<Int?>(null)
 
 	var temperature by mutableStateOf<Int?>(null)
+
+	var time by mutableStateOf<Time?>(null)
 
 	var powerDraw by mutableStateOf<Int?>(null)
 

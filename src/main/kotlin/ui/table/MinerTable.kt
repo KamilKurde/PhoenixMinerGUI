@@ -52,6 +52,7 @@ fun MinerTable(
 						{ TableCell(text = "Status", fontWeight = FontWeight.Bold) },
 						{ TableCell(text = "Hashrate", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
 						{ TableCell(text = "Shares", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
+						{ TableCell(text = "Time", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
 						{ TableCell(text = "Power", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
 						{ TableCell(text = "Efficiency", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
 					)
@@ -69,6 +70,7 @@ fun MinerTable(
 						{ TableCell(miner.status) },
 						{ TableCell(miner.hashrate?.let { "$it MH/s" }, textAlign = TextAlign.Right) },
 						{ TableCell(miner.shares, tooltip = miner.shares?.let { "${it.valid} Valid/ ${it.stale} Stale/ ${it.rejected} Rejected" }, textAlign = TextAlign.Right) },
+						{ TableCell(miner.time?.totalTime, textAlign = TextAlign.Right) },
 						{ TableCell(miner.powerDraw?.let { "$it W" }, textAlign = TextAlign.Right) },
 						{ TableCell(miner.powerEfficiency?.let { "$it kH/J" }, textAlign = TextAlign.Right) }
 					)
