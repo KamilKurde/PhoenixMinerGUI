@@ -129,6 +129,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 								powerEfficiency = split[4].toInt()
 							}
 						}
+						line.startsWith("Eth: Could not connect to") -> status = MinerStatus.ConnectionError
 						line.startsWith("Eth speed: ") && status == MinerStatus.Running -> {
 							var currentData = line.removePrefix("Eth speed: ")
 							while (currentData.isNotEmpty()) {
@@ -188,7 +189,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 							}
 						}
 						line.startsWith("miner stopped") -> {
-							status = MinerStatus.Error
+							status = MinerStatus.ProgramError
 							pid = null
 							hashrate = null
 							powerDraw = null

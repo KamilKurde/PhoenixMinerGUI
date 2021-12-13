@@ -8,6 +8,11 @@ enum class MinerStatus {
 		override fun toString() = "Building DAG"
 	},
 	Running,
-	Error,
-	Closing
+	Closing,
+	ConnectionError{
+		override fun toString() = "Connection Error"
+	},
+	ProgramError {
+		override fun toString() = "Miner Error"
+	},
 }
