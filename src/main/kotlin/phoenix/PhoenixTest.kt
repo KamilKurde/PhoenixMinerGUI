@@ -11,5 +11,5 @@ fun phoenixPathIsCorrect(path: String): Boolean {
 	if (path.split(File.separator).last() != "PhoenixMiner.exe") {
 		return false
 	}
-	return runBlocking { process(path, "-h", stdout = Redirect.CAPTURE).output[0].startsWith("Phoenix Miner") }
+	return runBlocking { process(path, "-v", stdout = Redirect.CAPTURE).output[0].startsWith("Phoenix Miner") }
 }
