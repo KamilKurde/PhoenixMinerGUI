@@ -124,6 +124,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 					when {
 						line.contains("Generating DAG") -> status = MinerStatus.DagBuilding
 						line.contains("DAG generated") -> status = MinerStatus.Running
+						line.contains("Eth: Mining") -> status = MinerStatus.Running
 						line.startsWith("GPUs power: ") && status == MinerStatus.Running -> {
 							val split = line.split(" ")
 							powerDraw = split[2].toFloat()
@@ -131,7 +132,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 								powerEfficiency = split[4].toInt()
 							}
 						}
-						line.startsWith("Eth: Could not connect to") -> status = MinerStatus.ConnectionError
+						line.startsWith("Eth: Could not connect to") || line.startsWith("Eth: Can't resolve host") -> status = MinerStatus.ConnectionError
 						line.startsWith("Eth speed: ") && status == MinerStatus.Running -> {
 							line.removePrefix("Eth speed: ").split(", ").forEach {
 								val (first, second) = it.split(" ")
