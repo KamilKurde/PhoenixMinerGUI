@@ -1,6 +1,7 @@
 import java.io.File
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.compose.jetbrainsCompose
 
 plugins {
@@ -10,7 +11,7 @@ plugins {
 }
 
 group = "com.github.KamilKurde"
-val currentVersion = "0.5.0"
+val currentVersion = "0.5.1"
 val appName = "PhoenixMiner GUI"
 version = currentVersion
 
@@ -20,6 +21,14 @@ repositories {
 	google()
 }
 
+tasks.withType<KotlinCompile> {
+	kotlinOptions.jvmTarget = "16"
+}
+
+java{
+	sourceCompatibility = JavaVersion.VERSION_16
+	targetCompatibility = JavaVersion.VERSION_16
+}
 dependencies {
 	implementation(compose.desktop.currentOs)
 	// Extended icons
