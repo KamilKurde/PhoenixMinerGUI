@@ -226,6 +226,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		shares = null
 		powerDraw = null
 		powerEfficiency = null
+		time = null
 		status = MinerStatus.Offline
 	}
 }
