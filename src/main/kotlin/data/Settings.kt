@@ -49,6 +49,8 @@ object Settings {
 			)
 		)
 	)
+	
+	val activeMiners get() = miners.filter { it.isActive }
 
 	private val minersToStart = mutableListOf<Miner>()
 
@@ -73,9 +75,14 @@ object Settings {
 
 		coroutineScope.launch {
 			try {
+				withContext(Dispatchers.Main){ println("Miners count: ${miners.size}") }
+
 				while (true) {
-					// Waiting for all other components to properly initialize (including UI) and giving timeframe for getting PID of new PhoenixMiner instance
-					delay(1000L)
+					delay(100L)
+					while (activeMiners.any { it.pid == null })
+					{
+						delay(100L)
+					}
 					minersToStart.firstOrNull()?.let { miner ->
 						if (miner.status == MinerStatus.Waiting) {
 							if (

@@ -82,6 +82,14 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 	private fun log(message: String) = println("Miner $id: $message")
 
+	private fun resetTemporalData()
+	{
+		pid = null
+		hashrate = null
+		powerDraw = null
+		powerEfficiency = null
+	}
+
 	fun startMining() {
 		coroutineJob = Job()
 		val coroutineScope = CoroutineScope(coroutineJob + Dispatchers.IO)
@@ -101,9 +109,12 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 						"echo miner stopped"
 			)
 			coroutineScope.launch {
-				delay(500L)
-				pid = getPIDsFor("PhoenixMiner.exe").first {
-					Settings.miners.none { miner -> miner.pid == it }
+				while (pid == null)
+				{
+					delay(100L)
+					pid = getPIDsFor("PhoenixMiner.exe").firstOrNull {
+						Settings.activeMiners.none { miner -> miner.pid == it }
+					}
 				}
 			}
 			process(
@@ -202,10 +213,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 						}
 						line.startsWith("miner stopped") -> {
 							status = MinerStatus.ProgramError
-							pid = null
-							hashrate = null
-							powerDraw = null
-							powerEfficiency = null
+							resetTemporalData()
 							Settings.startMiner(this@Miner)
 						}
 					}
@@ -223,10 +231,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		}
 		pid?.let { taskKill(it, true) }
 		coroutineJob.cancelAndJoin()
-		hashrate = null
+		resetTemporalData()
 		shares = null
-		powerDraw = null
-		powerEfficiency = null
 		time = null
 		status = MinerStatus.Offline
 	}

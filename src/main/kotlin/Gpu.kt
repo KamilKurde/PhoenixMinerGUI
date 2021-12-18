@@ -15,7 +15,7 @@ import java.io.File
 data class Gpu(val name: String, var id: Id = Id(1)) {
 	val inUse
 		get(): Boolean {
-			val isUsed = Settings.miners.filter { it.isActive }.any { miner -> miner.assignedGpuIds.any { it == id } }
+			val isUsed = Settings.activeMiners.any { miner -> miner.assignedGpuIds.any { it == id } }
 			if (!isUsed) {
 				percentage = null
 				temperature = null
