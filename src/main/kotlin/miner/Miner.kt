@@ -91,11 +91,11 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 	}
 
 	fun startMining() {
+		status = MinerStatus.Connecting
 		coroutineJob = Job()
 		val coroutineScope = CoroutineScope(coroutineJob + Dispatchers.IO)
 
 		coroutineScope.launch {
-			status = MinerStatus.Connecting
 			val formattedSettings = parameters.copy()
 			if (!formattedSettings.any { it is Config.StringParameter && it.configElement == StringArgument.Password }) {
 				formattedSettings.add(Config.StringParameter(StringArgument.Password, "x"))
