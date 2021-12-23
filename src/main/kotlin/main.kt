@@ -28,6 +28,37 @@ val icon @Composable get() = painterResource("icon.ico")
 @ExperimentalCoroutinesApi
 fun main(args: Array<String>) = application {
 	val phoenixAvailable = phoenixPathIsCorrect(Settings.phoenixPath)
+	rememberCoroutineScope().launch {
+		if (phoenixAvailable) {
+			args.ifNoArgCoroutine("/nokill")
+			{
+				// Kills all other PhoenixMiner GUI instances
+				val pid = ProcessHandle.current().pid().toInt()
+				withContext(Dispatchers.Main)
+				{
+					getPIDsFor("PhoenixMiner GUI.exe").minus(pid).forEach {
+						taskKill(it, true)
+					}
+					Miner.killAllMiners()
+				}
+			}
+			args.forEach { arg ->
+				Settings.miners.firstOrNull {
+					it.name == arg || tryOrFalse {
+						it.id.value == arg.toInt()
+					}
+				}?.let { Settings.startMiner(it) }
+			}
+			args.ifNoArg("/nomos")
+			{
+				Settings.miners.filter { it.mineOnStartup }.forEach {
+					Settings.startMiner(it)
+				}
+			}
+			Settings.gpus = getGpus()
+			Settings.saveSettings()
+		}
+	}
 	Window(
 		title = "PhoenixMiner GUI",
 		icon = icon,
@@ -37,37 +68,6 @@ fun main(args: Array<String>) = application {
 			exitApplication()
 		}
 	) {
-		rememberCoroutineScope().launchOnce {
-			if (phoenixAvailable) {
-				args.ifNoArgCoroutine("/nokill")
-				{
-					// Kills all other PhoenixMiner GUI instances
-					val pid = ProcessHandle.current().pid().toInt()
-					withContext(Dispatchers.Main)
-					{
-						getPIDsFor("PhoenixMiner GUI.exe").minus(pid).forEach {
-							taskKill(it, true)
-						}
-						Miner.killAllMiners()
-					}
-				}
-				args.forEach { arg ->
-					Settings.miners.firstOrNull {
-						it.name == arg || tryOrFalse {
-							it.id.value == arg.toInt()
-						}
-					}?.let { Settings.startMiner(it) }
-				}
-				args.ifNoArg("/nomos")
-				{
-					Settings.miners.filter { it.mineOnStartup }.forEach {
-						Settings.startMiner(it)
-					}
-				}
-				Settings.gpus = getGpus()
-				Settings.saveSettings()
-			}
-		}
 		AppTheme {
 			AnimatedVisibilityWithFade(visible = !phoenixAvailable)
 			{
