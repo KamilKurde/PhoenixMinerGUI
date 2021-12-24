@@ -25,80 +25,73 @@ val icon @Composable get() = painterResource("icon.ico")
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalCoroutinesApi
-fun main(args: Array<String>) = application {
+fun main(args: Array<String>) {
 	val phoenixAvailable = phoenixPathIsCorrect(Settings.phoenixPath)
-	CoroutineScope(Job()).launch {
-		if (phoenixAvailable) {
-			args.ifNoArgCoroutine("/nokill")
-			{
+	if (phoenixAvailable) {
+		CoroutineScope(Job()).launch {
+			if ("/nokill" !in args) {
 				// Kills all other PhoenixMiner GUI instances
 				val pid = ProcessHandle.current().pid().toInt()
-				withContext(Dispatchers.Main)
-				{
-					getPIDsFor("PhoenixMiner GUI.exe").minus(pid).forEach {
-						taskKill(it, true)
-					}
-					Miner.killAllMiners()
+				getPIDsFor("PhoenixMiner GUI.exe").minus(pid).forEach {
+					taskKill(it, true)
 				}
+				Miner.killAllMiners()
 			}
 			args.forEach { arg ->
-				withContext(Dispatchers.Main)
-				{
-					Settings.miners.firstOrNull {
-						it.name == arg || tryOrFalse {
-							it.id.value == arg.toInt()
-						}
-					}?.let { Settings.startMiner(it) }
-				}
+				Settings.miners.firstOrNull {
+					it.name == arg || tryOrFalse {
+						it.id.value == arg.toInt()
+					}
+				}?.let { Settings.startMiner(it) }
 			}
-			args.ifNoArg("/nomos")
-			{
+			if ("/nomos" !in args) {
 				Settings.miners.filter { it.mineOnStartup }.forEach {
 					Settings.startMiner(it)
 				}
 			}
 			Settings.gpus = getGpus()
-			Settings.saveSettings()
 		}
 	}
-	val windowState = rememberWindowState(
-		width = Settings.width.dp,
-		height = Settings.height.dp,
-		placement = Settings.placement,
-		position = WindowPosition(Settings.positionX.dp, Settings.positionY.dp)
-	)
-	Window(
-		title = "PhoenixMiner GUI",
-		icon = icon,
-		state = windowState,
-		onCloseRequest = {
-			Miner.stopAllMiners("/nokill" !in args)
-			Settings.saveSettings()
-			exitApplication()
-		}
-	) {
-		window.addWindowStateListener {
-			Settings.apply {
-				height = window.height
-				width = window.width
-				placement = window.placement
-				positionX = windowState.position.x.value.toInt()
-				positionY = windowState.position.y.value.toInt()
+	application {
+		val windowState = rememberWindowState(
+			width = Settings.width.dp,
+			height = Settings.height.dp,
+			placement = Settings.placement,
+			position = WindowPosition(Settings.positionX.dp, Settings.positionY.dp)
+		)
+		Window(
+			title = "PhoenixMiner GUI",
+			icon = icon,
+			state = windowState,
+			onCloseRequest = {
+				runBlocking { Miner.stopAllMiners("/nokill" !in args) }
+				Settings.saveSettings()
+				exitApplication()
 			}
-		}
-		AppTheme {
-			AnimatedVisibilityWithFade(visible = !phoenixAvailable)
-			{
-				Setup()
+		) {
+			window.addWindowStateListener {
+				Settings.apply {
+					height = window.height
+					width = window.width
+					placement = window.placement
+					positionX = windowState.position.x.value.toInt()
+					positionY = windowState.position.y.value.toInt()
+				}
 			}
-			AnimatedVisibilityWithFade(visible = minerToEdit == null && phoenixPathIsCorrect(Settings.phoenixPath))
-			{
-				Summary()
-			}
-			AnimatedVisibilityWithFade(visible = minerToEdit != null && phoenixPathIsCorrect(Settings.phoenixPath))
-			{
-				minerToEdit?.let {
-					MinerSettings(it)
+			AppTheme {
+				AnimatedVisibilityWithFade(visible = !phoenixAvailable)
+				{
+					Setup()
+				}
+				AnimatedVisibilityWithFade(visible = minerToEdit == null && phoenixPathIsCorrect(Settings.phoenixPath))
+				{
+					Summary()
+				}
+				AnimatedVisibilityWithFade(visible = minerToEdit != null && phoenixPathIsCorrect(Settings.phoenixPath))
+				{
+					minerToEdit?.let {
+						MinerSettings(it)
+					}
 				}
 			}
 		}
