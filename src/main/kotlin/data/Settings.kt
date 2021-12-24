@@ -2,6 +2,7 @@ package data
 
 import Gpu
 import androidx.compose.runtime.*
+import androidx.compose.ui.window.WindowPlacement
 import config.Config
 import config.Wallet
 import config.arguments.*
@@ -22,11 +23,25 @@ val folder = System.getenv("LOCALAPPDATA") + File.separator + "PhoenixMinerGUI"
 class SettingsData(
 	val phoenixPath: String = "",
 	val gpus: Array<Gpu> = emptyArray(),
-	val miners: Array<MinerData> = emptyArray()
+	val miners: Array<MinerData> = emptyArray(),
+	val width: Int = 720,
+	val height: Int = 1280,
+	val placement: WindowPlacement = WindowPlacement.Maximized,
+	val positionX: Int = 0,
+	val positionY: Int = 0
 ) {
 	@ExperimentalSerializationApi
 	companion object {
-		fun generateFromSettings() = SettingsData(Settings.phoenixPath, Settings.gpus, Settings.miners.map { it.toMinerData() }.toTypedArray())
+		fun generateFromSettings() = SettingsData(
+			Settings.phoenixPath,
+			Settings.gpus,
+			Settings.miners.map { it.toMinerData() }.toTypedArray(),
+			Settings.width,
+			Settings.height,
+			Settings.placement,
+			Settings.positionX,
+			Settings.positionY
+		)
 	}
 }
 
@@ -49,7 +64,12 @@ object Settings {
 			)
 		)
 	)
-	
+	var width: Int = 720
+	var height: Int = 1280
+	var placement: WindowPlacement = WindowPlacement.Maximized
+	var positionX: Int = 0
+	var positionY: Int = 0
+
 	val activeMiners get() = miners.filter { it.isActive }
 
 	private val minersToStart = mutableListOf<Miner>()
@@ -71,16 +91,20 @@ object Settings {
 			phoenixPath = settingsData.phoenixPath
 			gpus = settingsData.gpus
 			miners = settingsData.miners.map { it.toMiner() }.toTypedArray()
+			width = settingsData.width
+			height = settingsData.height
+			placement = settingsData.placement
+			positionX = settingsData.positionX
+			positionY = settingsData.positionY
 		}
 
 		coroutineScope.launch {
 			try {
-				withContext(Dispatchers.Main){ println("Miners count: ${miners.size}") }
+				withContext(Dispatchers.Main) { println("Miners count: ${miners.size}") }
 
 				while (true) {
 					delay(100L)
-					while (activeMiners.any { it.pid == null })
-					{
+					while (activeMiners.any { it.pid == null }) {
 						delay(100L)
 					}
 					minersToStart.firstOrNull()?.let { miner ->

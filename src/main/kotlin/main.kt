@@ -2,7 +2,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -28,7 +27,7 @@ val icon @Composable get() = painterResource("icon.ico")
 @ExperimentalCoroutinesApi
 fun main(args: Array<String>) = application {
 	val phoenixAvailable = phoenixPathIsCorrect(Settings.phoenixPath)
-	rememberCoroutineScope().launch {
+	CoroutineScope(Job()).launch {
 		if (phoenixAvailable) {
 			args.ifNoArgCoroutine("/nokill")
 			{
@@ -43,11 +42,14 @@ fun main(args: Array<String>) = application {
 				}
 			}
 			args.forEach { arg ->
-				Settings.miners.firstOrNull {
-					it.name == arg || tryOrFalse {
-						it.id.value == arg.toInt()
-					}
-				}?.let { Settings.startMiner(it) }
+				withContext(Dispatchers.Main)
+				{
+					Settings.miners.firstOrNull {
+						it.name == arg || tryOrFalse {
+							it.id.value == arg.toInt()
+						}
+					}?.let { Settings.startMiner(it) }
+				}
 			}
 			args.ifNoArg("/nomos")
 			{
@@ -59,15 +61,31 @@ fun main(args: Array<String>) = application {
 			Settings.saveSettings()
 		}
 	}
+	val windowState = rememberWindowState(
+		width = Settings.width.dp,
+		height = Settings.height.dp,
+		placement = Settings.placement,
+		position = WindowPosition(Settings.positionX.dp, Settings.positionY.dp)
+	)
 	Window(
 		title = "PhoenixMiner GUI",
 		icon = icon,
-		state = rememberWindowState(width = 1500.dp, height = 720.dp),
+		state = windowState,
 		onCloseRequest = {
 			Miner.stopAllMiners("/nokill" !in args)
+			Settings.saveSettings()
 			exitApplication()
 		}
 	) {
+		window.addWindowStateListener {
+			Settings.apply {
+				height = window.height
+				width = window.width
+				placement = window.placement
+				positionX = windowState.position.x.value.toInt()
+				positionY = windowState.position.y.value.toInt()
+			}
+		}
 		AppTheme {
 			AnimatedVisibilityWithFade(visible = !phoenixAvailable)
 			{
