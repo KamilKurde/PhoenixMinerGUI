@@ -36,12 +36,10 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			}
 		}
 
-		fun stopAllMiners(killOtherMiners: Boolean = true) {
-			runBlocking {
-				Settings.miners.forEach { it.stopMining() }
-				if (killOtherMiners) {
-					killAllMiners()
-				}
+		suspend fun stopAllMiners(killOtherMiners: Boolean = true) {
+			Settings.miners.forEach { it.stopMining() }
+			if (killOtherMiners) {
+				killAllMiners()
 			}
 		}
 	}
@@ -82,8 +80,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 	private fun log(message: String) = println("Miner $id: $message")
 
-	private fun resetTemporalData()
-	{
+	private fun resetTemporalData() {
 		pid = null
 		hashrate = null
 		powerDraw = null
@@ -109,8 +106,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 						"echo miner stopped"
 			)
 			coroutineScope.launch {
-				while (pid == null)
-				{
+				while (pid == null) {
 					delay(100L)
 					pid = getPIDsFor("PhoenixMiner.exe").firstOrNull {
 						Settings.activeMiners.none { miner -> miner.pid == it }
