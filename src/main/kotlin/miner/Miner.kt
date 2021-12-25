@@ -183,9 +183,12 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			// Workaround for phoenix not reporting throttled usage in normal stats
 			line.startsWith("Throttling GPUs") -> updateGpusThrottling(line)
 			line.startsWith("miner stopped") -> {
-				status = MinerStatus.ProgramError
 				resetTemporalData()
-				Settings.startMiner(this@Miner)
+				if (status != MinerStatus.Closing)
+				{
+					status = MinerStatus.ProgramError
+					Settings.startMiner(this@Miner)
+				}
 			}
 		}
 	}
