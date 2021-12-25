@@ -87,6 +87,109 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		powerEfficiency = null
 	}
 
+	private fun updateGpusPower(line: String)
+	{
+		val split = line.split(" ")
+		powerDraw = split[2].toFloat()
+		tryWithoutCatch {
+			powerEfficiency = split[4].toInt()
+		}
+	}
+
+	private fun updateEthSpeed(line: String)
+	{
+		line.removePrefix("Eth speed: ").split(", ").forEach {
+			val (first, second) = it.split(" ")
+			when {
+				second == "MH/s" -> {
+					hashrate = first.toFloat()
+				}
+				first == "shares:" -> {
+					val sharesList = second.removeSuffix(",").split("/").map { it.toInt() }.toTypedArray()
+					shares?.apply {
+						valid = sharesList[0]
+						stale = sharesList[1]
+						rejected = sharesList[2]
+					}
+					if (shares == null) {
+						shares = Shares(sharesList)
+					}
+				}
+				first == "time:" -> {
+					time?.totalTime = second
+					if (time == null) {
+						time = Time(second)
+					}
+					assignedGpuIds.map { id -> Settings.gpus[id.value] }.forEach { gpu ->
+						gpu.time = time
+					}
+				}
+			}
+		}
+	}
+
+	private fun updateGpuStats(line: String)
+	{
+		for (internalId in assignedGpuIds.indices) {
+			if (line.startsWith("GPU$internalId") && !(line.startsWith("GPU$internalId: Using") || line.startsWith("GPU$internalId: DAG"))) {
+				val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId] }
+				val gpu = Settings.gpus[gpuSettingsIndex]
+				val splitLine = line.split(" ")
+				if (line.startsWith("GPU$internalId: cclock")) {
+					gpu.powerEfficiency = splitLine[splitLine.size - 2].toInt()
+				} else {
+					var splitLineMultiGpu = splitLine
+					while (splitLineMultiGpu.isNotEmpty()) {
+						val currentGpu = Settings.gpus.first { it.id == assignedGpuIds[splitLineMultiGpu[0].removePrefix("GPU").removeSuffix(":").toInt()] }
+
+						currentGpu.temperature = splitLineMultiGpu[1].removeSuffix("C").toInt()
+						currentGpu.percentage = splitLineMultiGpu[2].removeSuffix("%").toInt()
+						currentGpu.powerDraw = splitLineMultiGpu[3].removeSuffix(",").removeSuffix("W").toInt()
+
+						splitLineMultiGpu = splitLineMultiGpu.drop(4)
+					}
+				}
+			}
+
+		}
+	}
+
+	private fun updateGpusThrottling(line: String)
+	{
+		val split = line.split(" ")
+		for (internalId in 1..assignedGpuIds.size + 1) {
+			split.forEachIndexed { index, string ->
+				if (string == "GPU$internalId") {
+					val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId - 1] }
+					val gpu = Settings.gpus[gpuSettingsIndex]
+					gpu.percentage = split[index + 1].removeSuffix(",").removePrefix("(").removeSuffix("%)").toInt()
+				}
+			}
+		}
+	}
+
+	private fun process(line: String) {
+		if (line.isNotBlank()) {
+			log(line)
+		}
+		when {
+			line.contains("Generating DAG") -> status = MinerStatus.DagBuilding
+			line.contains("DAG generated") -> status = MinerStatus.Running
+			line.contains("Eth: Mining") -> status = MinerStatus.Running
+			line.startsWith("GPUs power: ") && status == MinerStatus.Running -> updateGpusPower(line)
+			line.startsWith("Eth: Could not connect to") || line.startsWith("Eth: Can't resolve host") -> status = MinerStatus.ConnectionError
+			line.startsWith("Eth speed: ") && status == MinerStatus.Running -> updateEthSpeed(line)
+			line.startsWith("GPU") && status == MinerStatus.Running -> updateGpuStats(line)
+			// Workaround for phoenix not reporting throttled usage in normal stats
+			line.startsWith("Throttling GPUs") -> updateGpusThrottling(line)
+			line.startsWith("miner stopped") -> {
+				status = MinerStatus.ProgramError
+				resetTemporalData()
+				Settings.startMiner(this@Miner)
+			}
+		}
+	}
+
 	fun startMining() {
 		status = MinerStatus.Connecting
 		coroutineJob = Job()
@@ -124,97 +227,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 					"GPU_MAX_ALLOC_PERCENT" to "100",
 					"GPU_SINGLE_ALLOC_PERCENT" to "100"
 				),
-				consumer = { line ->
-					if (line.isNotBlank()) {
-						log(line)
-					}
-					when {
-						line.contains("Generating DAG") -> status = MinerStatus.DagBuilding
-						line.contains("DAG generated") -> status = MinerStatus.Running
-						line.contains("Eth: Mining") -> status = MinerStatus.Running
-						line.startsWith("GPUs power: ") && status == MinerStatus.Running -> {
-							val split = line.split(" ")
-							powerDraw = split[2].toFloat()
-							tryWithoutCatch {
-								powerEfficiency = split[4].toInt()
-							}
-						}
-						line.startsWith("Eth: Could not connect to") || line.startsWith("Eth: Can't resolve host") -> status = MinerStatus.ConnectionError
-						line.startsWith("Eth speed: ") && status == MinerStatus.Running -> {
-							line.removePrefix("Eth speed: ").split(", ").forEach {
-								val (first, second) = it.split(" ")
-								when {
-									second == "MH/s" -> {
-										hashrate = first.toFloat()
-									}
-									first == "shares:" -> {
-										val sharesList = second.removeSuffix(",").split("/").map { it.toInt() }.toTypedArray()
-										shares?.apply {
-											valid = sharesList[0]
-											stale = sharesList[1]
-											rejected = sharesList[2]
-										}
-										if (shares == null) {
-											shares = Shares(sharesList)
-										}
-									}
-									first == "time:" -> {
-										time?.totalTime = second
-										if (time == null) {
-											time = Time(second)
-										}
-										assignedGpuIds.map { id -> Settings.gpus[id.value] }.forEach { gpu ->
-											gpu.time = time
-										}
-									}
-								}
-							}
-						}
-						line.startsWith("GPU") && status == MinerStatus.Running -> {
-							for (internalId in assignedGpuIds.indices) {
-								if (line.startsWith("GPU$internalId") && !(line.startsWith("GPU$internalId: Using") || line.startsWith("GPU$internalId: DAG"))) {
-									val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId] }
-									val gpu = Settings.gpus[gpuSettingsIndex]
-									val splitLine = line.split(" ")
-									if (line.startsWith("GPU$internalId: cclock")) {
-										gpu.powerEfficiency = splitLine[splitLine.size - 2].toInt()
-									} else {
-										var splitLineMultiGpu = splitLine
-										while (splitLineMultiGpu.isNotEmpty()) {
-											val currentGpu = Settings.gpus.first { it.id == assignedGpuIds[splitLineMultiGpu[0].removePrefix("GPU").removeSuffix(":").toInt()] }
-
-											currentGpu.temperature = splitLineMultiGpu[1].removeSuffix("C").toInt()
-											currentGpu.percentage = splitLineMultiGpu[2].removeSuffix("%").toInt()
-											currentGpu.powerDraw = splitLineMultiGpu[3].removeSuffix(",").removeSuffix("W").toInt()
-
-											splitLineMultiGpu = splitLineMultiGpu.drop(4)
-										}
-									}
-								}
-
-							}
-						}
-						// Workaround for phoenix not reporting throttled usage in normal stats
-						line.startsWith("Throttling GPUs") -> {
-							val split = line.split(" ")
-							for (internalId in 1..assignedGpuIds.size + 1) {
-								split.forEachIndexed { index, string ->
-									if (string == "GPU$internalId") {
-										val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId - 1] }
-										val gpu = Settings.gpus[gpuSettingsIndex]
-										gpu.percentage = split[index + 1].removeSuffix(",").removePrefix("(").removeSuffix("%)").toInt()
-									}
-								}
-							}
-						}
-						line.startsWith("miner stopped") -> {
-							status = MinerStatus.ProgramError
-							resetTemporalData()
-							Settings.startMiner(this@Miner)
-						}
-					}
-				})
-
+				consumer = ::process
+			)
 		}
 	}
 
