@@ -65,19 +65,17 @@ fun main(args: Array<String>) {
 			state = windowState,
 			onCloseRequest = {
 				runBlocking { Miner.stopAllMiners("/nokill" !in args) }
-				Settings.saveSettings()
+				Settings.apply {
+					height = windowState.size.height.value.toInt()
+					width = windowState.size.width.value.toInt()
+					placement = windowState.placement
+					positionX = windowState.position.x.value.toInt()
+					positionY = windowState.position.y.value.toInt()
+					saveSettings()
+				}
 				exitApplication()
 			}
 		) {
-			window.addWindowStateListener {
-				Settings.apply {
-					height = window.height
-					width = window.width
-					placement = window.placement
-					positionX = windowState.position.x.value.toInt()
-					positionY = windowState.position.y.value.toInt()
-				}
-			}
 			AppTheme {
 				AnimatedVisibilityWithFade(visible = !phoenixAvailable)
 				{
