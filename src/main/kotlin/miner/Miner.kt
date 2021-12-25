@@ -68,7 +68,9 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 
 	var pid by mutableStateOf<Int?>(null)
 
-	private var coroutineJob = Job()
+	private var processingJob = Job()
+
+	private var pidJob = Job()
 
 	private val gpusFromConfig get() = parameters.copy().firstOrNull { it is Config.GpusParameter && it.configElement == GpusArgument.Gpus } as Config.GpusParameter?
 
@@ -173,6 +175,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			log(line)
 		}
 		when {
+			line.contains("Phoenix Miner") -> status = MinerStatus.Connecting
 			line.contains("Generating DAG") -> status = MinerStatus.DagBuilding
 			line.contains("DAG generated") -> status = MinerStatus.Running
 			line.contains("Eth: Mining") -> status = MinerStatus.Running
@@ -184,21 +187,18 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			line.startsWith("Throttling GPUs") -> updateGpusThrottling(line)
 			line.startsWith("miner stopped") -> {
 				resetTemporalData()
-				if (status != MinerStatus.Closing)
-				{
-					status = MinerStatus.ProgramError
-					Settings.startMiner(this@Miner)
-				}
+				status = MinerStatus.ProgramError
+				Settings.startMiner(this@Miner)
 			}
 		}
 	}
 
 	fun startMining() {
-		status = MinerStatus.Connecting
-		coroutineJob = Job()
-		val coroutineScope = CoroutineScope(coroutineJob + Dispatchers.IO)
-
-		coroutineScope.launch {
+		runBlocking {
+			stopMining(false)
+		}
+		processingJob = Job()
+		CoroutineScope(processingJob + Dispatchers.IO).launch {
 			val formattedSettings = parameters.copy()
 			if (!formattedSettings.any { it is Config.StringParameter && it.configElement == StringArgument.Password }) {
 				formattedSettings.add(Config.StringParameter(StringArgument.Password, "x"))
@@ -211,7 +211,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 						"\"${Settings.phoenixPath}\" $settingsAsString\n" +
 						"echo miner stopped"
 			)
-			coroutineScope.launch {
+			pidJob = Job()
+			CoroutineScope(pidJob + Dispatchers.IO).launch {
 				while (pid == null) {
 					delay(100L)
 					pid = getPIDsFor("PhoenixMiner.exe").firstOrNull {
@@ -235,18 +236,22 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		}
 	}
 
-	suspend fun stopMining() {
+	suspend fun stopMining(setStatus: Boolean = true) {
 		val previousStatus = status
 		status = MinerStatus.Closing
+		processingJob.cancelAndJoin()
 		while (pid == null && (previousStatus != MinerStatus.Waiting && previousStatus != MinerStatus.Offline)) {
 			delay(200L)
 			log("PID for miner wasn't obtained, waiting")
 		}
 		pid?.let { taskKill(it, true) }
-		coroutineJob.cancelAndJoin()
+		pidJob.cancelAndJoin()
 		resetTemporalData()
 		shares = null
 		time = null
-		status = MinerStatus.Offline
+		if (setStatus)
+		{
+			status = MinerStatus.Offline
+		}
 	}
 }

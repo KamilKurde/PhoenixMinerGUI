@@ -75,7 +75,7 @@ object Settings {
 	private val minersToStart = mutableListOf<Miner>()
 
 	fun startMiner(miner: Miner) {
-		if (miner !in minersToStart) {
+		if (miner !in minersToStart && miner !in activeMiners) {
 			miner.status = MinerStatus.Waiting
 			minersToStart.add(miner)
 		}
