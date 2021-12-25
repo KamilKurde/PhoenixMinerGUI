@@ -71,7 +71,7 @@ fun main(args: Array<String>) {
 					placement = windowState.placement
 					positionX = windowState.position.x.value.toInt()
 					positionY = windowState.position.y.value.toInt()
-					saveSettings()
+					save()
 				}
 				exitApplication()
 			}

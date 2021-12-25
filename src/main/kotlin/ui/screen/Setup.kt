@@ -37,7 +37,7 @@ fun Setup() {
 						(openFileDialog(ComposeWindow(), "choose PhoenixMiner.exe file").absolutePath).let {
 							if (phoenixPathIsCorrect(it)) {
 								Settings.phoenixPath = it
-								Settings.saveSettings()
+								Settings.save()
 							}
 						}
 					}

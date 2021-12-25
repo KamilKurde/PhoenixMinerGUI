@@ -130,7 +130,7 @@ object Settings {
 		}
 	}
 
-	fun saveSettings() {
+	fun save() {
 		File(folder).mkdirs()
 		val file = File(folder + File.separator + "settings.json")
 		file.createNewFile()

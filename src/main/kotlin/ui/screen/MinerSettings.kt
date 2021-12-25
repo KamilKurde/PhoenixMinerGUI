@@ -66,7 +66,7 @@ fun MinerSettings(miner: Miner) {
 				{
 					miner.name = name.trim()
 					miner.parameters = Parameters(*parameters.filter { it.enabled }.map { it.config }.toTypedArray())
-					Settings.saveSettings()
+					Settings.save()
 					if (wasWorking) {
 						CoroutineScope(Job()).launch {
 							miner.stopMining()
@@ -147,7 +147,7 @@ fun MinerSettings(miner: Miner) {
 					Button(
 						{
 							Settings.miners = Settings.miners.filter { it.id.value != miner.id.value }.toTypedArray()
-							Settings.saveSettings()
+							Settings.save()
 							Settings.minerToEdit = null
 							deletionAlert = false
 						}, colors = ButtonDefaults.buttonColors(Color.Red, Color.White)
