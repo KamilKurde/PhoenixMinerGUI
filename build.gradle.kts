@@ -31,8 +31,6 @@ java{
 }
 dependencies {
 	implementation(compose.desktop.currentOs)
-	// Extended icons
-	implementation("org.jetbrains.compose.material:material-icons-extended-desktop:1.0.0")
 	implementation("com.github.pgreze:kotlin-process:1.3.1")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
 }

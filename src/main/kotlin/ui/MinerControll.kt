@@ -17,6 +17,7 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import miner.Miner
 import miner.MinerStatus
+import ui.material.Stop
 import ui.table.TableCell
 
 @Suppress("FunctionName")
