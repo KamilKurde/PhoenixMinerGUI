@@ -5,9 +5,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.compose.jetbrainsCompose
 
 plugins {
-	kotlin("jvm") version "1.5.31"
-	id("org.jetbrains.compose") version "1.0.0"
-	kotlin("plugin.serialization") version "1.5.20"
+	kotlin("jvm") version "1.6.10"
+	id("org.jetbrains.compose") version "1.0.1"
+	kotlin("plugin.serialization") version "1.6.10"
 }
 
 group = "com.github.KamilKurde"
@@ -32,7 +32,7 @@ java{
 dependencies {
 	implementation(compose.desktop.currentOs)
 	implementation("com.github.pgreze:kotlin-process:1.3.1")
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 }
 
 compose.desktop {

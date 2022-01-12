@@ -9,8 +9,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import java.io.File
 
-@ExperimentalSerializationApi
-@ExperimentalCoroutinesApi
 @Serializable
 data class Gpu(val name: String, var id: Id = Id(1)) {
 	val inUse

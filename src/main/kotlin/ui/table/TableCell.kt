@@ -2,6 +2,7 @@ package ui.table
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
@@ -13,8 +14,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ui.material.Tooltip
 
-@Suppress("FunctionName")
-@ExperimentalAnimationApi
+@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED")
 @Composable
 fun RowScope.TableCell(
 	text: Any?,

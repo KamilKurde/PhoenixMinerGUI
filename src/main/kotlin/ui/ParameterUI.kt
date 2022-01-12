@@ -1,6 +1,7 @@
 package ui
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -10,16 +11,12 @@ import androidx.compose.ui.text.style.TextAlign
 import config.*
 import data.Id
 import data.Settings
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.serialization.ExperimentalSerializationApi
 import ui.material.MaterialRow
 import ui.table.TableCell
 import ui.theme.*
 
-@Suppress("FunctionName")
-@ExperimentalSerializationApi
-@ExperimentalCoroutinesApi
-@ExperimentalAnimationApi
+@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED")
 @Composable
 fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
 	MaterialRow {

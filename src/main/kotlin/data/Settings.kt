@@ -17,10 +17,8 @@ import kotlin.random.nextULong
 
 val folder = System.getenv("LOCALAPPDATA") + File.separator + "PhoenixMinerGUI"
 
-@ExperimentalSerializationApi
-@ExperimentalCoroutinesApi
 @Serializable
-class SettingsData(
+class SettingsData constructor(
 	val phoenixPath: String = "",
 	val gpus: Array<Gpu> = emptyArray(),
 	val miners: Array<MinerData> = emptyArray(),
@@ -30,7 +28,6 @@ class SettingsData(
 	val positionX: Int = 0,
 	val positionY: Int = 0
 ) {
-	@ExperimentalSerializationApi
 	companion object {
 		fun generateFromSettings() = SettingsData(
 			Settings.phoenixPath,
@@ -45,8 +42,6 @@ class SettingsData(
 	}
 }
 
-@ExperimentalSerializationApi
-@ExperimentalCoroutinesApi
 object Settings {
 	var phoenixPath by mutableStateOf("")
 	var gpus by mutableStateOf(emptyArray<Gpu>())

@@ -14,16 +14,12 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import java.io.File
 
-@ExperimentalSerializationApi
-@ExperimentalCoroutinesApi
 @Serializable
 class MinerData(val name: String = "", val id: Id = Id(1), val mineOnStartup: Boolean = false, val settings: Array<String> = emptyArray()) {
 	fun toMiner() = Miner(name, id, mineOnStartup, Parameters(*settings))
 }
 
-@ExperimentalSerializationApi
 @Suppress("BlockingMethodInNonBlockingContext")
-@ExperimentalCoroutinesApi
 class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, parameters: Parameters) {
 	constructor(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, vararg parameters: Config) : this(name, id, startMiningOnStartup, Parameters(*parameters))
 
@@ -193,6 +189,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		}
 	}
 
+	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
+	@OptIn(ExperimentalCoroutinesApi::class)
 	fun startMining() {
 		runBlocking {
 			stopMining(false)
