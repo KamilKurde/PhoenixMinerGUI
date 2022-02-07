@@ -9,7 +9,7 @@ enum class MinerStatus {
 	},
 	Running,
 	Closing,
-	ConnectionError{
+	ConnectionError {
 		override fun toString() = "Connection Error"
 	},
 	ProgramError {

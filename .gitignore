@@ -2,7 +2,9 @@
 *.class
 
 # Cache
-.idea/
+!.idea/
+.idea/*
+!.idea/codeStyles
 .gradle/
 build/
 gradle/

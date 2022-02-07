@@ -3,7 +3,7 @@ package ui.table
 import CONTROLS_COLUMN_SIZE
 import NAME_COLUMN_SIZE
 import SIZE_PER_ELEMENT
-import androidx.compose.animation.ExperimentalAnimationApi
+import activity.MinerSettings
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,15 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.github.KamilKurde.Activity
+import com.github.KamilKurde.Intent
 import config.Config
 import config.Wallet
 import config.arguments.StringArgument
 import config.arguments.WalletArgument
 import data.Id
 import data.Settings
-import data.Settings.minerToEdit
-import kotlinx.coroutines.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import miner.Miner
 import ui.ConstrainedRow
 import ui.MinerControls
@@ -31,13 +30,11 @@ import ui.material.MaterialRow
 import kotlin.random.Random
 import kotlin.random.nextULong
 
-@Suppress("FunctionName")
-@ExperimentalSerializationApi
-@ExperimentalAnimationApi
-@ExperimentalFoundationApi
-@ExperimentalCoroutinesApi
+@Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED")
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MinerTable(
+	activity: Activity,
 	modifier: Modifier = Modifier
 ) {
 	MaterialColumn(modifier) {
@@ -65,7 +62,7 @@ fun MinerTable(
 					ConstrainedRow(
 						Modifier.weight(1f),
 						SIZE_PER_ELEMENT.dp,
-						{ MinerControls(miner, CONTROLS_COLUMN_SIZE) },
+						{ MinerControls(miner, CONTROLS_COLUMN_SIZE, activity) },
 						{ TableCell(miner.name, tooltip = miner.name + (miner.pid?.let { ", PID: $it" } ?: ""), modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp)) },
 						{ TableCell(miner.status) },
 						{ TableCell(miner.hashrate?.let { "$it MH/s" }, textAlign = TextAlign.Right) },
@@ -89,11 +86,10 @@ fun MinerTable(
 						Config.StringParameter(StringArgument.Pool, "eu1.ethermine.org:4444"),
 						Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),
 					)
-					minerToEdit = miner
-					CoroutineScope(Job()).launch {
-						delay(1000L)
-						Settings.miners += miner
-					}
+					Settings.miners += miner
+					val intent = Intent(MinerSettings::class)
+					intent.putExtra("minerID", Settings.miners.indexOf(miner))
+					activity.startActivity(intent)
 				},
 			)
 			{

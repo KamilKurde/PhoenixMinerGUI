@@ -5,7 +5,6 @@ import com.github.pgreze.process.Redirect
 import com.github.pgreze.process.process
 import data.*
 import kotlinx.coroutines.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import java.io.File
 
@@ -35,8 +34,8 @@ data class Gpu(val name: String, var id: Id = Id(1)) {
 	var powerEfficiency by mutableStateOf<Int?>(null)
 }
 
-@ExperimentalSerializationApi
-@ExperimentalCoroutinesApi
+@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
+@OptIn(ExperimentalCoroutinesApi::class)
 suspend fun getGpus() = coroutineScope {
 	val file = File(folder + File.separator + "deviceDiscovery.bat")
 	file.createNewFile()

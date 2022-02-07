@@ -23,7 +23,7 @@ fun RowScope.TableCell(
 	modifier: Modifier = Modifier,
 	fontWeight: FontWeight? = null,
 	textAlign: TextAlign? = null,
-	tooltip: String? = text?.toString()
+	tooltip: String? = text?.toString(),
 ) {
 	var modifier = modifier.padding(horizontal = 16.dp)
 	weight?.let {
@@ -45,6 +45,6 @@ fun RowScope.TableCell(
 				textAlign = textAlign
 			)
 		}
-
+		
 	}
 }

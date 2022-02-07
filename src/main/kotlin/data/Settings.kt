@@ -26,9 +26,11 @@ class SettingsData constructor(
 	val height: Int = 1280,
 	val placement: WindowPlacement = WindowPlacement.Maximized,
 	val positionX: Int = 0,
-	val positionY: Int = 0
+	val positionY: Int = 0,
 ) {
+	
 	companion object {
+		
 		fun generateFromSettings() = SettingsData(
 			Settings.phoenixPath,
 			Settings.gpus,
@@ -43,9 +45,9 @@ class SettingsData constructor(
 }
 
 object Settings {
+	
 	var phoenixPath by mutableStateOf("")
 	var gpus by mutableStateOf(emptyArray<Gpu>())
-	var minerToEdit by mutableStateOf<Miner?>(null)
 	var miners by mutableStateOf(
 		arrayOf(
 			Miner(
@@ -64,20 +66,20 @@ object Settings {
 	var placement: WindowPlacement = WindowPlacement.Maximized
 	var positionX: Int = 0
 	var positionY: Int = 0
-
+	
 	val activeMiners get() = miners.filter { it.isActive }
-
+	
 	private val minersToStart = mutableListOf<Miner>()
-
+	
 	fun startMiner(miner: Miner) {
 		if (miner !in minersToStart) {
 			miner.status = MinerStatus.Waiting
 			minersToStart.add(miner)
 		}
 	}
-
+	
 	private val coroutineScope = CoroutineScope(Job())
-
+	
 	init {
 		(tryOrNull {
 			val file = File(folder + File.separator + "settings.json")
@@ -92,11 +94,11 @@ object Settings {
 			positionX = settingsData.positionX
 			positionY = settingsData.positionY
 		}
-
+		
 		coroutineScope.launch {
 			try {
 				withContext(Dispatchers.Main) { println("Miners count: ${miners.size}") }
-
+				
 				while (true) {
 					delay(100L)
 					while (activeMiners.any { it.pid == null }) {
@@ -121,10 +123,10 @@ object Settings {
 			} catch (e: CancellationException) {
 				println("settings killed")
 			}
-
+			
 		}
 	}
-
+	
 	fun save() {
 		File(folder).mkdirs()
 		val file = File(folder + File.separator + "settings.json")

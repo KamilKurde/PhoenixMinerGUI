@@ -10,7 +10,6 @@ import config.arguments.StringArgument
 import data.*
 import functions.*
 import kotlinx.coroutines.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import java.io.File
 
@@ -23,7 +22,6 @@ class MinerData(val name: String = "", val id: Id = Id(1), val mineOnStartup: Bo
 class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, parameters: Parameters) {
 	constructor(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, vararg parameters: Config) : this(name, id, startMiningOnStartup, Parameters(*parameters))
 
-	@ExperimentalSerializationApi
 	companion object {
 		fun killAllMiners() {
 			// Kills all other PhoenixMiner instances
@@ -85,8 +83,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		powerEfficiency = null
 	}
 
-	private fun updateGpusPower(line: String)
-	{
+	private fun updateGpusPower(line: String) {
 		val split = line.split(" ")
 		powerDraw = split[2].toFloat()
 		tryWithoutCatch {
@@ -94,8 +91,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		}
 	}
 
-	private fun updateEthSpeed(line: String)
-	{
+	private fun updateEthSpeed(line: String) {
 		line.removePrefix("Eth speed: ").split(", ").forEach {
 			val (first, second) = it.split(" ")
 			when {
@@ -126,8 +122,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		}
 	}
 
-	private fun updateGpuStats(line: String)
-	{
+	private fun updateGpuStats(line: String) {
 		for (internalId in assignedGpuIds.indices) {
 			if (line.startsWith("GPU$internalId") && !(line.startsWith("GPU$internalId: Using") || line.startsWith("GPU$internalId: DAG"))) {
 				val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId] }
@@ -152,8 +147,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		}
 	}
 
-	private fun updateGpusThrottling(line: String)
-	{
+	private fun updateGpusThrottling(line: String) {
 		val split = line.split(" ")
 		for (internalId in 1..assignedGpuIds.size + 1) {
 			split.forEachIndexed { index, string ->
@@ -247,8 +241,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		resetTemporalData()
 		shares = null
 		time = null
-		if (setStatus)
-		{
+		if (setStatus) {
 			status = MinerStatus.Offline
 		}
 	}

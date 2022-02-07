@@ -6,7 +6,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
-@ExperimentalCoroutinesApi
+@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
+@OptIn(ExperimentalCoroutinesApi::class)
 fun phoenixPathIsCorrect(path: String): Boolean {
 	if (path.split(File.separator).last() != "PhoenixMiner.exe") {
 		return false

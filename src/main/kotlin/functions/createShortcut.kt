@@ -15,7 +15,8 @@ object Shortcut {
 
 	fun delete() = File(location).delete()
 
-	@ExperimentalCoroutinesApi
+	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED", "BlockingMethodInNonBlockingContext")
+	@OptIn(ExperimentalCoroutinesApi::class)
 	fun create() {
 		CoroutineScope(Job() + Dispatchers.IO).launch {
 			val file = File(folder + File.separator + "startupShortcutMaker.vbs")

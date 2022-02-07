@@ -61,6 +61,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
 						label = { Text("Numeric value") }
 					)
 				}
+				
 				is Config.WalletParameter -> {
 					var temporalValue by remember { mutableStateOf(config.valueAsString) }
 					var errorState by remember { mutableStateOf(false) }
@@ -81,6 +82,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
 						label = { Text("Wallet address") }
 					)
 				}
+				
 				is Config.GpusParameter -> {
 					var temporalValue by remember { mutableStateOf(config.valueAsString) }
 					var errorState by remember { mutableStateOf(false) }
@@ -104,6 +106,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
 						label = { Text("IDs of GPUs separated by commas") }
 					)
 				}
+				
 				is Config.BooleanParameter -> {
 					Switch(
 						config.value,
@@ -111,6 +114,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
 						modifier = Modifier.fillMaxSize(),
 					)
 				}
+				
 				is Config.StringParameter -> {
 					TextField(
 						value = config.value,

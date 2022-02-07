@@ -5,6 +5,7 @@ import config.arguments.*
 import data.Id
 
 interface CommandlineArgument {
+	
 	val name: String
 	val description: String
 	val parameter: String
@@ -12,16 +13,18 @@ interface CommandlineArgument {
 }
 
 sealed class Config(val configElement: CommandlineArgument) : CommandlineArgument {
+	
 	override val name get() = configElement.name
 	override val description get() = configElement.description
 	override val parameter get() = configElement.parameter
 	override val required get() = configElement.required
 	abstract val valueAsString: String
 	open val fullParameter get() = "-$parameter $valueAsString"
-
+	
 	abstract fun copy(): Config
-
+	
 	companion object {
+		
 		operator fun invoke(inString: String): Config {
 			val parameter = inString.split(" ")[0]
 			val withoutPrefix = if (inString.startsWith("$parameter ") && inString.length > parameter.length + 1) inString.removePrefix("$parameter ") else null
@@ -34,7 +37,7 @@ sealed class Config(val configElement: CommandlineArgument) : CommandlineArgumen
 				else -> throw IllegalArgumentException("Given argument wasn't found")
 			}
 		}
-
+		
 		val possibleConfigs = (
 				BooleanArgument.values().map { it.parameter } +
 						GpusArgument.values().map { it.parameter } +
@@ -43,43 +46,48 @@ sealed class Config(val configElement: CommandlineArgument) : CommandlineArgumen
 						WalletArgument.values().map { it.parameter }
 				)
 	}
-
+	
 	class BooleanParameter(val element: BooleanArgument, value: Boolean) : Config(element) {
+		
 		var value by mutableStateOf(value)
-
+		
 		override val valueAsString get() = if (value) "1" else "0"
-
+		
 		override fun copy() = BooleanParameter(element, value)
 	}
-
+	
 	class StringParameter(val element: StringArgument, value: String) : Config(element) {
+		
 		var value by mutableStateOf(value)
-
+		
 		override val valueAsString get() = value
 		override fun copy() = StringParameter(element, value)
 	}
-
+	
 	class GpusParameter(val element: GpusArgument, value: Array<Id>) : Config(element) {
+		
 		var value by mutableStateOf(value)
-
+		
 		override val valueAsString get() = value.joinToString(",")
 		override fun copy() = GpusParameter(element, value)
 	}
-
+	
 	class WalletParameter(val element: WalletArgument, value: Wallet) : Config(element) {
+		
 		var value by mutableStateOf(value)
-
+		
 		override val valueAsString get() = value.toString()
 		override fun copy() = WalletParameter(element, value)
 	}
-
+	
 	class NumberParameter(val element: NumberArgument, value: Int) : Config(element) {
+		
 		var value by mutableStateOf(value)
-
+		
 		override val valueAsString get() = value.toString()
-
+		
 		override fun copy() = NumberParameter(element, value)
-
+		
 		init {
 			require(value in element.range) { "value is outside the allowed range" }
 		}
@@ -87,6 +95,7 @@ sealed class Config(val configElement: CommandlineArgument) : CommandlineArgumen
 }
 
 open class SettingsConfig(config: Config, enabled: Boolean) {
+	
 	val config by mutableStateOf(config.copy())
 	var enabled by mutableStateOf(enabled)
 }

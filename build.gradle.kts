@@ -1,8 +1,7 @@
-import java.io.File
 import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.compose.jetbrainsCompose
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	kotlin("jvm") version "1.6.10"
@@ -11,7 +10,7 @@ plugins {
 }
 
 group = "com.github.KamilKurde"
-val currentVersion = "0.5.6"
+val currentVersion = "0.6.0"
 val appName = "PhoenixMiner GUI"
 version = currentVersion
 
@@ -19,13 +18,14 @@ repositories {
 	mavenCentral()
 	jetbrainsCompose()
 	google()
+	maven { url = uri("https://jitpack.io") }
 }
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions.jvmTarget = "16"
 }
 
-java{
+java {
 	sourceCompatibility = JavaVersion.VERSION_16
 	targetCompatibility = JavaVersion.VERSION_16
 }
@@ -33,6 +33,7 @@ dependencies {
 	implementation(compose.desktop.currentOs)
 	implementation("com.github.pgreze:kotlin-process:1.3.1")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+	implementation("com.github.KamilKurde:cdalf:0.2.3")
 }
 
 compose.desktop {
@@ -56,17 +57,16 @@ compose.desktop {
 	}
 }
 
-abstract class UpdateVersionFile: DefaultTask()
-{
+abstract class UpdateVersionFile : DefaultTask() {
+	
 	@Input
 	var file = ""
-
+	
 	@Input
 	var version = ""
-
+	
 	@TaskAction
-	fun updateVersion()
-	{
+	fun updateVersion() {
 		File(file).writeText("const val VERSION = \"$version\"")
 	}
 }
@@ -93,7 +93,7 @@ tasks.register<Copy>("copyExe")
 tasks.register<Zip>("zipDistributable")
 {
 	from(project.projectDir.absolutePath + File.separator + "build" + File.separator + "compose" + File.separator + "binaries" + File.separator + "main" + File.separator + "app" + File.separator)
-	archiveFileName.set( appName.replace(" ", "") + "-" + currentVersion + "-Portable.zip")
+	archiveFileName.set(appName.replace(" ", "") + "-" + currentVersion + "-Portable.zip")
 	destinationDirectory.set(File(project.projectDir.absolutePath + File.separator + "distributables" + File.separator))
 }
 

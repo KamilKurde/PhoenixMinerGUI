@@ -15,6 +15,7 @@ class Time(minutes: Int) {
 
 	companion object {
 		operator fun invoke(time: String) = Time(0).apply {
-			totalTime = time }
+			totalTime = time
+		}
 	}
 }

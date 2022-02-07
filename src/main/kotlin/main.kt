@@ -1,31 +1,21 @@
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.ExperimentalMaterialApi
+import activity.Setup
+import activity.Summary
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.WindowState
+import com.github.KamilKurde.Application
+import com.github.KamilKurde.Intent
 import data.Settings
-import data.Settings.minerToEdit
 import functions.*
 import kotlinx.coroutines.*
-import kotlinx.serialization.ExperimentalSerializationApi
 import miner.Miner
 import phoenix.phoenixPathIsCorrect
-import ui.AnimatedVisibilityWithFade
-import ui.screen.*
-import ui.theme.AppTheme
 
-val icon @Composable get() = painterResource("icon.ico")
+val icon = @Composable { painterResource("icon.ico") }
 
-@ExperimentalSerializationApi
-@ExperimentalMaterialApi
-@ExperimentalAnimationApi
-@ExperimentalFoundationApi
-@ExperimentalComposeUiApi
-@ExperimentalCoroutinesApi
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = Application {
 	val phoenixAvailable = phoenixPathIsCorrect(Settings.phoenixPath)
 	if (phoenixAvailable) {
 		CoroutineScope(Job()).launch {
@@ -52,46 +42,29 @@ fun main(args: Array<String>) {
 			Settings.gpus = getGpus()
 		}
 	}
-	application {
-		val windowState = rememberWindowState(
-			width = Settings.width.dp,
-			height = Settings.height.dp,
-			placement = Settings.placement,
-			position = WindowPosition(Settings.positionX.dp, Settings.positionY.dp)
-		)
-		Window(
-			title = "PhoenixMiner GUI",
-			icon = icon,
-			state = windowState,
-			onCloseRequest = {
-				runBlocking { Miner.stopAllMiners("/nokill" !in args) }
-				Settings.apply {
-					height = windowState.size.height.value.toInt()
-					width = windowState.size.width.value.toInt()
-					placement = windowState.placement
-					positionX = windowState.position.x.value.toInt()
-					positionY = windowState.position.y.value.toInt()
-					save()
-				}
-				exitApplication()
+	val windowState = WindowState(
+		width = Settings.width.dp,
+		height = Settings.height.dp,
+		placement = Settings.placement,
+		position = WindowPosition(Settings.positionX.dp, Settings.positionY.dp)
+	)
+	val intent = Intent(if (phoenixAvailable) Summary::class else Setup::class)
+	com.github.KamilKurde.Window(
+		intent,
+		title = "PhoenixMiner GUI",
+		icon = icon,
+		windowState = windowState,
+		onCloseRequest = {
+			runBlocking { Miner.stopAllMiners("/nokill" !in args) }
+			Settings.apply {
+				height = windowState.size.height.value.toInt()
+				width = windowState.size.width.value.toInt()
+				placement = windowState.placement
+				positionX = windowState.position.x.value.toInt()
+				positionY = windowState.position.y.value.toInt()
+				save()
 			}
-		) {
-			AppTheme {
-				AnimatedVisibilityWithFade(visible = !phoenixAvailable)
-				{
-					Setup()
-				}
-				AnimatedVisibilityWithFade(visible = minerToEdit == null && phoenixPathIsCorrect(Settings.phoenixPath))
-				{
-					Summary()
-				}
-				AnimatedVisibilityWithFade(visible = minerToEdit != null && phoenixPathIsCorrect(Settings.phoenixPath))
-				{
-					minerToEdit?.let {
-						MinerSettings(it)
-					}
-				}
-			}
+			close()
 		}
-	}
+	)
 }

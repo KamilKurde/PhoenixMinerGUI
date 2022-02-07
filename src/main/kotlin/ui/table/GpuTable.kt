@@ -1,7 +1,6 @@
 package ui.table
 
 import SIZE_PER_ELEMENT
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,17 +11,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import data.Settings
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.serialization.ExperimentalSerializationApi
 import ui.ConstrainedRow
 import ui.material.MaterialColumn
 import ui.material.MaterialRow
 
-@Suppress("FunctionName")
-@ExperimentalFoundationApi
-@ExperimentalSerializationApi
-@ExperimentalAnimationApi
-@ExperimentalCoroutinesApi
+@Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED")
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GpuTable(
 	modifier: Modifier = Modifier
