@@ -19,7 +19,7 @@ import ui.material.MaterialRow
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GpuTable(
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
 ) {
 	MaterialColumn(modifier) {
 		LazyColumn {
@@ -39,13 +39,13 @@ fun GpuTable(
 					)
 				}
 			}
-
+			
 			if (Settings.gpus.isEmpty()) {
 				item {
 					LinearProgressIndicator(Modifier.fillMaxWidth())
 				}
 			}
-
+			
 			items(Settings.gpus.size)
 			{
 				MaterialRow(Modifier.fillMaxWidth()) {
@@ -68,6 +68,6 @@ fun GpuTable(
 			}
 		}
 	}
-
-
+	
+	
 }

@@ -35,7 +35,7 @@ import kotlin.random.nextULong
 @Composable
 fun MinerTable(
 	activity: Activity,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
 ) {
 	MaterialColumn(modifier) {
 		LazyColumn {

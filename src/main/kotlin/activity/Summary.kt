@@ -18,6 +18,7 @@ import ui.table.MinerTable
 import ui.theme.AppTheme
 
 class Summary : Activity() {
+	
 	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
 	@OptIn(ExperimentalCoroutinesApi::class)
 	override fun onCreate() {

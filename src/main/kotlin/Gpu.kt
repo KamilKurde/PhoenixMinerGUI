@@ -10,6 +10,7 @@ import java.io.File
 
 @Serializable
 data class Gpu(val name: String, var id: Id = Id(1)) {
+	
 	val inUse
 		get(): Boolean {
 			val isUsed = Settings.activeMiners.any { miner -> miner.assignedGpuIds.any { it == id } }
@@ -22,15 +23,15 @@ data class Gpu(val name: String, var id: Id = Id(1)) {
 			}
 			return isUsed
 		}
-
+	
 	var percentage by mutableStateOf<Int?>(null)
-
+	
 	var temperature by mutableStateOf<Int?>(null)
-
+	
 	var time by mutableStateOf<Time?>(null)
-
+	
 	var powerDraw by mutableStateOf<Int?>(null)
-
+	
 	var powerEfficiency by mutableStateOf<Int?>(null)
 }
 
@@ -58,7 +59,7 @@ suspend fun getGpus() = coroutineScope {
 					Id(splitLine[0].removePrefix("GPU").removeSuffix(":").toInt())
 				)
 			)
-
+			
 		}
 	}
 	gpuList.toTypedArray()

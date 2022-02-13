@@ -20,6 +20,7 @@ import ui.material.Tooltip
 import ui.theme.AppTheme
 
 class Setup : Activity() {
+	
 	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
 	@OptIn(ExperimentalFoundationApi::class, ExperimentalCoroutinesApi::class)
 	override fun onCreate() {
