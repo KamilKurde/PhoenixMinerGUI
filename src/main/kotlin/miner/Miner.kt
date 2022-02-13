@@ -15,21 +15,24 @@ import java.io.File
 
 @Serializable
 class MinerData(val name: String = "", val id: Id = Id(1), val mineOnStartup: Boolean = false, val settings: Array<String> = emptyArray()) {
+	
 	fun toMiner() = Miner(name, id, mineOnStartup, Parameters(*settings))
 }
 
 @Suppress("BlockingMethodInNonBlockingContext")
 class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, parameters: Parameters) {
+	
 	constructor(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, vararg parameters: Config) : this(name, id, startMiningOnStartup, Parameters(*parameters))
-
+	
 	companion object {
+		
 		fun killAllMiners() {
 			// Kills all other PhoenixMiner instances
 			runBlocking {
 				taskKill("PhoenixMiner.exe", true)
 			}
 		}
-
+		
 		suspend fun stopAllMiners(killOtherMiners: Boolean = true) {
 			Settings.miners.forEach { it.stopMining() }
 			if (killOtherMiners) {
@@ -37,52 +40,52 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			}
 		}
 	}
-
+	
 	var name by mutableStateOf(name)
-
+	
 	var id by mutableStateOf(id)
-
+	
 	var mineOnStartup by mutableStateOf(startMiningOnStartup)
-
+	
 	var parameters by mutableStateOf(parameters)
-
+	
 	var status by mutableStateOf(MinerStatus.Offline)
-
+	
 	val isActive get() = status != MinerStatus.Offline && status != MinerStatus.Waiting
-
+	
 	var hashrate by mutableStateOf<Float?>(null)
-
+	
 	var shares by mutableStateOf<Shares?>(null)
-
+	
 	var time by mutableStateOf<Time?>(null)
-
+	
 	var powerDraw by mutableStateOf<Float?>(null)
-
+	
 	var powerEfficiency by mutableStateOf<Int?>(null)
-
+	
 	var pid by mutableStateOf<Int?>(null)
-
+	
 	private var processingJob = Job()
-
+	
 	private var pidJob = Job()
-
+	
 	private val gpusFromConfig get() = parameters.copy().firstOrNull { it is Config.GpusParameter && it.configElement == GpusArgument.Gpus } as Config.GpusParameter?
-
+	
 	var assignedGpuIds = gpusFromConfig?.value ?: Settings.gpus.map { it.id }.toTypedArray()
-
+	
 	fun toMinerData() = MinerData(name, id, mineOnStartup, parameters.toStringArray())
-
+	
 	private val file = File(folder + File.separator + "miner$id.bat")
-
-	private fun log(message: String) = println("Miner $id: $message")
-
+	
+	fun log(message: String) = println("Miner $id: $message")
+	
 	private fun resetTemporalData() {
 		pid = null
 		hashrate = null
 		powerDraw = null
 		powerEfficiency = null
 	}
-
+	
 	private fun updateGpusPower(line: String) {
 		val split = line.split(" ")
 		powerDraw = split[2].toFloat()
@@ -90,7 +93,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			powerEfficiency = split[4].toInt()
 		}
 	}
-
+	
 	private fun updateEthSpeed(line: String) {
 		line.removePrefix("Eth speed: ").split(", ").forEach {
 			val (first, second) = it.split(" ")
@@ -98,6 +101,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 				second == "MH/s" -> {
 					hashrate = first.toFloat()
 				}
+				
 				first == "shares:" -> {
 					val sharesList = second.removeSuffix(",").split("/").map { it.toInt() }.toTypedArray()
 					shares?.apply {
@@ -109,6 +113,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 						shares = Shares(sharesList)
 					}
 				}
+				
 				first == "time:" -> {
 					time?.totalTime = second
 					if (time == null) {
@@ -121,7 +126,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			}
 		}
 	}
-
+	
 	private fun updateGpuStats(line: String) {
 		for (internalId in assignedGpuIds.indices) {
 			if (line.startsWith("GPU$internalId") && !(line.startsWith("GPU$internalId: Using") || line.startsWith("GPU$internalId: DAG"))) {
@@ -134,19 +139,19 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 					var splitLineMultiGpu = splitLine
 					while (splitLineMultiGpu.isNotEmpty()) {
 						val currentGpu = Settings.gpus.first { it.id == assignedGpuIds[splitLineMultiGpu[0].removePrefix("GPU").removeSuffix(":").toInt()] }
-
+						
 						currentGpu.temperature = splitLineMultiGpu[1].removeSuffix("C").toInt()
 						currentGpu.percentage = splitLineMultiGpu[2].removeSuffix("%").toInt()
 						currentGpu.powerDraw = splitLineMultiGpu[3].removeSuffix(",").removeSuffix("W").toInt()
-
+						
 						splitLineMultiGpu = splitLineMultiGpu.drop(4)
 					}
 				}
 			}
-
+			
 		}
 	}
-
+	
 	private fun updateGpusThrottling(line: String) {
 		val split = line.split(" ")
 		for (internalId in 1..assignedGpuIds.size + 1) {
@@ -159,36 +164,39 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			}
 		}
 	}
-
+	
 	private fun process(line: String) {
-		if (line.isNotBlank()) {
-			log(line)
-		}
-		when {
-			line.contains("Phoenix Miner") -> status = MinerStatus.Connecting
-			line.contains("Generating DAG") -> status = MinerStatus.DagBuilding
-			line.contains("DAG generated") -> status = MinerStatus.Running
-			line.contains("Eth: Mining") -> status = MinerStatus.Running
-			line.startsWith("GPUs power: ") && status == MinerStatus.Running -> updateGpusPower(line)
-			line.startsWith("Eth: Could not connect to") || line.startsWith("Eth: Can't resolve host") -> status = MinerStatus.ConnectionError
-			line.startsWith("Eth speed: ") && status == MinerStatus.Running -> updateEthSpeed(line)
-			line.startsWith("GPU") && status == MinerStatus.Running -> updateGpuStats(line)
-			// Workaround for phoenix not reporting throttled usage in normal stats
-			line.startsWith("Throttling GPUs") -> updateGpusThrottling(line)
-			line.startsWith("miner stopped") -> {
-				resetTemporalData()
-				status = MinerStatus.ProgramError
-				Settings.startMiner(this@Miner)
+		try {
+			if (line.isNotBlank()) {
+				log(line)
 			}
+			when {
+				line.contains("Phoenix Miner") -> status = MinerStatus.Connecting
+				line.contains("Generating DAG") -> status = MinerStatus.DagBuilding
+				line.contains("DAG generated") -> status = MinerStatus.Running
+				line.contains("Eth: Mining") -> status = MinerStatus.Running
+				line.startsWith("GPUs power: ") && status == MinerStatus.Running -> updateGpusPower(line)
+				line.startsWith("Eth: Could not connect to") || line.startsWith("Eth: Can't resolve host") -> status = MinerStatus.ConnectionError
+				line.startsWith("Eth speed: ") && status == MinerStatus.Running -> updateEthSpeed(line)
+				line.startsWith("GPU") && status == MinerStatus.Running -> updateGpuStats(line)
+				// Workaround for phoenix not reporting throttled usage in normal stats
+				line.startsWith("Throttling GPUs") -> updateGpusThrottling(line)
+				
+				line.startsWith("miner stopped") -> {
+					resetTemporalData()
+					status = MinerStatus.ProgramError
+					Settings.startMiner(this@Miner)
+				}
+			}
+		} catch (e: Exception) {
+			log(e.stackTraceToString())
+			Settings.addError(e, false)
 		}
 	}
-
+	
 	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
 	@OptIn(ExperimentalCoroutinesApi::class)
 	fun startMining() {
-		runBlocking {
-			stopMining(false)
-		}
 		processingJob = Job()
 		CoroutineScope(processingJob + Dispatchers.IO).launch {
 			val formattedSettings = parameters.copy()
@@ -210,39 +218,44 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 					pid = getPIDsFor("PhoenixMiner.exe").firstOrNull {
 						Settings.activeMiners.none { miner -> miner.pid == it }
 					}
+					if (pid == null) {
+						log("Couldn't obtain PID, waiting")
+					}
 				}
+				log("Obtained PID: $pid")
+				pidJob.complete()
 			}
-			process(
-				file.absolutePath,
-				stdout = Redirect.CAPTURE,
-				// setting environmental variables like instructed on PhoenixMiner.org
-				env = mapOf(
-					"GPU_FORCE_64BIT_PTR" to "0",
-					"GPU_MAX_HEAP_SIZE" to "100",
-					"GPU_USE_SYNC_OBJECTS" to "1",
-					"GPU_MAX_ALLOC_PERCENT" to "100",
-					"GPU_SINGLE_ALLOC_PERCENT" to "100"
-				),
-				consumer = ::process
-			)
+			try {
+				process(
+					file.absolutePath,
+					stdout = Redirect.CAPTURE,
+					// setting environmental variables like instructed on PhoenixMiner.org
+					env = mapOf(
+						"GPU_FORCE_64BIT_PTR" to "0",
+						"GPU_MAX_HEAP_SIZE" to "100",
+						"GPU_USE_SYNC_OBJECTS" to "1",
+						"GPU_MAX_ALLOC_PERCENT" to "100",
+						"GPU_SINGLE_ALLOC_PERCENT" to "100"
+					),
+					consumer = ::process
+				)
+			} catch (e: CancellationException) {
+				log("Killed by cancellation")
+			}
 		}
 	}
-
-	suspend fun stopMining(setStatus: Boolean = true) {
-		val previousStatus = status
-		status = MinerStatus.Closing
-		processingJob.cancelAndJoin()
-		while (pid == null && (previousStatus != MinerStatus.Waiting && previousStatus != MinerStatus.Offline)) {
-			delay(200L)
-			log("PID for miner wasn't obtained, waiting")
+	
+	suspend fun stopMining() {
+		if (status == MinerStatus.Offline) {
+			return
 		}
+		status = MinerStatus.Closing
+		pidJob.join()
 		pid?.let { taskKill(it, true) }
-		pidJob.cancelAndJoin()
+		processingJob.cancelAndJoin()
 		resetTemporalData()
 		shares = null
 		time = null
-		if (setStatus) {
-			status = MinerStatus.Offline
-		}
+		status = MinerStatus.Offline
 	}
 }

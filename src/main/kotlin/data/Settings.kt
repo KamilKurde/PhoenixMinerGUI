@@ -12,6 +12,8 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import miner.*
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.random.Random
 import kotlin.random.nextULong
 
@@ -72,10 +74,27 @@ object Settings {
 	private val minersToStart = mutableListOf<Miner>()
 	
 	fun startMiner(miner: Miner) {
-		if (miner !in minersToStart) {
+		if (miner !in minersToStart && (!miner.isActive || miner.status == MinerStatus.ProgramError)) {
 			miner.status = MinerStatus.Waiting
 			minersToStart.add(miner)
 		}
+	}
+	
+	private val errorLog = File(folder + File.separator + "error_log.txt")
+	
+	fun addError(e: Exception, printError: Boolean = true) {
+		if (printError) {
+			e.printStackTrace()
+		}
+		var errors = if (errorLog.exists()) errorLog.readLines() else emptyList()
+		val errorHeader = { it: String -> !it.startsWith("\t") }
+		if (errors.count(errorHeader) >= 100) {
+			errors = errors.drop(1)
+			errors = errors.drop(errors.indexOfFirst(errorHeader))
+		}
+		@Suppress("SuspiciousCollectionReassignment")
+		errors += SimpleDateFormat("yyyy/MM/dd HH:mm:ss: ").format(Date()) + e.stackTraceToString()
+		errorLog.writeText(errors.joinToString("\n"))
 	}
 	
 	private val coroutineScope = CoroutineScope(Job())
