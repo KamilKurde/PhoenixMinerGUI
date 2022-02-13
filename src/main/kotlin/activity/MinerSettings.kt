@@ -20,7 +20,8 @@ import com.github.KamilKurde.Activity
 import config.Parameters
 import data.Settings
 import kotlinx.coroutines.*
-import miner.MinerStatus
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import ui.ParameterUI
 import ui.material.MaterialRow
 import ui.table.TableCell
@@ -34,7 +35,7 @@ class MinerSettings : Activity() {
 		super.onCreate()
 		val minerID = intent.getExtra<Int>("minerID")!!
 		val miner = Settings.miners[minerID]
-		val wasWorking by mutableStateOf(miner.status != MinerStatus.Offline && miner.status != MinerStatus.Closing)
+		val initialSettings = Json.encodeToString(miner.toMinerData())
 		setContent {
 			AppTheme {
 				Column(
@@ -67,8 +68,10 @@ class MinerSettings : Activity() {
 								miner.name = name.trim()
 								miner.parameters = Parameters(*parameters.filter { it.enabled }.map { it.config }.toTypedArray())
 								Settings.save()
-								if (wasWorking) {
+								// Ensure that miner is active and changes were made before restarting miner
+								if (miner.isActive && initialSettings != Json.encodeToString(miner.toMinerData())) {
 									CoroutineScope(Job()).launch {
+										miner.log("Restarting miner")
 										miner.stopMining()
 										Settings.startMiner(miner)
 									}
