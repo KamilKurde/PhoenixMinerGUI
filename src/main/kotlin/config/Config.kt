@@ -94,7 +94,7 @@ sealed class Config(val configElement: CommandlineArgument) : CommandlineArgumen
 	}
 }
 
-open class SettingsConfig(config: Config, enabled: Boolean) {
+open class SettingsConfig(config: Config, enabled: Boolean = config.required) {
 	
 	val config by mutableStateOf(config.copy())
 	var enabled by mutableStateOf(enabled)

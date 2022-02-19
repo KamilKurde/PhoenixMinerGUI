@@ -66,7 +66,7 @@ class Parameters(private var parameters: MutableList<Config> = mutableListOf()) 
 	fun allConfigs(): Array<SettingsConfig> {
 		val allConfigs = Config.possibleConfigs.map { commandLineArgument ->
 			val config = parameters.firstOrNull { it.parameter == commandLineArgument }
-			if (config != null) SettingsConfig(config, true) else SettingsConfig(Config(commandLineArgument), false)
+			if (config != null) SettingsConfig(config, true) else SettingsConfig(Config(commandLineArgument))
 		}.sortedBy { it.config.name }
 		val required = allConfigs.filter { it.config.required }
 		val optional = allConfigs.filter { !it.config.required }
