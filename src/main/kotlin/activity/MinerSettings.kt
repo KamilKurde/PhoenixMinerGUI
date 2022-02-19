@@ -17,15 +17,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
-import config.Parameters
+import config.*
+import config.arguments.StringArgument
+import config.arguments.WalletArgument
+import data.Id
 import data.Settings
 import kotlinx.coroutines.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import miner.Miner
 import ui.ParameterUI
 import ui.material.MaterialRow
 import ui.table.TableCell
 import ui.theme.*
+import kotlin.random.Random
+import kotlin.random.nextULong
 
 class MinerSettings : Activity() {
 	
@@ -33,8 +39,19 @@ class MinerSettings : Activity() {
 	@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 	override fun onCreate() {
 		super.onCreate()
-		val minerID = intent.getExtra<Int>("minerID")!!
-		val miner = Settings.miners[minerID]
+		val minerID = intent.getExtra<Int>("minerID")
+		val miner = if (minerID != null) {
+			Settings.miners[minerID]
+		} else {
+			val id = (0..Int.MAX_VALUE).first { int -> Settings.miners.none { it.id.value == int } }
+			Miner(
+				"Miner $id", Id(id),
+				false,
+				Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
+				Config.StringParameter(StringArgument.Pool, "eu1.ethermine.org:4444"),
+				Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),
+			)
+		}
 		val initialSettings = Json.encodeToString(miner.toMinerData())
 		setContent {
 			AppTheme {
@@ -67,6 +84,9 @@ class MinerSettings : Activity() {
 							{
 								miner.name = name.trim()
 								miner.parameters = Parameters(*parameters.filter { it.enabled }.map { it.config }.toTypedArray())
+								if (Settings.miners.none { it.id == miner.id }) {
+									Settings.miners.add(miner)
+								}
 								Settings.save()
 								// Ensure that miner is active and changes were made before restarting miner
 								if (miner.isActive && initialSettings != Json.encodeToString(miner.toMinerData())) {
@@ -149,7 +169,7 @@ class MinerSettings : Activity() {
 							confirmButton = {
 								Button(
 									{
-										Settings.miners = Settings.miners.filter { it.id.value != miner.id.value }.toTypedArray()
+										Settings.miners.remove(miner)
 										Settings.save()
 										parent.back()
 										deletionAlert = false

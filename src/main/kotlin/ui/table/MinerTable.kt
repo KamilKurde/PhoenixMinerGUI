@@ -16,19 +16,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
 import com.github.KamilKurde.Intent
-import config.Config
-import config.Wallet
-import config.arguments.StringArgument
-import config.arguments.WalletArgument
-import data.Id
 import data.Settings
-import miner.Miner
 import ui.ConstrainedRow
 import ui.MinerControls
 import ui.material.MaterialColumn
 import ui.material.MaterialRow
-import kotlin.random.Random
-import kotlin.random.nextULong
 
 @Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED")
 @OptIn(ExperimentalFoundationApi::class)
@@ -78,17 +70,7 @@ fun MinerTable(
 		{
 			TextButton(
 				{
-					val id = (0..Int.MAX_VALUE).first { int -> Settings.miners.none { it.id.value == int } }
-					val miner = Miner(
-						"Miner $id", Id(id),
-						false,
-						Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
-						Config.StringParameter(StringArgument.Pool, "eu1.ethermine.org:4444"),
-						Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),
-					)
-					Settings.miners += miner
 					val intent = Intent(MinerSettings::class)
-					intent.putExtra("minerID", Settings.miners.indexOf(miner))
 					activity.startActivity(intent)
 				},
 			)

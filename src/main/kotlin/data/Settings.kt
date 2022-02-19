@@ -50,17 +50,15 @@ object Settings {
 	
 	var phoenixPath by mutableStateOf("")
 	var gpus by mutableStateOf(emptyArray<Gpu>())
-	var miners by mutableStateOf(
-		arrayOf(
-			Miner(
-				"Donate Your Hashpower To The Dev", Id(1),
-				false,
-				Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
-				Config.StringParameter(StringArgument.Pool, "eu1.ethermine.org:4444"),
-				Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),
-				Config.BooleanParameter(BooleanArgument.Log, false),
-				Config.NumberParameter(NumberArgument.Ttli, 80)
-			)
+	val miners = mutableStateListOf(
+		Miner(
+			"Donate Your Hashpower To The Dev", Id(1),
+			false,
+			Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
+			Config.StringParameter(StringArgument.Pool, "eu1.ethermine.org:4444"),
+			Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),
+			Config.BooleanParameter(BooleanArgument.Log, false),
+			Config.NumberParameter(NumberArgument.Ttli, 80)
 		)
 	)
 	var width: Int = 720
@@ -106,7 +104,8 @@ object Settings {
 		} ?: SettingsData.generateFromSettings()).let { settingsData ->
 			phoenixPath = settingsData.phoenixPath
 			gpus = settingsData.gpus
-			miners = settingsData.miners.map { it.toMiner() }.toTypedArray()
+			miners.clear()
+			miners.addAll(settingsData.miners.map { it.toMiner() })
 			width = settingsData.width
 			height = settingsData.height
 			placement = settingsData.placement
