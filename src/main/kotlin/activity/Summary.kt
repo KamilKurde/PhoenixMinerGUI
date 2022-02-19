@@ -11,8 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
+import com.github.KamilKurde.Intent
+import data.Settings
 import functions.Shortcut
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import phoenix.phoenixPathIsCorrect
 import ui.table.GpuTable
 import ui.table.MinerTable
 import ui.theme.AppTheme
@@ -23,6 +26,9 @@ class Summary : Activity() {
 	@OptIn(ExperimentalCoroutinesApi::class)
 	override fun onCreate() {
 		super.onCreate()
+		if (!phoenixPathIsCorrect(Settings.phoenixPath)) {
+			startActivity(Intent(Setup::class))
+		}
 		setContent {
 			AppTheme {
 				Column(modifier = Modifier.fillMaxSize().padding(8.dp), verticalArrangement = Arrangement.Top) {

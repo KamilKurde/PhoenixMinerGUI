@@ -1,4 +1,3 @@
-import activity.Setup
 import activity.Summary
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
@@ -48,7 +47,7 @@ fun main(args: Array<String>) = Application {
 		placement = Settings.placement,
 		position = WindowPosition(Settings.positionX.dp, Settings.positionY.dp)
 	)
-	val intent = Intent(if (phoenixAvailable) Summary::class else Setup::class)
+	val intent = Intent(Summary::class)
 	com.github.KamilKurde.Window(
 		intent,
 		title = "PhoenixMiner GUI",

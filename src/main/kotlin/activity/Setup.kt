@@ -40,6 +40,7 @@ class Setup : Activity() {
 										if (phoenixPathIsCorrect(it)) {
 											Settings.phoenixPath = it
 											Settings.save()
+											finish()
 										}
 									}
 								}
