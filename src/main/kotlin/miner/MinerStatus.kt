@@ -3,6 +3,7 @@ package miner
 enum class MinerStatus {
 	Offline,
 	Waiting,
+	Launching,
 	Connecting,
 	DagBuilding {
 		

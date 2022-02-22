@@ -171,7 +171,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 				log(line)
 			}
 			when {
-				line.contains("Phoenix Miner") -> status = MinerStatus.Connecting
+				line.contains("Connecting") -> status = MinerStatus.Connecting
 				line.contains("Generating DAG") -> status = MinerStatus.DagBuilding
 				line.contains("DAG generated") -> status = MinerStatus.Running
 				line.contains("Eth: Mining") -> status = MinerStatus.Running
@@ -198,6 +198,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 	@OptIn(ExperimentalCoroutinesApi::class)
 	fun startMining() {
 		processingJob = Job()
+		status = MinerStatus.Launching
 		CoroutineScope(processingJob + Dispatchers.IO).launch {
 			val formattedSettings = parameters.copy()
 			if (!formattedSettings.any { it is Config.StringParameter && it.configElement == StringArgument.Password }) {
