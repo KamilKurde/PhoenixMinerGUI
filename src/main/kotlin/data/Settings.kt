@@ -6,7 +6,7 @@ import androidx.compose.ui.window.WindowPlacement
 import config.Config
 import config.Wallet
 import config.arguments.*
-import functions.tryOrNull
+import functions.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
@@ -120,6 +120,11 @@ object Settings {
 				while (true) {
 					delay(100L)
 					while (activeMiners.any { it.pid == null }) {
+						val minerWithoutPid = activeMiners.first { it.pid == null }
+						val unassignedPid = getPIDsFor("PhoenixMiner.exe").firstOrNull { pid -> activeMiners.none { it.pid == pid } }
+						if (unassignedPid != null) {
+							minerWithoutPid.pid = unassignedPid
+						}
 						delay(100L)
 					}
 					minersToStart.firstOrNull()?.let { miner ->

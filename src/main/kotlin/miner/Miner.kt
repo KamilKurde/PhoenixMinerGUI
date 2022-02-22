@@ -8,7 +8,8 @@ import config.Parameters
 import config.arguments.GpusArgument
 import config.arguments.StringArgument
 import data.*
-import functions.*
+import functions.taskKill
+import functions.tryWithoutCatch
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
 import java.io.File
@@ -66,8 +67,6 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 	var pid by mutableStateOf<Int?>(null)
 	
 	private var processingJob = Job()
-	
-	private var pidJob = Job()
 	
 	private val gpusFromConfig get() = parameters.copy().firstOrNull { it is Config.GpusParameter && it.configElement == GpusArgument.Gpus } as Config.GpusParameter?
 	
@@ -212,20 +211,6 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 						"\"${Settings.phoenixPath}\" $settingsAsString\n" +
 						"echo miner stopped"
 			)
-			pidJob = Job()
-			CoroutineScope(pidJob + Dispatchers.IO).launch {
-				while (pid == null) {
-					delay(100L)
-					pid = getPIDsFor("PhoenixMiner.exe").firstOrNull {
-						Settings.activeMiners.none { miner -> miner.pid == it }
-					}
-					if (pid == null) {
-						log("Couldn't obtain PID, waiting")
-					}
-				}
-				log("Obtained PID: $pid")
-				pidJob.complete()
-			}
 			try {
 				process(
 					file.absolutePath,
@@ -251,7 +236,6 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 			return
 		}
 		status = MinerStatus.Closing
-		pidJob.join()
 		pid?.let { taskKill(it, true) }
 		processingJob.cancelAndJoin()
 		resetTemporalData()
