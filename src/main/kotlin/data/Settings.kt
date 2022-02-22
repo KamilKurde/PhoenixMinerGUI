@@ -127,6 +127,9 @@ object Settings {
 						}
 						delay(100L)
 					}
+					for (pid in getPIDsFor("PhoenixMiner.exe").filter { pid -> activeMiners.none { it.pid == pid } }) {
+						taskKill(pid, true)
+					}
 					minersToStart.firstOrNull()?.let { miner ->
 						if (miner.status == MinerStatus.Waiting) {
 							if (
