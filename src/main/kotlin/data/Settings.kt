@@ -50,7 +50,7 @@ object Settings {
 	var gpus by mutableStateOf(emptyArray<Gpu>())
 	val miners = mutableStateListOf(
 		Miner(
-			"Donate Your Hashpower To The Dev", Id(1),
+			"Donate Your Hashpower To The Dev", Id(0),
 			false,
 			Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
 			Config.StringParameter(StringArgument.Pool, "eu1.ethermine.org:4444"),
