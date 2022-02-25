@@ -158,6 +158,7 @@ object Settings {
 	}
 	
 	fun save() {
+		miners.sortBy { it.id.value }
 		File(folder).mkdirs()
 		val file = File(folder + File.separator + "settings.json")
 		file.createNewFile()
