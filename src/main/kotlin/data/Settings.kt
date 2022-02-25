@@ -115,10 +115,10 @@ object Settings {
 			positionY = settingsData.positionY
 		}
 		
+		println("Miners count: ${miners.size}")
+		
 		coroutineScope.launch {
 			try {
-				withContext(Dispatchers.Main) { println("Miners count: ${miners.size}") }
-				
 				while (true) {
 					delay(100L)
 					while (activeMiners.any { it.pid == null }) {
