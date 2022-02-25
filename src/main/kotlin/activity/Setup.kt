@@ -13,7 +13,8 @@ import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
 import data.Settings
 import functions.tryWithoutCatch
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import getGpus
+import kotlinx.coroutines.*
 import phoenix.openFileDialog
 import phoenix.phoenixPathIsCorrect
 import ui.material.Tooltip
@@ -38,6 +39,9 @@ class Setup : Activity() {
 								tryWithoutCatch {
 									(openFileDialog(ComposeWindow(), "choose PhoenixMiner.exe file").absolutePath).let {
 										if (phoenixPathIsCorrect(it)) {
+											CoroutineScope(Job()).launch {
+												Settings.gpus = getGpus()
+											}
 											Settings.phoenixPath = it
 											Settings.save()
 											finish()

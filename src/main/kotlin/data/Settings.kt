@@ -22,7 +22,6 @@ val folder = System.getenv("LOCALAPPDATA") + File.separator + "PhoenixMinerGUI"
 @Serializable
 class SettingsData constructor(
 	val phoenixPath: String = "",
-	val gpus: Array<Gpu> = emptyArray(),
 	val miners: Array<MinerData> = emptyArray(),
 	val width: Int = 720,
 	val height: Int = 1280,
@@ -35,7 +34,6 @@ class SettingsData constructor(
 		
 		fun generateFromSettings() = SettingsData(
 			Settings.phoenixPath,
-			Settings.gpus,
 			Settings.miners.map { it.toMinerData() }.toTypedArray(),
 			Settings.width,
 			Settings.height,
@@ -102,10 +100,10 @@ object Settings {
 	init {
 		(tryOrNull {
 			val file = File(folder + File.separator + "settings.json")
-			Json.decodeFromString(file.readText())
+			@Suppress("JSON_FORMAT_REDUNDANT")
+			Json{ ignoreUnknownKeys = true }.decodeFromString(file.readText())
 		} ?: SettingsData.generateFromSettings()).let { settingsData ->
 			phoenixPath = settingsData.phoenixPath
-			gpus = settingsData.gpus
 			miners.clear()
 			miners.addAll(settingsData.miners.map { it.toMiner() })
 			width = settingsData.width

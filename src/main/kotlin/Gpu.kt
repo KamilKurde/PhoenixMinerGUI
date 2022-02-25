@@ -5,10 +5,8 @@ import com.github.pgreze.process.Redirect
 import com.github.pgreze.process.process
 import data.*
 import kotlinx.coroutines.*
-import kotlinx.serialization.Serializable
 import java.io.File
 
-@Serializable
 data class Gpu(val name: String, var id: Id = Id(1)) {
 	
 	val inUse

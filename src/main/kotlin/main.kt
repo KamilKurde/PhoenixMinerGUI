@@ -40,7 +40,6 @@ fun main(args: Array<String>) = Application {
 					Settings.startMiner(it)
 				}
 			}
-			Settings.gpus = getGpus()
 		}
 	}
 	val windowState = WindowState(
