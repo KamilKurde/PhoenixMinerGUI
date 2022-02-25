@@ -25,6 +25,8 @@ fun main(args: Array<String>) = Application {
 					taskKill(it, true)
 				}
 				Miner.killAllMiners()
+			} else {
+				Settings.nokill = true
 			}
 			args.forEach { arg ->
 				Settings.miners.firstOrNull {
