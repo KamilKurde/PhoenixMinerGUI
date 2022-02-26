@@ -14,7 +14,7 @@ import com.github.KamilKurde.Activity
 import com.github.KamilKurde.Intent
 import data.Settings
 import functions.Shortcut
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import phoenix.phoenixPathIsCorrect
 import ui.table.GpuTable
 import ui.table.MinerTable
