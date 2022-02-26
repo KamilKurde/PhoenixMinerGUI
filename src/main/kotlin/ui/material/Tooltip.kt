@@ -1,5 +1,6 @@
 package ui.material
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +15,9 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Tooltip(text: String) {
 	Surface(shape = RoundedCornerShape(4.dp)) {
-		Text(text, modifier = Modifier.background(Color.Gray).padding(4.dp), color = Color.White)
+		Crossfade(text)
+		{
+			Text(it, modifier = Modifier.background(Color.Gray).padding(4.dp), color = Color.White)
+		}
 	}
 }
