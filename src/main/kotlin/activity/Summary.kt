@@ -14,7 +14,6 @@ import com.github.KamilKurde.Activity
 import com.github.KamilKurde.Intent
 import data.Settings
 import functions.Shortcut
-import getGpus
 import kotlinx.coroutines.*
 import phoenix.phoenixPathIsCorrect
 import ui.table.GpuTable
@@ -29,10 +28,6 @@ class Summary : Activity() {
 		super.onCreate()
 		if (!phoenixPathIsCorrect(Settings.phoenixPath)) {
 			startActivity(Intent(Setup::class))
-		} else {
-			CoroutineScope(Job()).launch {
-				Settings.gpus = getGpus()
-			}
 		}
 		setContent {
 			AppTheme {

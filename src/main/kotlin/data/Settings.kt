@@ -7,10 +7,12 @@ import config.Config
 import config.Wallet
 import config.arguments.*
 import functions.*
+import getGpus
 import kotlinx.coroutines.*
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import miner.*
+import phoenix.phoenixPathIsCorrect
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -117,6 +119,10 @@ object Settings {
 		
 		coroutineScope.launch {
 			try {
+				if (phoenixPathIsCorrect(phoenixPath))
+				{
+					gpus = getGpus()
+				}
 				while (true) {
 					delay(100L)
 					while (activeMiners.any { it.pid == null }) {
