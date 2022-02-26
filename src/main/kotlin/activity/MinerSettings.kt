@@ -116,7 +116,7 @@ class MinerSettings : Activity() {
 								Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
 								TableCell("Name", NAME_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Left)
 								TableCell("Description", DESCRIPTION_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Left)
-								TableCell("Value", VALUE_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Right)
+								TableCell("Value", VALUE_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
 							}
 						}
 						// Handling miner startup on program launch
