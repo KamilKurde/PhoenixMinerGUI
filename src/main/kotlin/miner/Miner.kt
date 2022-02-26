@@ -3,8 +3,8 @@ package miner
 import androidx.compose.runtime.*
 import com.github.pgreze.process.Redirect
 import com.github.pgreze.process.process
-import config.Config
-import config.Parameters
+import config.Arguments
+import config.Option
 import config.arguments.GpusArgument
 import config.arguments.StringArgument
 import data.*
@@ -17,13 +17,13 @@ import java.io.File
 @Serializable
 class MinerData(val name: String = "", val id: Id = Id(1), val mineOnStartup: Boolean = false, val settings: Array<String> = emptyArray()) {
 	
-	fun toMiner() = Miner(name, id, mineOnStartup, Parameters(*settings))
+	fun toMiner() = Miner(name, id, mineOnStartup, Arguments(*settings))
 }
 
 @Suppress("BlockingMethodInNonBlockingContext")
-class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, parameters: Parameters) {
+class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, arguments: Arguments) {
 	
-	constructor(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, vararg parameters: Config) : this(name, id, startMiningOnStartup, Parameters(*parameters))
+	constructor(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, vararg options: Option) : this(name, id, startMiningOnStartup, Arguments(*options))
 	
 	companion object {
 		
@@ -48,7 +48,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 	
 	var mineOnStartup by mutableStateOf(startMiningOnStartup)
 	
-	var parameters by mutableStateOf(parameters)
+	var arguments by mutableStateOf(arguments)
 	
 	var status by mutableStateOf(MinerStatus.Offline)
 	
@@ -68,11 +68,11 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 	
 	private var processingJob = Job()
 	
-	private val gpusFromConfig get() = parameters.copy().firstOrNull { it is Config.GpusParameter && it.configElement == GpusArgument.Gpus } as Config.GpusParameter?
+	private val gpusFromOption get() = arguments.copy().firstOrNull { it is Option.Gpus && it.commandlineArgument == GpusArgument.Gpus } as Option.Gpus?
 	
-	var assignedGpuIds = gpusFromConfig?.value ?: Settings.gpus.map { it.id }.toTypedArray()
+	var assignedGpuIds = gpusFromOption?.value ?: Settings.gpus.map { it.id }.toTypedArray()
 	
-	fun toMinerData() = MinerData(name, id, mineOnStartup, parameters.toStringArray())
+	fun toMinerData() = MinerData(name, id, mineOnStartup, arguments.toStringArray())
 	
 	private val file = File(folder + File.separator + "miner$id.bat")
 	
@@ -199,11 +199,11 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, pa
 		processingJob = Job()
 		status = MinerStatus.Launching
 		CoroutineScope(processingJob + Dispatchers.IO).launch {
-			val formattedSettings = parameters.copy()
-			if (!formattedSettings.any { it is Config.StringParameter && it.configElement == StringArgument.Password }) {
-				formattedSettings.add(Config.StringParameter(StringArgument.Password, "x"))
+			val formattedSettings = arguments.copy()
+			if (!formattedSettings.any { it is Option.String && it.commandlineArgument == StringArgument.Password }) {
+				formattedSettings.add(Option.String(StringArgument.Password, "x"))
 			}
-			val settingsAsArray = (formattedSettings.map { it.fullParameter } + "-hstats 2" + "-rmode 0" + "-cdm 0" + "-fret 1000" + "-gbase 0").toTypedArray()
+			val settingsAsArray = (formattedSettings.map { it.fullArgument } + "-hstats 2" + "-rmode 0" + "-cdm 0" + "-fret 1000" + "-gbase 0").toTypedArray()
 			val settingsAsString = settingsAsArray.joinToString(separator = " ")
 			file.createNewFile()
 			file.writeText(

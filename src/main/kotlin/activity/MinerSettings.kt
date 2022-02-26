@@ -47,9 +47,9 @@ class MinerSettings : Activity() {
 			Miner(
 				"Miner $id", Id(id),
 				false,
-				Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
-				Config.StringParameter(StringArgument.Pool, "eu1.ethermine.org:4444"),
-				Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),
+				Option.Wallet(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
+				Option.String(StringArgument.Pool, "eu1.ethermine.org:4444"),
+				Option.String(StringArgument.Worker, "Donation${Random.nextULong()}"),
 			)
 		}
 		val initialSettings = Json.encodeToString(miner.toMinerData())
@@ -59,7 +59,7 @@ class MinerSettings : Activity() {
 					modifier = Modifier.fillMaxSize().padding(8.dp)
 				) {
 					var name by remember { mutableStateOf(miner.name) }
-					val parameters by remember { mutableStateOf(miner.parameters.allConfigs()) }
+					val parameters by remember { mutableStateOf(miner.arguments.allConfigs()) }
 					
 					Row(
 						horizontalArrangement = Arrangement.SpaceBetween,
@@ -83,7 +83,7 @@ class MinerSettings : Activity() {
 						Button(
 							{
 								miner.name = name.trim()
-								miner.parameters = Parameters(*parameters.filter { it.enabled }.map { it.config }.toTypedArray())
+								miner.arguments = Arguments(*parameters.filter { it.enabled }.map { it.config }.toTypedArray())
 								if (Settings.miners.none { it.id == miner.id }) {
 									Settings.miners.add(miner)
 								}

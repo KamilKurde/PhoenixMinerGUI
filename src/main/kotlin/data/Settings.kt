@@ -3,7 +3,7 @@ package data
 import Gpu
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.WindowPlacement
-import config.Config
+import config.Option
 import config.Wallet
 import config.arguments.*
 import functions.*
@@ -54,11 +54,11 @@ object Settings {
 		Miner(
 			"Donate Your Hashpower To The Dev", Id(0),
 			false,
-			Config.WalletParameter(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
-			Config.StringParameter(StringArgument.Pool, "eu1.ethermine.org:4444"),
-			Config.StringParameter(StringArgument.Worker, "Donation${Random.nextULong()}"),
-			Config.BooleanParameter(BooleanArgument.Log, false),
-			Config.NumberParameter(NumberArgument.Ttli, 80)
+			Option.Wallet(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
+			Option.String(StringArgument.Pool, "eu1.ethermine.org:4444"),
+			Option.String(StringArgument.Worker, "Donation${Random.nextULong()}"),
+			Option.Boolean(BooleanArgument.Log, false),
+			Option.Number(NumberArgument.Ttli, 80)
 		)
 	)
 	var width: Int = 720
@@ -103,7 +103,7 @@ object Settings {
 		(tryOrNull {
 			val file = File(folder + File.separator + "settings.json")
 			@Suppress("JSON_FORMAT_REDUNDANT")
-			Json{ ignoreUnknownKeys = true }.decodeFromString(file.readText())
+			Json { ignoreUnknownKeys = true }.decodeFromString(file.readText())
 		} ?: SettingsData.generateFromSettings()).let { settingsData ->
 			phoenixPath = settingsData.phoenixPath
 			miners.clear()
@@ -119,8 +119,7 @@ object Settings {
 		
 		coroutineScope.launch {
 			try {
-				if (phoenixPathIsCorrect(phoenixPath))
-				{
+				if (phoenixPathIsCorrect(phoenixPath)) {
 					gpus = getGpus()
 				}
 				while (true) {

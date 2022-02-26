@@ -18,7 +18,7 @@ import ui.theme.*
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED")
 @Composable
-fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
+fun ParameterUI(settings: OptionWrapper, displayTooltip: Boolean = true) {
 	MaterialRow {
 		val config = settings.config
 		if (config.required) {
@@ -36,7 +36,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
 		TableCell(config.description, DESCRIPTION_WEIGHT, textAlign = TextAlign.Left, tooltip = if (displayTooltip) config.description else null)
 		Box(modifier = Modifier.weight(VALUE_WEIGHT)) {
 			when (config) {
-				is Config.NumberParameter -> {
+				is Option.Number -> {
 					var temporalValue by remember { mutableStateOf(config.valueAsString) }
 					var errorState by remember { mutableStateOf(false) }
 					TextField(
@@ -62,7 +62,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
 					)
 				}
 				
-				is Config.WalletParameter -> {
+				is Option.Wallet -> {
 					var temporalValue by remember { mutableStateOf(config.valueAsString) }
 					var errorState by remember { mutableStateOf(false) }
 					TextField(
@@ -83,7 +83,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
 					)
 				}
 				
-				is Config.GpusParameter -> {
+				is Option.Gpus -> {
 					var temporalValue by remember { mutableStateOf(config.valueAsString) }
 					var errorState by remember { mutableStateOf(false) }
 					TextField(
@@ -107,7 +107,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
 					)
 				}
 				
-				is Config.BooleanParameter -> {
+				is Option.Boolean -> {
 					Switch(
 						config.value,
 						{ config.value = it },
@@ -115,7 +115,7 @@ fun ParameterUI(settings: SettingsConfig, displayTooltip: Boolean = true) {
 					)
 				}
 				
-				is Config.StringParameter -> {
+				is Option.String -> {
 					TextField(
 						value = config.value,
 						modifier = Modifier.fillMaxSize(),
