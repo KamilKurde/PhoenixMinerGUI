@@ -119,11 +119,18 @@ object Settings {
 		
 		coroutineScope.launch {
 			try {
-				if (phoenixPathIsCorrect(phoenixPath)) {
-					gpus = getGpus()
-				}
 				while (true) {
 					delay(100L)
+					while (gpus.isEmpty()) {
+						try {
+							if (phoenixPathIsCorrect(phoenixPath)) {
+								gpus = getGpus()
+							}
+						} catch (e: Exception) {
+							addError(e)
+						}
+						delay(100L)
+					}
 					while (activeMiners.any { it.pid == null }) {
 						val minerWithoutPid = activeMiners.first { it.pid == null }
 						val unassignedPid = getPIDsFor("PhoenixMiner.exe").firstOrNull { pid -> activeMiners.none { it.pid == pid } }
