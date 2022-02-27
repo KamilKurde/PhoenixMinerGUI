@@ -14,7 +14,7 @@ import phoenix.phoenixPathIsCorrect
 
 val icon = @Composable { painterResource("icon.ico") }
 
-fun main(args: Array<String>) = Application {
+fun main(args: Array<String>) = Application({Settings.addError(it)}) {
 	val phoenixAvailable = phoenixPathIsCorrect(Settings.phoenixPath)
 	if (phoenixAvailable) {
 		CoroutineScope(Job()).launch {
