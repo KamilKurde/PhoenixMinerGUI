@@ -93,9 +93,11 @@ fun ParameterUI(settings: OptionWrapper, displayTooltip: Boolean = true) {
 							temporalValue = newValue
 							try {
 								val ids = temporalValue.split(",").map { Id(it.toInt()) }.toTypedArray()
-								if (ids.all { id -> Settings.gpus.any { gpu -> gpu.id == id } }) {
+								if (ids.all { id -> Settings.gpus.any { gpu -> gpu.id == id } } && ids.isNotEmpty()) {
 									config.value = ids
 									errorState = false
+								} else {
+									errorState = true
 								}
 							} catch (e: Exception) {
 								errorState = true
