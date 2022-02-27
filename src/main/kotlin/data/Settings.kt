@@ -3,9 +3,6 @@ package data
 import Gpu
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.WindowPlacement
-import config.Option
-import config.Wallet
-import config.arguments.*
 import functions.*
 import getGpus
 import kotlinx.coroutines.*
@@ -16,8 +13,6 @@ import phoenix.phoenixPathIsCorrect
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.random.Random
-import kotlin.random.nextULong
 
 val folder = System.getenv("LOCALAPPDATA") + File.separator + "PhoenixMinerGUI"
 
@@ -50,17 +45,7 @@ object Settings {
 	
 	var phoenixPath by mutableStateOf("")
 	var gpus by mutableStateOf(emptyArray<Gpu>())
-	val miners = mutableStateListOf(
-		Miner(
-			"Donate Your Hashpower To The Dev", Id(0),
-			false,
-			Option.Wallet(WalletArgument.Wallet, Wallet("0x65cbddb4e7dd27009278d3160c8a5a4990d580d9")),
-			Option.String(StringArgument.Pool, "eu1.ethermine.org:4444"),
-			Option.String(StringArgument.Worker, "Donation${Random.nextULong()}"),
-			Option.Boolean(BooleanArgument.Log, false),
-			Option.Number(NumberArgument.Ttli, 80)
-		)
-	)
+	val miners = mutableStateListOf(*getDefaultMiners())
 	var width: Int = 720
 	var height: Int = 1280
 	var placement: WindowPlacement = WindowPlacement.Maximized
