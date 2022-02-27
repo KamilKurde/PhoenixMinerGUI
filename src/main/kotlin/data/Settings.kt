@@ -148,7 +148,7 @@ object Settings {
 						if (miner.status == MinerStatus.Waiting) {
 							if (
 								when {
-									miner.assignedGpuIds.isNotEmpty() -> miner.assignedGpuIds.none { id -> gpus[id.value].inUse }
+									miner.assignedGpuIds.isNotEmpty() -> miner.assignedGpuIds.none { id -> gpus.getOrNull(id.value)?.inUse != false }
 									else -> gpus.none { it.inUse }
 								}
 							) {
