@@ -85,14 +85,14 @@ tasks.register<UpdateVersionFile>("updateVersionFileToDevelopment")
 
 tasks.register<Copy>("copyExe")
 {
-	from(project.projectDir.absolutePath + File.separator + "build" + File.separator + "compose" + File.separator + "binaries" + File.separator + "main" + File.separator + "exe" + File.separator + "$appName-$currentVersion.exe")
+	from(tasks.getByName("packageExe"))
 	into(project.projectDir.absolutePath + File.separator + "distributables")
 	rename("(.+)", appName.replace(" ", "") + "-" + currentVersion + "-Setup.exe")
 }
 
 tasks.register<Zip>("zipDistributable")
 {
-	from(project.projectDir.absolutePath + File.separator + "build" + File.separator + "compose" + File.separator + "binaries" + File.separator + "main" + File.separator + "app" + File.separator)
+	from(tasks.getByName("createDistributable"))
 	archiveFileName.set(appName.replace(" ", "") + "-" + currentVersion + "-Portable.zip")
 	destinationDirectory.set(File(project.projectDir.absolutePath + File.separator + "distributables" + File.separator))
 }
@@ -105,5 +105,5 @@ tasks.register<Delete>("cleanDistributablesDir")
 // Main task to use for building distributables for both installer and portable
 tasks.register<GradleBuild>("bundleDistributables")
 {
-	tasks = listOf("cleanDistributablesDir", "updateVersionFileToCurrent", "createDistributable", "zipDistributable", "packageExe", "copyExe", "updateVersionFileToDevelopment")
+	tasks = listOf("cleanDistributablesDir", "updateVersionFileToCurrent", "zipDistributable", "copyExe", "updateVersionFileToDevelopment")
 }
