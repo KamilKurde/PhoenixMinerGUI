@@ -68,9 +68,9 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 	
 	private var processingJob = Job()
 	
-	private val gpusFromOption get() = arguments.copy().firstOrNull { it is Option.Gpus && it.commandlineArgument == GpusArgument.Gpus } as Option.Gpus?
+	private val gpusFromOption get() = arguments.copy().firstOrNull { it is Option.Gpus && it.commandlineArgument == GpusArgument.Gpus && it.value.isNotEmpty() } as Option.Gpus?
 	
-	var assignedGpuIds = gpusFromOption?.value ?: Settings.gpus.map { it.id }.toTypedArray()
+	val assignedGpuIds get() = gpusFromOption?.value ?: Settings.gpus.map { it.id }.toTypedArray()
 	
 	fun toMinerData() = MinerData(name, id, mineOnStartup, arguments.toStringArray())
 	
