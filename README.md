@@ -35,7 +35,7 @@ Unofficial PhoenixMiner GUI for windows
 	* Start/Stop button which changes depending on miner status
 	* Settings button which takes you back to the configuration screen of the miner (you can delete miner in there using red button on the bottom)
 5. You can start miner from command line by launching PhoenixMinerGUI and passing ID or Name of the miner as arguments (you can mix usage of IDs and Names), if the name contains spaces you need to wrap it in quotation marks
-	* (eg, if you have "My Miner" with ID 1, and "The other miner" with ID 2, and you want to run them both then you can do this like that: "*[Path to PhoenixMinerGUI folder]*\PhoenixMiner GUI.exe "My Miner" 2", this will start PhoenixMiner, and it will automatically start both miners)
+	* (eg, if you have "My Miner" with ID 1, and "The other miner" with ID 2, and you want to run them both then you can do this like that: `[Path to PhoenixMinerGUI folder]\PhoenixMiner GUI.exe "My Miner" 2`, this will start PhoenixMiner, and it will automatically start both miners)
 
 ## Command line arguments
 
