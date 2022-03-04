@@ -145,8 +145,15 @@ object Settings {
 						minersToStart.removeFirst()
 					}
 				}
-			} catch (e: CancellationException) {
-				println("settings killed")
+			} catch (e: Exception) {
+				if (e is CancellationException)
+				{
+					println("Settings killed")
+				}
+				else
+				{
+					addError(e)
+				}
 			}
 			
 		}
