@@ -43,6 +43,11 @@ class SettingsData constructor(
 
 object Settings {
 	
+	private val serializer = Json {
+		ignoreUnknownKeys = true
+		encodeDefaults = true
+	}
+	
 	var phoenixPath by mutableStateOf("")
 	var gpus by mutableStateOf(emptyArray<Gpu>())
 	val miners = mutableStateListOf(*getDefaultMiners())
@@ -88,7 +93,7 @@ object Settings {
 		(tryOrNull {
 			val file = File(folder + File.separator + "settings.json")
 			@Suppress("JSON_FORMAT_REDUNDANT")
-			Json { ignoreUnknownKeys = true }.decodeFromString(file.readText())
+			serializer.decodeFromString(file.readText())
 		} ?: SettingsData.generateFromSettings()).let { settingsData ->
 			phoenixPath = settingsData.phoenixPath
 			miners.clear()
@@ -164,6 +169,6 @@ object Settings {
 		File(folder).mkdirs()
 		val file = File(folder + File.separator + "settings.json")
 		file.createNewFile()
-		file.writeText(Json.encodeToString(SettingsData.generateFromSettings()))
+		file.writeText(serializer.encodeToString(SettingsData.generateFromSettings()))
 	}
 }
