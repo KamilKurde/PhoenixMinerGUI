@@ -54,7 +54,7 @@ class Setup : Activity() {
 						{
 							TooltipArea(
 								{
-									Tooltip("This version was tested for PhoenixMiner 5.9d however it should work with newer version as well")
+									Tooltip("This version was tested for PhoenixMiner 6.0b however it should work with newer version as well")
 								}
 							)
 							{
