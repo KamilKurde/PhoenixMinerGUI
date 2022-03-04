@@ -40,7 +40,7 @@ class Summary : Activity() {
 						Text("Miners", fontWeight = FontWeight.Bold)
 					}
 					MinerTable(this@Summary, Modifier.weight(1f, false))
-					Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically)
+					Row(Modifier.fillMaxWidth().padding(top = SPACERS_HEIGHT.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically)
 					{
 						Text(VERSION)
 						// This doesn't work without full distributable, distributable gives exe location as its path, while running from IDEA program gives project location as its path
