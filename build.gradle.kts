@@ -33,7 +33,7 @@ dependencies {
 	implementation(compose.desktop.currentOs)
 	implementation("com.github.pgreze:kotlin-process:1.3.1")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-	implementation("com.github.KamilKurde:cdalf:0.2.7")
+	implementation("com.github.KamilKurde:cdalf:0.2.8")
 }
 
 compose.desktop {
