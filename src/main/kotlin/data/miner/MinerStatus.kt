@@ -1,4 +1,4 @@
-package miner
+package data.miner
 
 enum class MinerStatus {
 	Offline,

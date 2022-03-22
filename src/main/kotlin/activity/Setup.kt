@@ -12,7 +12,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
 import functions.tryWithoutCatch
-import getGpus
 import kotlinx.coroutines.*
 import phoenix.openFileDialog
 import phoenix.phoenixPathIsCorrect

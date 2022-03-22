@@ -1,4 +1,4 @@
-package miner
+package data.miner
 
 import config.Option
 import config.Wallet

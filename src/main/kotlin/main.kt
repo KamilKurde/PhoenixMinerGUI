@@ -9,7 +9,7 @@ import com.github.KamilKurde.Intent
 import data.Settings
 import functions.*
 import kotlinx.coroutines.*
-import miner.Miner
+import data.miner.Miner
 import phoenix.phoenixPathIsCorrect
 
 val icon = @Composable { painterResource("icon.ico") }

@@ -1,18 +1,16 @@
 package data
 
-import Gpu
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.WindowPlacement
 import data.serializers.SettingsSerializer
 import functions.*
-import getGpus
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
-import miner.*
+import data.miner.*
 import phoenix.phoenixPathIsCorrect
 import java.io.File
 import java.text.SimpleDateFormat

@@ -1,4 +1,4 @@
-package miner
+package data.miner
 
 import androidx.compose.runtime.*
 import com.github.pgreze.process.Redirect
@@ -69,7 +69,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 	
 	val assignedGpuIds get() = gpusFromOption?.value ?: settings.gpus.map { it.id }.toTypedArray()
 	
-	private val file = File(folder + File.separator + "miner$id.bat")
+	private val file = File(folder + File.separator + "data.miner$id.bat")
 	
 	fun log(message: String) = println("Miner $id: $message")
 	
@@ -176,7 +176,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 				// Workaround for phoenix not reporting throttled usage in normal stats
 				line.startsWith("Throttling GPUs") -> updateGpusThrottling(line)
 				
-				line.startsWith("miner stopped") -> {
+				line.startsWith("data.miner stopped") -> {
 					resetTemporalData()
 					status = MinerStatus.ProgramError
 					settings.startMiner(this@Miner)
@@ -204,7 +204,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 			file.writeText(
 				"@echo off\n" +
 						"\"${settings.phoenixPath}\" $settingsAsString\n" +
-						"echo miner stopped"
+						"echo data.miner stopped"
 			)
 			try {
 				process(

@@ -75,7 +75,7 @@ fun MinerTable(
 				},
 			)
 			{
-				Text("Create new miner")
+				Text("Create new data.miner")
 			}
 		}
 	}

@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
 import com.github.KamilKurde.Intent
 import kotlinx.coroutines.*
-import miner.Miner
-import miner.MinerStatus
+import data.miner.Miner
+import data.miner.MinerStatus
 import settings
 import ui.material.Stop
 import ui.table.TableCell

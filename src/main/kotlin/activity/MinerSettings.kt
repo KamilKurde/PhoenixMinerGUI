@@ -24,7 +24,7 @@ import data.Id
 import kotlinx.coroutines.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import miner.Miner
+import data.miner.Miner
 import settings
 import ui.ParameterUI
 import ui.material.MaterialRow
@@ -88,10 +88,10 @@ class Minersettings : Activity() {
 									settings.miners.add(miner)
 								}
 								settings.save()
-								// Ensure that miner is active and changes were made before restarting miner
+								// Ensure that data.miner is active and changes were made before restarting data.miner
 								if (miner.isActive && initialsettings != Json.encodeToString(miner)) {
 									CoroutineScope(Job()).launch {
-										miner.log("Restarting miner")
+										miner.log("Restarting data.miner")
 										miner.stopMining()
 										settings.startMiner(miner)
 									}
@@ -119,12 +119,12 @@ class Minersettings : Activity() {
 								TableCell("Value", VALUE_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
 							}
 						}
-						// Handling miner startup on program launch
+						// Handling data.miner startup on program launch
 						item {
 							MaterialRow {
 								Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
 								TableCell("Mos", NAME_WEIGHT, textAlign = TextAlign.Left)
-								TableCell("Start this miner on program launch", DESCRIPTION_WEIGHT, textAlign = TextAlign.Left)
+								TableCell("Start this data.miner on program launch", DESCRIPTION_WEIGHT, textAlign = TextAlign.Left)
 								Box(modifier = Modifier.weight(VALUE_WEIGHT)) {
 									Switch(
 										miner.mineOnStartup,
@@ -155,7 +155,7 @@ class Minersettings : Activity() {
 							modifier = Modifier.width(400.dp),
 							onDismissRequest = { deletionAlert = false },
 							title = {
-								Text("Are you sure that you want to delete this miner?")
+								Text("Are you sure that you want to delete this data.miner?")
 							},
 							text = {
 								Text("This action cannot be undone")
