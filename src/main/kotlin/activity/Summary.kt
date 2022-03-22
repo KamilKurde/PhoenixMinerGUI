@@ -36,7 +36,7 @@ class Summary : Activity() {
 				Column(modifier = Modifier.padding(top = SPACERS_HEIGHT.dp).fillMaxWidth().height(SPACERS_HEIGHT.dp), verticalArrangement = Arrangement.SpaceEvenly, horizontalAlignment = Alignment.CenterHorizontally) {
 					Text("Miners", fontWeight = FontWeight.Bold, color = MaterialTheme.colors.onBackground)
 				}
-				MinerTable(this@Summary, Modifier.weight(1f, false), this@Summary::setTheme)
+				MinerTable(this@Summary, Modifier.weight(1f, false))
 				Row(Modifier.fillMaxWidth().padding(top = SPACERS_HEIGHT.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically)
 				{
 					Text(VERSION, color = MaterialTheme.colors.onBackground)

@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.github.KamilKurde"
-val currentVersion = "0.7.0"
+val currentVersion = "0.7.1"
 val appName = "PhoenixMiner GUI"
 version = currentVersion
 
@@ -33,7 +33,7 @@ dependencies {
 	implementation(compose.desktop.currentOs)
 	implementation("com.github.pgreze:kotlin-process:1.3.1")
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-	implementation("com.github.KamilKurde:cdalf:0.2.9")
+	implementation("com.github.KamilKurde:cdalf:0.2.10")
 }
 
 compose.desktop {

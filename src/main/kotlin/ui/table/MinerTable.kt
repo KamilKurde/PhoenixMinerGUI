@@ -25,7 +25,6 @@ import ui.material.*
 fun MinerTable(
 	activity: Activity,
 	modifier: Modifier = Modifier,
-	setTheme: (theme: Theme) -> Unit,
 ) {
 	MaterialColumn(modifier.roundedBorder()) {
 		LazyColumn {
@@ -70,7 +69,7 @@ fun MinerTable(
 				modifier = Modifier.padding(start = 8.dp),
 				onClick = {
 					settings.darkMode = !settings.darkMode
-					setTheme(settings.colors)
+					Application.windows.forEach { it.defaultTheme = settings.colors }
 				})
 			{
 				Icon(if (settings.darkMode) Icons.Rounded.LightMode else Icons.Rounded.DarkMode, "Change theme")

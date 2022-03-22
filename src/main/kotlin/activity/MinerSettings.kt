@@ -53,10 +53,6 @@ class Minersettings : Activity() {
 		}
 		val initialSettings = Json.encodeToString(miner)
 		setContent {
-			LaunchedEffect(settings.darkMode)
-			{
-				setTheme(settings.colors)
-			}
 			Column(
 				modifier = Modifier.fillMaxSize().padding(8.dp)
 			) {
@@ -94,7 +90,7 @@ class Minersettings : Activity() {
 							// Ensure that data.miner is active and changes were made before restarting data.miner
 							if (miner.isActive && initialSettings != Json.encodeToString(miner)) {
 								CoroutineScope(Job()).launch {
-									miner.log("Restarting data.miner")
+									miner.log("Restarting miner")
 									miner.stopMining()
 									settings.startMiner(miner)
 								}
