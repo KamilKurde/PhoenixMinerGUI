@@ -39,9 +39,6 @@ class Setup : Activity() {
 								tryWithoutCatch {
 									(openFileDialog(ComposeWindow(), "choose PhoenixMiner.exe file").absolutePath).let {
 										if (phoenixPathIsCorrect(it)) {
-											CoroutineScope(Job()).launch {
-												settings.gpus = getGpus()
-											}
 											settings.phoenixPath = it
 											settings.save()
 											finish()
