@@ -12,6 +12,7 @@ import functions.taskKill
 import functions.tryWithoutCatch
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
+import settings
 import java.io.File
 
 @Serializable
@@ -35,7 +36,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 		}
 		
 		suspend fun stopAllMiners(killOtherMiners: Boolean = true) {
-			Settings.miners.forEach { it.stopMining() }
+			settings.miners.forEach { it.stopMining() }
 			if (killOtherMiners) {
 				killAllMiners()
 			}
@@ -70,7 +71,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 	
 	private val gpusFromOption get() = arguments.copy().firstOrNull { it is Option.Gpus && it.commandlineArgument == GpusArgument.Gpus && it.value.isNotEmpty() } as Option.Gpus?
 	
-	val assignedGpuIds get() = gpusFromOption?.value ?: Settings.gpus.map { it.id }.toTypedArray()
+	val assignedGpuIds get() = gpusFromOption?.value ?: settings.gpus.map { it.id }.toTypedArray()
 	
 	fun toMinerData() = MinerData(name, id, mineOnStartup, arguments.toStringArray())
 	
@@ -118,7 +119,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 					if (time == null) {
 						time = Time(second)
 					}
-					assignedGpuIds.map { id -> Settings.gpus[id.value] }.forEach { gpu ->
+					assignedGpuIds.map { id -> settings.gpus[id.value] }.forEach { gpu ->
 						gpu.time = time
 					}
 				}
@@ -129,15 +130,15 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 	private fun updateGpuStats(line: String) {
 		for (internalId in assignedGpuIds.indices) {
 			if (line.startsWith("GPU$internalId") && !(line.startsWith("GPU$internalId: Using") || line.startsWith("GPU$internalId: DAG"))) {
-				val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId] }
-				val gpu = Settings.gpus[gpuSettingsIndex]
+				val gpusettingsIndex = settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId] }
+				val gpu = settings.gpus[gpusettingsIndex]
 				val splitLine = line.split(" ")
 				if (line.startsWith("GPU$internalId: cclock")) {
 					gpu.powerEfficiency = splitLine[splitLine.size - 2].toInt()
 				} else {
 					var splitLineMultiGpu = splitLine
 					while (splitLineMultiGpu.isNotEmpty()) {
-						val currentGpu = Settings.gpus.first { it.id == assignedGpuIds[splitLineMultiGpu[0].removePrefix("GPU").removeSuffix(":").toInt()] }
+						val currentGpu = settings.gpus.first { it.id == assignedGpuIds[splitLineMultiGpu[0].removePrefix("GPU").removeSuffix(":").toInt()] }
 						
 						currentGpu.temperature = splitLineMultiGpu[1].removeSuffix("C").toInt()
 						currentGpu.percentage = splitLineMultiGpu[2].removeSuffix("%").toInt()
@@ -156,8 +157,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 		for (internalId in 1..assignedGpuIds.size + 1) {
 			split.forEachIndexed { index, string ->
 				if (string == "GPU$internalId") {
-					val gpuSettingsIndex = Settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId - 1] }
-					val gpu = Settings.gpus[gpuSettingsIndex]
+					val gpusettingsIndex = settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId - 1] }
+					val gpu = settings.gpus[gpusettingsIndex]
 					gpu.percentage = split[index + 1].removeSuffix(",").removePrefix("(").removeSuffix("%)").toInt()
 				}
 			}
@@ -184,12 +185,12 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 				line.startsWith("miner stopped") -> {
 					resetTemporalData()
 					status = MinerStatus.ProgramError
-					Settings.startMiner(this@Miner)
+					settings.startMiner(this@Miner)
 				}
 			}
 		} catch (e: Exception) {
 			log(e.stackTraceToString())
-			Settings.addError(e, false)
+			settings.addError(e, false)
 		}
 	}
 	
@@ -199,16 +200,16 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 		processingJob = Job()
 		status = MinerStatus.Launching
 		CoroutineScope(processingJob + Dispatchers.IO).launch {
-			val formattedSettings = arguments.copy()
-			if (!formattedSettings.any { it is Option.String && it.commandlineArgument == StringArgument.Password }) {
-				formattedSettings.add(Option.String(StringArgument.Password, "x"))
+			val formattedsettings = arguments.copy()
+			if (!formattedsettings.any { it is Option.String && it.commandlineArgument == StringArgument.Password }) {
+				formattedsettings.add(Option.String(StringArgument.Password, "x"))
 			}
-			val settingsAsArray = (formattedSettings.map { it.fullArgument } + "-hstats 2" + "-rmode 0" + "-cdm 0" + "-fret 1000" + "-gbase 0").toTypedArray()
+			val settingsAsArray = (formattedsettings.map { it.fullArgument } + "-hstats 2" + "-rmode 0" + "-cdm 0" + "-fret 1000" + "-gbase 0").toTypedArray()
 			val settingsAsString = settingsAsArray.joinToString(separator = " ")
 			file.createNewFile()
 			file.writeText(
 				"@echo off\n" +
-						"\"${Settings.phoenixPath}\" $settingsAsString\n" +
+						"\"${settings.phoenixPath}\" $settingsAsString\n" +
 						"echo miner stopped"
 			)
 			try {

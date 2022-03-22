@@ -11,12 +11,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
-import data.Settings
 import functions.tryWithoutCatch
 import getGpus
 import kotlinx.coroutines.*
 import phoenix.openFileDialog
 import phoenix.phoenixPathIsCorrect
+import settings
 import ui.material.Tooltip
 import ui.theme.AppTheme
 
@@ -40,10 +40,10 @@ class Setup : Activity() {
 									(openFileDialog(ComposeWindow(), "choose PhoenixMiner.exe file").absolutePath).let {
 										if (phoenixPathIsCorrect(it)) {
 											CoroutineScope(Job()).launch {
-												Settings.gpus = getGpus()
+												settings.gpus = getGpus()
 											}
-											Settings.phoenixPath = it
-											Settings.save()
+											settings.phoenixPath = it
+											settings.save()
 											finish()
 										}
 									}

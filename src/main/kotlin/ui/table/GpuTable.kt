@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import data.Settings
+import settings
 import ui.ConstrainedRow
 import ui.material.MaterialColumn
 import ui.material.MaterialRow
@@ -40,16 +40,16 @@ fun GpuTable(
 				}
 			}
 			
-			if (Settings.gpus.isEmpty()) {
+			if (settings.gpus.isEmpty()) {
 				item {
 					LinearProgressIndicator(Modifier.fillMaxWidth())
 				}
 			}
 			
-			items(Settings.gpus.size)
+			items(settings.gpus.size)
 			{
 				MaterialRow(Modifier.fillMaxWidth()) {
-					val gpu = Settings.gpus[it]
+					val gpu = settings.gpus[it]
 					val namesToRemove = listOf("NVIDIA", "GeForce", "AMD", "Radeon")
 					val nameWithoutKeywords = gpu.name.substring(namesToRemove.maxOf { gpu.name.indexOf(it, ignoreCase = true) + it.length })
 					ConstrainedRow(

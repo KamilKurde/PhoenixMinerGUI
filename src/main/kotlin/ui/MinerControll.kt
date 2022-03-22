@@ -1,7 +1,7 @@
 package ui
 
 import ID_COLUMN_SIZE
-import activity.MinerSettings
+import activity.Minersettings
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -14,10 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
 import com.github.KamilKurde.Intent
-import data.Settings
 import kotlinx.coroutines.*
 import miner.Miner
 import miner.MinerStatus
+import settings
 import ui.material.Stop
 import ui.table.TableCell
 
@@ -35,14 +35,14 @@ fun RowScope.MinerControls(miner: Miner, size: Int, activity: Activity) {
 						miner.stopMining()
 					}
 				} else {
-					Settings.startMiner(miner)
+					settings.startMiner(miner)
 				}
 			}, modifier = modifier
 		)
 		{
 			Icon(if (minerRunning) Icons.Rounded.Stop else Icons.Rounded.PlayArrow, if (minerRunning) "Stop button" else "Start button", tint = Color.Black)
 		}
-		IconButton({ activity.startActivity(Intent(MinerSettings::class).putExtra("minerID", Settings.miners.indexOf(miner))) }, modifier = modifier)
+		IconButton({ activity.startActivity(Intent(Minersettings::class).putExtra("minerID", settings.miners.indexOf(miner))) }, modifier = modifier)
 		{
 			Icon(Icons.Rounded.Settings, "Edit", tint = Color.Black)
 		}

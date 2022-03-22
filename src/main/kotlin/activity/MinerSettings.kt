@@ -21,11 +21,11 @@ import config.*
 import config.arguments.StringArgument
 import config.arguments.WalletArgument
 import data.Id
-import data.Settings
 import kotlinx.coroutines.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import miner.Miner
+import settings
 import ui.ParameterUI
 import ui.material.MaterialRow
 import ui.table.TableCell
@@ -33,7 +33,7 @@ import ui.theme.*
 import kotlin.random.Random
 import kotlin.random.nextULong
 
-class MinerSettings : Activity() {
+class Minersettings : Activity() {
 	
 	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
 	@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
@@ -41,9 +41,9 @@ class MinerSettings : Activity() {
 		super.onCreate()
 		val minerID = intent.getExtra<Int>("minerID")
 		val miner = if (minerID != null) {
-			Settings.miners[minerID]
+			settings.miners[minerID]
 		} else {
-			val id = (0..Int.MAX_VALUE).first { int -> Settings.miners.none { it.id.value == int } }
+			val id = (0..Int.MAX_VALUE).first { int -> settings.miners.none { it.id.value == int } }
 			Miner(
 				"Miner $id", Id(id),
 				false,
@@ -52,7 +52,7 @@ class MinerSettings : Activity() {
 				Option.String(StringArgument.Worker, "Donation${Random.nextULong()}"),
 			)
 		}
-		val initialSettings = Json.encodeToString(miner.toMinerData())
+		val initialsettings = Json.encodeToString(miner.toMinerData())
 		setContent {
 			AppTheme {
 				Column(
@@ -84,16 +84,16 @@ class MinerSettings : Activity() {
 							{
 								miner.name = name.trim()
 								miner.arguments = Arguments(*parameters.filter { it.enabled }.map { it.config }.toTypedArray())
-								if (Settings.miners.none { it.id == miner.id }) {
-									Settings.miners.add(miner)
+								if (settings.miners.none { it.id == miner.id }) {
+									settings.miners.add(miner)
 								}
-								Settings.save()
+								settings.save()
 								// Ensure that miner is active and changes were made before restarting miner
-								if (miner.isActive && initialSettings != Json.encodeToString(miner.toMinerData())) {
+								if (miner.isActive && initialsettings != Json.encodeToString(miner.toMinerData())) {
 									CoroutineScope(Job()).launch {
 										miner.log("Restarting miner")
 										miner.stopMining()
-										Settings.startMiner(miner)
+										settings.startMiner(miner)
 									}
 								}
 							}
@@ -169,8 +169,8 @@ class MinerSettings : Activity() {
 							confirmButton = {
 								Button(
 									{
-										Settings.miners.remove(miner)
-										Settings.save()
+										settings.miners.remove(miner)
+										settings.save()
 										parent.back()
 										deletionAlert = false
 									}, colors = ButtonDefaults.buttonColors(Color.Red, Color.White)

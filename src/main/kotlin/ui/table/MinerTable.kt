@@ -3,7 +3,7 @@ package ui.table
 import CONTROLS_COLUMN_SIZE
 import NAME_COLUMN_SIZE
 import SIZE_PER_ELEMENT
-import activity.MinerSettings
+import activity.Minersettings
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
 import com.github.KamilKurde.Intent
-import data.Settings
+import settings
 import ui.ConstrainedRow
 import ui.MinerControls
 import ui.material.MaterialColumn
@@ -47,9 +47,9 @@ fun MinerTable(
 					)
 				}
 			}
-			items(Settings.miners.size)
+			items(settings.miners.size)
 			{
-				val miner = Settings.miners[it]
+				val miner = settings.miners[it]
 				MaterialRow(Modifier.fillMaxWidth()) {
 					ConstrainedRow(
 						Modifier.weight(1f),
@@ -70,7 +70,7 @@ fun MinerTable(
 		{
 			TextButton(
 				{
-					val intent = Intent(MinerSettings::class)
+					val intent = Intent(Minersettings::class)
 					activity.startActivity(intent)
 				},
 			)

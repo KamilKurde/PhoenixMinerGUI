@@ -14,8 +14,10 @@ import phoenix.phoenixPathIsCorrect
 
 val icon = @Composable { painterResource("icon.ico") }
 
-fun main(args: Array<String>) = Application({Settings.addError(it)}) {
-	val phoenixAvailable = phoenixPathIsCorrect(Settings.phoenixPath)
+var settings = Settings.load() ?: Settings()
+
+fun main(args: Array<String>) = Application({ settings.addError(it) }) {
+	val phoenixAvailable = phoenixPathIsCorrect(settings.phoenixPath)
 	if (phoenixAvailable) {
 		CoroutineScope(Job()).launch {
 			if ("/nokill" !in args) {
@@ -26,27 +28,27 @@ fun main(args: Array<String>) = Application({Settings.addError(it)}) {
 				}
 				Miner.killAllMiners()
 			} else {
-				Settings.nokill = true
+				settings.nokill = true
 			}
 			args.forEach { arg ->
-				Settings.miners.firstOrNull {
+				settings.miners.firstOrNull {
 					it.name == arg || tryOrFalse {
 						it.id.value == arg.toInt()
 					}
-				}?.let { Settings.startMiner(it) }
+				}?.let { settings.startMiner(it) }
 			}
 			if ("/nomos" !in args) {
-				Settings.miners.filter { it.mineOnStartup }.forEach {
-					Settings.startMiner(it)
+				settings.miners.filter { it.mineOnStartup }.forEach {
+					settings.startMiner(it)
 				}
 			}
 		}
 	}
 	val windowState = WindowState(
-		width = Settings.width.dp,
-		height = Settings.height.dp,
-		placement = Settings.placement,
-		position = WindowPosition(Settings.positionX.dp, Settings.positionY.dp)
+		width = settings.width.dp,
+		height = settings.height.dp,
+		placement = settings.placement,
+		position = WindowPosition(settings.positionX.dp, settings.positionY.dp)
 	)
 	val intent = Intent(Summary::class)
 	com.github.KamilKurde.Window(
@@ -56,7 +58,7 @@ fun main(args: Array<String>) = Application({Settings.addError(it)}) {
 		windowState = windowState,
 		onCloseRequest = {
 			runBlocking { Miner.stopAllMiners("/nokill" !in args) }
-			Settings.apply {
+			settings.apply {
 				height = windowState.size.height.value.toInt()
 				width = windowState.size.width.value.toInt()
 				placement = windowState.placement
@@ -67,4 +69,10 @@ fun main(args: Array<String>) = Application({Settings.addError(it)}) {
 			close()
 		}
 	)
+	
+	val settingsScope = CoroutineScope(Job())
+	settingsScope.launch {
+		delay(1000L)
+		settings.executionLoop()
+	}
 }

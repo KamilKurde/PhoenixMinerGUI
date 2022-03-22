@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import config.*
 import data.Id
-import data.Settings
+import settings
 import ui.material.MaterialRow
 import ui.table.TableCell
 import ui.theme.*
@@ -18,17 +18,17 @@ import ui.theme.*
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED")
 @Composable
-fun ParameterUI(settings: OptionWrapper, displayTooltip: Boolean = true) {
+fun ParameterUI(option: OptionWrapper, displayTooltip: Boolean = true) {
 	MaterialRow {
-		val config = settings.config
+		val config = option.config
 		if (config.required) {
 			Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
 		} else {
 			Box(modifier = Modifier.weight(CHECKBOX_WEIGHT), contentAlignment = Alignment.Center)
 			{
 				Checkbox(
-					settings.enabled,
-					{ settings.enabled = it }
+					option.enabled,
+					{ option.enabled = it }
 				)
 			}
 		}
@@ -93,7 +93,7 @@ fun ParameterUI(settings: OptionWrapper, displayTooltip: Boolean = true) {
 							temporalValue = newValue
 							try {
 								val ids = temporalValue.split(",").map { Id(it.toInt()) }.toTypedArray()
-								if (ids.all { id -> Settings.gpus.any { gpu -> gpu.id == id } } && ids.isNotEmpty()) {
+								if (ids.all { id -> settings.gpus.any { gpu -> gpu.id == id } } && ids.isNotEmpty()) {
 									config.value = ids
 									errorState = false
 								} else {

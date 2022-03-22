@@ -4,14 +4,14 @@ import androidx.compose.runtime.*
 import com.github.pgreze.process.Redirect
 import com.github.pgreze.process.process
 import data.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.io.File
 
 data class Gpu(val name: String, var id: Id = Id(1)) {
 	
 	val inUse
 		get(): Boolean {
-			val isUsed = Settings.activeMiners.any { miner -> miner.assignedGpuIds.any { it == id } }
+			val isUsed = settings.activeMiners.any { miner -> miner.assignedGpuIds.any { it == id } }
 			if (!isUsed) {
 				percentage = null
 				temperature = null
@@ -38,7 +38,7 @@ data class Gpu(val name: String, var id: Id = Id(1)) {
 suspend fun getGpus(): Array<Gpu> {
 	val file = File(folder + File.separator + "deviceDiscovery.bat")
 	file.createNewFile()
-	val path = Settings.phoenixPath
+	val path = settings.phoenixPath
 	file.writeText(
 		"echo off\n" +
 				"\"$path\" -list -gbase 0"
