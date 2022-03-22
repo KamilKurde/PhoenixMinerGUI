@@ -22,24 +22,24 @@ Unofficial PhoenixMiner GUI for windows
 1. Main app screen consists of two tables, the upper one shows GPUs detected by PhoenixMiner, the bottom one shows your configured miners
    ![Summary](../assets/Summary.png?raw=true#gh-light-mode-only)
    ![Summary](../assets/Summary-dark.png?raw=true#gh-dark-mode-only)
-3. To create new data.miner simply click on "Create new data.miner" button which will take you to the configuration screen
+3. To create new miner simply click on "Create new miner" button which will take you to the configuration screen
    ![Settings](../assets/Settings.png?raw=true#gh-light-mode-only)
    ![Settings](../assets/Settings-dark.png?raw=true#gh-dark-mode-only)
-	* You can change name of the data.miner in the upper text field
+	* You can change name of the miner in the upper text field
 	* Changes aren't saved automatically, to save changes you need to click on the "Save" button
 	* Settings table consists of 4 columns:
-		1. Checkbox to enable/disable option (visible only on options that aren't required by the data.miner)
+		1. Checkbox to enable/disable option (visible only on options that aren't required by the miner)
 		2. Name is simply command line argument name, table is sorted alphabetically by it (excluding required options, they are always on top)
 		3. Description is shortened description from PhoenixMiner docs
 		4. Value is field for changing parameter, if it's text field, and it turns red that means current data that's entered in there isn't in correct format.
 			* In that case when you save settings it will take last correct value (so e.g. when you enter "80" as value of Ttli and you hit backspace it changes to "8" which is a correct value and when you hit backspace it changes to "" which isn't correct value, so when you hit "Save" button it will save Ttli as "8")
-4. On the left of the data.miner name you have two buttons:
+4. On the left of the miner name you have two buttons:
    ![Working](../assets/Working.png?raw=true#gh-light-mode-only)
    ![Working](../assets/Working-dark.png?raw=true#gh-dark-mode-only)
-	* Start/Stop button which changes depending on data.miner status
-	* Settings button which takes you back to the configuration screen of the data.miner (you can delete data.miner in there using red button on the bottom)
-5. You can start data.miner from command line by launching PhoenixMinerGUI and passing ID or Name of the data.miner as arguments (you can mix usage of IDs and Names), if the name contains spaces you need to wrap it in quotation marks
-	* (eg, if you have "My Miner" with ID 1, and "The other data.miner" with ID 2, and you want to run them both then you can do this like that: `[Path to PhoenixMinerGUI folder]\PhoenixMiner GUI.exe "My Miner" 2`, this will start PhoenixMiner, and it will automatically start both miners)
+	* Start/Stop button which changes depending on miner status
+	* Settings button which takes you back to the configuration screen of the miner (you can delete miner in there using red button on the bottom)
+5. You can start miner from command line by launching PhoenixMinerGUI and passing ID or Name of the miner as arguments (you can mix usage of IDs and Names), if the name contains spaces you need to wrap it in quotation marks
+	* (eg, if you have "My Miner" with ID 1, and "The other miner" with ID 2, and you want to run them both then you can do this like that: `[Path to PhoenixMinerGUI folder]\PhoenixMiner GUI.exe "My Miner" 2`, this will start PhoenixMiner, and it will automatically start both miners)
 
 ## Command line arguments
 
