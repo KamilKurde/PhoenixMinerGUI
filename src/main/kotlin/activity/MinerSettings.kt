@@ -51,7 +51,7 @@ class Minersettings : Activity() {
 				Option.String(StringArgument.Worker, "Donation${Random.nextULong()}"),
 			)
 		}
-		val initialsettings = Json.encodeToString(miner)
+		val initialSettings = Json.encodeToString(miner)
 		setContent {
 			LaunchedEffect(settings.darkMode)
 			{
@@ -92,7 +92,7 @@ class Minersettings : Activity() {
 							}
 							settings.save()
 							// Ensure that data.miner is active and changes were made before restarting data.miner
-							if (miner.isActive && initialsettings != Json.encodeToString(miner)) {
+							if (miner.isActive && initialSettings != Json.encodeToString(miner)) {
 								CoroutineScope(Job()).launch {
 									miner.log("Restarting data.miner")
 									miner.stopMining()
