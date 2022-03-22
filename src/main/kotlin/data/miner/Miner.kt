@@ -121,6 +121,19 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 		}
 	}
 	
+	private fun updatePowerRelatedStats(input: List<String>) {
+		var splitLineMultiGpu = input
+		while (splitLineMultiGpu.isNotEmpty()) {
+			val currentGpu = settings.gpus.first { it.id == assignedGpuIds[splitLineMultiGpu[0].removePrefix("GPU").removeSuffix(":").toInt()] }
+			
+			currentGpu.temperature = splitLineMultiGpu[1].removeSuffix("C").toInt()
+			currentGpu.percentage = splitLineMultiGpu[2].removeSuffix("%").toInt()
+			currentGpu.powerDraw = splitLineMultiGpu[3].removeSuffix(",").removeSuffix("W").toInt()
+			
+			splitLineMultiGpu = splitLineMultiGpu.drop(4)
+		}
+	}
+	
 	private fun updateGpuStats(line: String) {
 		for (internalId in assignedGpuIds.indices) {
 			if (line.startsWith("GPU$internalId") && !(line.startsWith("GPU$internalId: Using") || line.startsWith("GPU$internalId: DAG"))) {
@@ -130,16 +143,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 				if (line.startsWith("GPU$internalId: cclock")) {
 					gpu.powerEfficiency = splitLine[splitLine.size - 2].toInt()
 				} else {
-					var splitLineMultiGpu = splitLine
-					while (splitLineMultiGpu.isNotEmpty()) {
-						val currentGpu = settings.gpus.first { it.id == assignedGpuIds[splitLineMultiGpu[0].removePrefix("GPU").removeSuffix(":").toInt()] }
-						
-						currentGpu.temperature = splitLineMultiGpu[1].removeSuffix("C").toInt()
-						currentGpu.percentage = splitLineMultiGpu[2].removeSuffix("%").toInt()
-						currentGpu.powerDraw = splitLineMultiGpu[3].removeSuffix(",").removeSuffix("W").toInt()
-						
-						splitLineMultiGpu = splitLineMultiGpu.drop(4)
-					}
+					updatePowerRelatedStats(splitLine)
 				}
 			}
 			
