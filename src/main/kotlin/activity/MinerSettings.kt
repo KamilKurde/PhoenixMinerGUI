@@ -52,7 +52,7 @@ class Minersettings : Activity() {
 				Option.String(StringArgument.Worker, "Donation${Random.nextULong()}"),
 			)
 		}
-		val initialsettings = Json.encodeToString(miner.toMinerData())
+		val initialsettings = Json.encodeToString(miner)
 		setContent {
 			AppTheme {
 				Column(
@@ -89,7 +89,7 @@ class Minersettings : Activity() {
 								}
 								settings.save()
 								// Ensure that miner is active and changes were made before restarting miner
-								if (miner.isActive && initialsettings != Json.encodeToString(miner.toMinerData())) {
+								if (miner.isActive && initialsettings != Json.encodeToString(miner)) {
 									CoroutineScope(Job()).launch {
 										miner.log("Restarting miner")
 										miner.stopMining()

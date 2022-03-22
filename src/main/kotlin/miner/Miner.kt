@@ -8,6 +8,7 @@ import config.Option
 import config.arguments.GpusArgument
 import config.arguments.StringArgument
 import data.*
+import data.serializers.MinerSerializer
 import functions.taskKill
 import functions.tryWithoutCatch
 import kotlinx.coroutines.*
@@ -15,12 +16,7 @@ import kotlinx.serialization.Serializable
 import settings
 import java.io.File
 
-@Serializable
-class MinerData(val name: String = "", val id: Id = Id(1), val mineOnStartup: Boolean = false, val settings: Array<String> = emptyArray()) {
-	
-	fun toMiner() = Miner(name, id, mineOnStartup, Arguments(*settings))
-}
-
+@Serializable(MinerSerializer::class)
 @Suppress("BlockingMethodInNonBlockingContext")
 class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, arguments: Arguments) {
 	
@@ -72,8 +68,6 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 	private val gpusFromOption get() = arguments.copy().firstOrNull { it is Option.Gpus && it.commandlineArgument == GpusArgument.Gpus && it.value.isNotEmpty() } as Option.Gpus?
 	
 	val assignedGpuIds get() = gpusFromOption?.value ?: settings.gpus.map { it.id }.toTypedArray()
-	
-	fun toMinerData() = MinerData(name, id, mineOnStartup, arguments.toStringArray())
 	
 	private val file = File(folder + File.separator + "miner$id.bat")
 	
