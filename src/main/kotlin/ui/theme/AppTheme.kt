@@ -3,7 +3,6 @@ package ui.theme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 
 
 private val lightColors = lightColors(
@@ -11,13 +10,6 @@ private val lightColors = lightColors(
 	primaryVariant = PrimaryVariant,
 	secondary = Secondary,
 	secondaryVariant = SecondaryVariant,
-	background = Color.White,
-	surface = Color.White,
-	error = Error,
-	onPrimary = OnPrimary,
-	onSecondary = OnSecondary,
-	onBackground = Color.Black,
-	onSurface = Color.Black,
 	onError = OnError
 )
 /*private val darkColors = darkColors(
