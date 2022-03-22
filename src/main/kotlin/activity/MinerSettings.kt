@@ -13,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
@@ -21,10 +20,10 @@ import config.*
 import config.arguments.StringArgument
 import config.arguments.WalletArgument
 import data.Id
+import data.miner.Miner
 import kotlinx.coroutines.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import data.miner.Miner
 import settings
 import ui.ParameterUI
 import ui.material.MaterialRow
@@ -54,133 +53,136 @@ class Minersettings : Activity() {
 		}
 		val initialsettings = Json.encodeToString(miner)
 		setContent {
-			AppTheme {
-				Column(
-					modifier = Modifier.fillMaxSize().padding(8.dp)
+			LaunchedEffect(settings.darkMode)
+			{
+				setTheme(settings.colors)
+			}
+			Column(
+				modifier = Modifier.fillMaxSize().padding(8.dp)
+			) {
+				var name by remember { mutableStateOf(miner.name) }
+				val parameters by remember { mutableStateOf(miner.arguments.allConfigs()) }
+				
+				Row(
+					horizontalArrangement = Arrangement.SpaceBetween,
+					verticalAlignment = Alignment.CenterVertically,
+					modifier = Modifier.fillMaxWidth()
 				) {
-					var name by remember { mutableStateOf(miner.name) }
-					val parameters by remember { mutableStateOf(miner.arguments.allConfigs()) }
-					
-					Row(
-						horizontalArrangement = Arrangement.SpaceBetween,
-						verticalAlignment = Alignment.CenterVertically,
-						modifier = Modifier.fillMaxWidth()
-					) {
-						IconButton(
-							{
-								parent.back()
-							})
+					IconButton(
 						{
-							Icon(Icons.Rounded.ArrowBack, "Back", tint = Color.Black)
-						}
-						Spacer(modifier = Modifier.width(16.dp))
-						TextField(
-							value = name,
-							onValueChange = { name = it },
-							label = { Text("Name") }
-						)
-						Spacer(modifier = Modifier.width(16.dp))
-						Button(
-							{
-								miner.name = name.trim()
-								miner.arguments = Arguments(*parameters.filter { it.enabled }.map { it.config }.toTypedArray())
-								if (settings.miners.none { it.id == miner.id }) {
-									settings.miners.add(miner)
-								}
-								settings.save()
-								// Ensure that data.miner is active and changes were made before restarting data.miner
-								if (miner.isActive && initialsettings != Json.encodeToString(miner)) {
-									CoroutineScope(Job()).launch {
-										miner.log("Restarting data.miner")
-										miner.stopMining()
-										settings.startMiner(miner)
-									}
+							parent.back()
+						})
+					{
+						Icon(Icons.Rounded.ArrowBack, "Back", tint = MaterialTheme.colors.onSurface)
+					}
+					Spacer(modifier = Modifier.width(16.dp))
+					TextField(
+						value = name,
+						onValueChange = { name = it },
+						label = { Text("Name") },
+						colors = TextFieldDefaults.textFieldColors(textColor = MaterialTheme.colors.onSurface)
+					)
+					Spacer(modifier = Modifier.width(16.dp))
+					Button(
+						{
+							miner.name = name.trim()
+							miner.arguments = Arguments(*parameters.filter { it.enabled }.map { it.config }.toTypedArray())
+							if (settings.miners.none { it.id == miner.id }) {
+								settings.miners.add(miner)
+							}
+							settings.save()
+							// Ensure that data.miner is active and changes were made before restarting data.miner
+							if (miner.isActive && initialsettings != Json.encodeToString(miner)) {
+								CoroutineScope(Job()).launch {
+									miner.log("Restarting data.miner")
+									miner.stopMining()
+									settings.startMiner(miner)
 								}
 							}
-						)
-						{
-							Text("Save")
+						}
+					)
+					{
+						Text("Save")
+					}
+				}
+				
+				Spacer(modifier = Modifier.height(32.dp))
+				
+				var deletionAlert by remember { mutableStateOf(false) }
+				
+				LazyColumn(
+					modifier = Modifier.fillMaxWidth().wrapContentHeight()
+						.border(1.dp, Color(0f, 0f, 0f, 0.12f), RoundedCornerShape(4.dp))
+				) {
+					stickyHeader {
+						MaterialRow(isHeader = true) {
+							Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
+							TableCell("Name", NAME_WEIGHT, isHeader = true, textAlign = TextAlign.Left)
+							TableCell("Description", DESCRIPTION_WEIGHT, isHeader = true, textAlign = TextAlign.Left)
+							TableCell("Value", VALUE_WEIGHT, isHeader = true, textAlign = TextAlign.Center)
 						}
 					}
-					
-					Spacer(modifier = Modifier.height(32.dp))
-					
-					var deletionAlert by remember { mutableStateOf(false) }
-					
-					LazyColumn(
-						modifier = Modifier.fillMaxWidth().wrapContentHeight()
-							.border(1.dp, Color(0f, 0f, 0f, 0.12f), RoundedCornerShape(4.dp))
-					) {
-						stickyHeader {
-							MaterialRow(isHeader = true) {
-								Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
-								TableCell("Name", NAME_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Left)
-								TableCell("Description", DESCRIPTION_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Left)
-								TableCell("Value", VALUE_WEIGHT, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-							}
-						}
-						// Handling data.miner startup on program launch
-						item {
-							MaterialRow {
-								Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
-								TableCell("Mos", NAME_WEIGHT, textAlign = TextAlign.Left)
-								TableCell("Start this data.miner on program launch", DESCRIPTION_WEIGHT, textAlign = TextAlign.Left)
-								Box(modifier = Modifier.weight(VALUE_WEIGHT)) {
-									Switch(
-										miner.mineOnStartup,
-										{ miner.mineOnStartup = it },
-										modifier = Modifier.fillMaxSize(),
-									)
-								}
-							}
-						}
-						items(parameters.size)
-						{
-							ParameterUI(parameters[it], !deletionAlert)
-						}
-						item {
-							Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-								IconButton({
-									deletionAlert = true
-								})
-								{
-									Icon(Icons.Rounded.Delete, "Delete Button", tint = Color.Red)
-								}
-							}
-						}
-					}
-					
-					if (deletionAlert) {
-						AlertDialog(
-							modifier = Modifier.width(400.dp),
-							onDismissRequest = { deletionAlert = false },
-							title = {
-								Text("Are you sure that you want to delete this data.miner?")
-							},
-							text = {
-								Text("This action cannot be undone")
-							},
-							dismissButton = {
-								OutlinedButton({ deletionAlert = false })
-								{
-									Text("No")
-								}
-							},
-							confirmButton = {
-								Button(
-									{
-										settings.miners.remove(miner)
-										settings.save()
-										parent.back()
-										deletionAlert = false
-									}, colors = ButtonDefaults.buttonColors(Color.Red, Color.White)
+					// Handling data.miner startup on program launch
+					item {
+						MaterialRow {
+							Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
+							TableCell("Mos", NAME_WEIGHT, textAlign = TextAlign.Left)
+							TableCell("Start this data.miner on program launch", DESCRIPTION_WEIGHT, textAlign = TextAlign.Left)
+							Box(modifier = Modifier.weight(VALUE_WEIGHT)) {
+								Switch(
+									miner.mineOnStartup,
+									{ miner.mineOnStartup = it },
+									modifier = Modifier.fillMaxSize(),
 								)
-								{
-									Text("Yes")
-								}
 							}
-						)
+						}
 					}
+					items(parameters.size)
+					{
+						ParameterUI(parameters[it], !deletionAlert)
+					}
+					item {
+						Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+							IconButton({
+								deletionAlert = true
+							})
+							{
+								Icon(Icons.Rounded.Delete, "Delete Button", tint = Color.Red)
+							}
+						}
+					}
+				}
+				
+				if (deletionAlert) {
+					AlertDialog(
+						modifier = Modifier.width(400.dp),
+						onDismissRequest = { deletionAlert = false },
+						title = {
+							Text("Are you sure that you want to delete this data.miner?")
+						},
+						text = {
+							Text("This action cannot be undone")
+						},
+						dismissButton = {
+							OutlinedButton({ deletionAlert = false })
+							{
+								Text("No")
+							}
+						},
+						confirmButton = {
+							Button(
+								{
+									settings.miners.remove(miner)
+									settings.save()
+									parent.back()
+									deletionAlert = false
+								}, colors = ButtonDefaults.buttonColors(Color.Red, Color.White)
+							)
+							{
+								Text("Yes")
+							}
+						}
+					)
 				}
 			}
 		}

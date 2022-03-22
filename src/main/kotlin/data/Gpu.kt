@@ -5,7 +5,6 @@ package data
 import androidx.compose.runtime.*
 import com.github.pgreze.process.Redirect
 import com.github.pgreze.process.process
-import data.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import settings
 import java.io.File

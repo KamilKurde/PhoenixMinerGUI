@@ -7,13 +7,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import settings
 import ui.ConstrainedRow
-import ui.material.MaterialColumn
-import ui.material.MaterialRow
+import ui.material.*
 
 @Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED")
 @OptIn(ExperimentalFoundationApi::class)
@@ -21,21 +19,21 @@ import ui.material.MaterialRow
 fun GpuTable(
 	modifier: Modifier = Modifier,
 ) {
-	MaterialColumn(modifier) {
+	MaterialColumn(modifier.roundedBorder()) {
 		LazyColumn {
 			stickyHeader {
 				MaterialRow(isHeader = true) {
 					ConstrainedRow(
 						Modifier.weight(1f),
 						SIZE_PER_ELEMENT.dp,
-						{ TableCell("ID", fontWeight = FontWeight.Bold) },
-						{ TableCell("Name", fontWeight = FontWeight.Bold) },
-						{ TableCell("in Use", fontWeight = FontWeight.Bold) },
-						{ TableCell("Performance", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ TableCell("Temperature", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ TableCell("Time", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ TableCell("Power", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ TableCell("Efficiency", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
+						{ TableCell("ID", isHeader = true) },
+						{ TableCell("Name", isHeader = true) },
+						{ TableCell("in Use", isHeader = true) },
+						{ TableCell("Performance", isHeader = true, textAlign = TextAlign.Right) },
+						{ TableCell("Temperature", isHeader = true, textAlign = TextAlign.Right) },
+						{ TableCell("Time", isHeader = true, textAlign = TextAlign.Right) },
+						{ TableCell("Power", isHeader = true, textAlign = TextAlign.Right) },
+						{ TableCell("Efficiency", isHeader = true, textAlign = TextAlign.Right) }
 					)
 				}
 			}

@@ -2,12 +2,12 @@ package data.serializers
 
 import androidx.compose.ui.window.WindowPlacement
 import data.Settings
+import data.miner.Miner
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import data.miner.Miner
 
 class SettingsSerializer : KSerializer<Settings> {
 	
@@ -20,6 +20,7 @@ class SettingsSerializer : KSerializer<Settings> {
 		val placement: WindowPlacement = WindowPlacement.Maximized,
 		val positionX: Int = 0,
 		val positionY: Int = 0,
+		val darkMode: Boolean = true,
 	) {
 		
 		fun toSettings() = Settings(
@@ -29,7 +30,8 @@ class SettingsSerializer : KSerializer<Settings> {
 			height,
 			placement,
 			positionX,
-			positionY
+			positionY,
+			darkMode
 		)
 		
 		constructor(settings: Settings) : this(
@@ -39,7 +41,8 @@ class SettingsSerializer : KSerializer<Settings> {
 			settings.height,
 			settings.placement,
 			settings.positionX,
-			settings.positionY
+			settings.positionY,
+			settings.darkMode
 		)
 	}
 	

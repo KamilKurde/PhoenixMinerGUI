@@ -4,12 +4,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
-import com.github.KamilKurde.Application
-import com.github.KamilKurde.Intent
+import com.github.KamilKurde.*
 import data.Settings
+import data.miner.Miner
 import functions.*
 import kotlinx.coroutines.*
-import data.miner.Miner
 import phoenix.phoenixPathIsCorrect
 
 val icon = @Composable { painterResource("icon.ico") }
@@ -51,11 +50,12 @@ fun main(args: Array<String>) = Application({ settings.addError(it) }) {
 		position = WindowPosition(settings.positionX.dp, settings.positionY.dp)
 	)
 	val intent = Intent(Summary::class)
-	com.github.KamilKurde.Window(
+	Window(
 		intent,
 		title = "PhoenixMiner GUI",
 		icon = icon,
 		windowState = windowState,
+		defaultTheme = settings.colors,
 		onCloseRequest = {
 			runBlocking { Miner.stopAllMiners("/nokill" !in args) }
 			settings.apply {

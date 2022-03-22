@@ -7,20 +7,17 @@ import activity.Minersettings
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.github.KamilKurde.Activity
-import com.github.KamilKurde.Intent
+import com.github.KamilKurde.*
 import settings
 import ui.ConstrainedRow
 import ui.MinerControls
-import ui.material.MaterialColumn
-import ui.material.MaterialRow
+import ui.material.*
 
 @Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED")
 @OptIn(ExperimentalFoundationApi::class)
@@ -28,22 +25,23 @@ import ui.material.MaterialRow
 fun MinerTable(
 	activity: Activity,
 	modifier: Modifier = Modifier,
+	setTheme: (theme: Theme) -> Unit,
 ) {
-	MaterialColumn(modifier) {
+	MaterialColumn(modifier.roundedBorder()) {
 		LazyColumn {
 			stickyHeader {
 				MaterialRow(isHeader = true) {
 					ConstrainedRow(
 						Modifier.weight(1f),
 						SIZE_PER_ELEMENT.dp,
-						{ TableCell(text = "ID", fontWeight = FontWeight.Bold) },
-						{ TableCell(text = "Name", modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp), fontWeight = FontWeight.Bold) },
-						{ TableCell(text = "Status", fontWeight = FontWeight.Bold) },
-						{ TableCell(text = "Hashrate", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ TableCell(text = "Shares", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ TableCell(text = "Time", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ TableCell(text = "Power", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) },
-						{ TableCell(text = "Efficiency", fontWeight = FontWeight.Bold, textAlign = TextAlign.Right) }
+						{ TableCell(text = "ID", isHeader = true) },
+						{ TableCell(text = "Name", modifier = Modifier.defaultMinSize(minWidth = NAME_COLUMN_SIZE.dp), isHeader = true) },
+						{ TableCell(text = "Status", isHeader = true) },
+						{ TableCell(text = "Hashrate", isHeader = true, textAlign = TextAlign.Right) },
+						{ TableCell(text = "Shares", isHeader = true, textAlign = TextAlign.Right) },
+						{ TableCell(text = "Time", isHeader = true, textAlign = TextAlign.Right) },
+						{ TableCell(text = "Power", isHeader = true, textAlign = TextAlign.Right) },
+						{ TableCell(text = "Efficiency", isHeader = true, textAlign = TextAlign.Right) }
 					)
 				}
 			}
@@ -66,16 +64,26 @@ fun MinerTable(
 				}
 			}
 		}
-		Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End)
+		MaterialRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween)
 		{
 			TextButton(
-				{
+				modifier = Modifier.padding(start = 8.dp),
+				onClick = {
+					settings.darkMode = !settings.darkMode
+					setTheme(settings.colors)
+				})
+			{
+				Icon(if (settings.darkMode) Icons.Rounded.LightMode else Icons.Rounded.DarkMode, "Change theme")
+			}
+			TextButton(
+				modifier = Modifier.padding(end = 8.dp),
+				onClick = {
 					val intent = Intent(Minersettings::class)
 					activity.startActivity(intent)
 				},
 			)
 			{
-				Text("Create new data.miner")
+				Text("Create new miner")
 			}
 		}
 	}

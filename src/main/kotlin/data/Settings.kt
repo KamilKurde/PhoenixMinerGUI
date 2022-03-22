@@ -2,6 +2,8 @@ package data
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.window.WindowPlacement
+import com.github.KamilKurde.Theme
+import data.miner.*
 import data.serializers.SettingsSerializer
 import functions.*
 import kotlinx.coroutines.CancellationException
@@ -10,8 +12,9 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
-import data.miner.*
 import phoenix.phoenixPathIsCorrect
+import ui.theme.darkColors
+import ui.theme.lightColors
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,6 +30,7 @@ class Settings(
 	var placement: WindowPlacement = WindowPlacement.Maximized,
 	var positionX: Int = 0,
 	var positionY: Int = 0,
+	darkMode: Boolean = true,
 ) {
 	
 	var phoenixPath by mutableStateOf(phoenixPath)
@@ -38,6 +42,10 @@ class Settings(
 	var nokill = false
 	
 	private val minersToStart = mutableListOf<Miner>()
+	
+	var darkMode by mutableStateOf(darkMode)
+	
+	val colors get() = Theme(if (darkMode) darkColors else lightColors)
 	
 	companion object {
 		

@@ -2,12 +2,12 @@ package data.serializers
 
 import config.Arguments
 import data.Id
+import data.miner.Miner
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import data.miner.Miner
 
 class MinerSerializer : KSerializer<Miner> {
 	

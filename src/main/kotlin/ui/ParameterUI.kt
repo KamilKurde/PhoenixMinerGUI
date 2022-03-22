@@ -58,7 +58,8 @@ fun ParameterUI(option: OptionWrapper, displayTooltip: Boolean = true) {
 						},
 						isError = errorState,
 						singleLine = true,
-						label = { Text("Numeric value") }
+						label = { Text("Numeric value") },
+						colors = TextFieldDefaults.textFieldColors(textColor = MaterialTheme.colors.onSurface)
 					)
 				}
 				
@@ -79,7 +80,8 @@ fun ParameterUI(option: OptionWrapper, displayTooltip: Boolean = true) {
 						},
 						isError = errorState,
 						singleLine = true,
-						label = { Text("Wallet address") }
+						label = { Text("Wallet address") },
+						colors = TextFieldDefaults.textFieldColors(textColor = MaterialTheme.colors.onSurface)
 					)
 				}
 				
@@ -105,7 +107,8 @@ fun ParameterUI(option: OptionWrapper, displayTooltip: Boolean = true) {
 						},
 						isError = errorState,
 						singleLine = true,
-						label = { Text("IDs of GPUs separated by commas") }
+						label = { Text("IDs of GPUs separated by commas") },
+						colors = TextFieldDefaults.textFieldColors(textColor = MaterialTheme.colors.onSurface)
 					)
 				}
 				
@@ -125,7 +128,8 @@ fun ParameterUI(option: OptionWrapper, displayTooltip: Boolean = true) {
 							config.value = it
 						},
 						singleLine = true,
-						label = { Text("Value") }
+						label = { Text("Value") },
+						colors = TextFieldDefaults.textFieldColors(textColor = MaterialTheme.colors.onSurface)
 					)
 				}
 			}
