@@ -87,7 +87,7 @@ class Minersettings : Activity() {
 								settings.miners.add(miner)
 							}
 							settings.save()
-							// Ensure that data.miner is active and changes were made before restarting data.miner
+							// Ensure that miner is active and changes were made before restarting miner
 							if (miner.isActive && initialSettings != Json.encodeToString(miner)) {
 								CoroutineScope(Job()).launch {
 									miner.log("Restarting miner")
@@ -118,12 +118,12 @@ class Minersettings : Activity() {
 							TableCell("Value", VALUE_WEIGHT, isHeader = true, textAlign = TextAlign.Center)
 						}
 					}
-					// Handling data.miner startup on program launch
+					// Handling miner startup on program launch
 					item {
 						MaterialRow {
 							Spacer(modifier = Modifier.weight(CHECKBOX_WEIGHT))
 							TableCell("Mos", NAME_WEIGHT, textAlign = TextAlign.Left)
-							TableCell("Start this data.miner on program launch", DESCRIPTION_WEIGHT, textAlign = TextAlign.Left)
+							TableCell("Start this miner on program launch", DESCRIPTION_WEIGHT, textAlign = TextAlign.Left)
 							Box(modifier = Modifier.weight(VALUE_WEIGHT)) {
 								Switch(
 									miner.mineOnStartup,
@@ -154,7 +154,7 @@ class Minersettings : Activity() {
 						modifier = Modifier.width(400.dp),
 						onDismissRequest = { deletionAlert = false },
 						title = {
-							Text("Are you sure that you want to delete this data.miner?")
+							Text("Are you sure that you want to delete this miner?")
 						},
 						text = {
 							Text("This action cannot be undone")

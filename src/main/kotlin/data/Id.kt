@@ -23,7 +23,7 @@ object IdSerializer : KSerializer<Id> {
 value class Id(val value: Int) {
 	
 	init {
-		require(value >= 0) { "Id in phoenix data.miner cannot be lower than 0" }
+		require(value >= 0) { "Id in phoenix miner cannot be lower than 0" }
 	}
 	
 	override fun toString() = value.toString()
