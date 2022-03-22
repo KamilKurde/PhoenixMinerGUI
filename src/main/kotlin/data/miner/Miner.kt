@@ -124,8 +124,8 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 	private fun updateGpuStats(line: String) {
 		for (internalId in assignedGpuIds.indices) {
 			if (line.startsWith("GPU$internalId") && !(line.startsWith("GPU$internalId: Using") || line.startsWith("GPU$internalId: DAG"))) {
-				val gpusettingsIndex = settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId] }
-				val gpu = settings.gpus[gpusettingsIndex]
+				val gpuSettingsIndex = settings.gpus.indexOfFirst { it.id == assignedGpuIds[internalId] }
+				val gpu = settings.gpus[gpuSettingsIndex]
 				val splitLine = line.split(" ")
 				if (line.startsWith("GPU$internalId: cclock")) {
 					gpu.powerEfficiency = splitLine[splitLine.size - 2].toInt()
