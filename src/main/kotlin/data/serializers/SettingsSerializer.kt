@@ -22,7 +22,7 @@ class SettingsSerializer : KSerializer<Settings> {
 		val positionY: Int = 0,
 	) {
 		
-		fun tosettings() = Settings(
+		fun toSettings() = Settings(
 			phoenixPath,
 			miners.map { it.toMiner() }.toTypedArray(),
 			width,
@@ -43,7 +43,7 @@ class SettingsSerializer : KSerializer<Settings> {
 		)
 	}
 	
-	override fun deserialize(decoder: Decoder): Settings = SettingsData.serializer().deserialize(decoder).tosettings()
+	override fun deserialize(decoder: Decoder): Settings = SettingsData.serializer().deserialize(decoder).toSettings()
 	
 	override val descriptor: SerialDescriptor
 		get() = SettingsData.serializer().descriptor
