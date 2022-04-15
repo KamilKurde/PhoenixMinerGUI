@@ -105,5 +105,7 @@ tasks.register<Delete>("cleanDistributablesDir")
 // Main task to use for building distributables for both installer and portable
 tasks.register<GradleBuild>("bundleDistributables")
 {
-	tasks = listOf("cleanDistributablesDir", "updateVersionFileToCurrent", "zipDistributable", "copyExe", "updateVersionFileToDevelopment")
+	dependsOn("updateVersionFileToCurrent", "cleanDistributablesDir")
+	tasks = listOf("zipDistributable", "copyExe")
+	finalizedBy("updateVersionFileToDevelopment")
 }
