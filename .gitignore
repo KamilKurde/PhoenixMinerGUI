@@ -7,7 +7,6 @@
 !.idea/codeStyles
 .gradle/
 build/
-gradle/
 
 # Build
 distributables/
