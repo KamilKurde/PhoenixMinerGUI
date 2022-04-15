@@ -11,7 +11,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
 import functions.tryWithoutCatch
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import phoenix.openFileDialog
 import phoenix.phoenixPathIsCorrect
 import settings
@@ -19,8 +18,8 @@ import ui.material.Tooltip
 
 class Setup : Activity() {
 	
-	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-	@OptIn(ExperimentalFoundationApi::class, ExperimentalCoroutinesApi::class)
+	@Suppress("OPT_IN_IS_NOT_ENABLED")
+	@OptIn(ExperimentalFoundationApi::class)
 	override fun onCreate() {
 		super.onCreate()
 		setContent {
@@ -47,7 +46,7 @@ class Setup : Activity() {
 					{
 						TooltipArea(
 							{
-								Tooltip("This version was tested for PhoenixMiner 6.0b however it should work with newer version as well")
+								Tooltip("This version was tested for PhoenixMiner 6.1b however it should work with newer version as well")
 							}
 						)
 						{
