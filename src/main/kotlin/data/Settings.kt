@@ -37,7 +37,7 @@ class Settings(
 	var gpus by mutableStateOf(emptyArray<Gpu>())
 	val miners = mutableStateListOf(*miners)
 	
-	val activeMiners by derivedStateOf { miners.filter { it.isActive } }
+	val activeMiners by safeDerivedStateOf { miners.filter { it.isActive } }
 	
 	var nokill = false
 	
