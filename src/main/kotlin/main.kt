@@ -55,7 +55,7 @@ fun main(args: Array<String>) = Application({ settings.addError(it) }) {
 		title = "PhoenixMiner GUI",
 		icon = icon,
 		windowState = windowState,
-		defaultTheme = settings.colors,
+		defaultTheme = settings.theme,
 		onCloseRequest = {
 			runBlocking { Miner.stopAllMiners("/nokill" !in args) }
 			settings.apply {

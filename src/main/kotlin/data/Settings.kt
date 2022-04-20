@@ -45,7 +45,7 @@ class Settings(
 	
 	var darkMode by mutableStateOf(darkMode)
 	
-	val colors by derivedStateOf { Theme(if (darkMode) darkColors else lightColors) }
+	val theme by derivedStateOf { Theme(if (this.darkMode) darkColors else lightColors) }
 	
 	companion object {
 		

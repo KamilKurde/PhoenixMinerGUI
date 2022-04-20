@@ -69,7 +69,7 @@ fun MinerTable(
 				modifier = Modifier.padding(start = 8.dp),
 				onClick = {
 					settings.darkMode = !settings.darkMode
-					Application.windows.forEach { it.defaultTheme = settings.colors }
+					Application.windows.forEach { it.defaultTheme = settings.theme }
 				})
 			{
 				Icon(if (settings.darkMode) Icons.Rounded.LightMode else Icons.Rounded.DarkMode, "Change theme")
