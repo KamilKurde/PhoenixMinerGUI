@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
 import com.github.KamilKurde.Intent
 import functions.Shortcut
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import phoenix.phoenixPathIsCorrect
 import settings
 import ui.table.GpuTable
@@ -21,7 +20,6 @@ import ui.table.MinerTable
 class Summary : Activity() {
 	
 	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-	@OptIn(ExperimentalCoroutinesApi::class)
 	override fun onCreate() {
 		super.onCreate()
 		if (!phoenixPathIsCorrect(settings.phoenixPath)) {

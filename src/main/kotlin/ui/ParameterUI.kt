@@ -1,7 +1,5 @@
 package ui
 
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -15,7 +13,6 @@ import ui.material.MaterialRow
 import ui.table.TableCell
 import ui.theme.*
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED")
 @Composable
 fun ParameterUI(option: OptionWrapper, displayTooltip: Boolean = true) {
