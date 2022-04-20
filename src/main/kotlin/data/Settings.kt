@@ -37,7 +37,7 @@ class Settings(
 	var gpus by mutableStateOf(emptyArray<Gpu>())
 	val miners = mutableStateListOf(*miners)
 	
-	val activeMiners get() = miners.filter { it.isActive }
+	val activeMiners by derivedStateOf { miners.filter { it.isActive } }
 	
 	var nokill = false
 	
@@ -45,7 +45,7 @@ class Settings(
 	
 	var darkMode by mutableStateOf(darkMode)
 	
-	val colors get() = Theme(if (darkMode) darkColors else lightColors)
+	val colors by derivedStateOf { Theme(if (darkMode) darkColors else lightColors) }
 	
 	companion object {
 		

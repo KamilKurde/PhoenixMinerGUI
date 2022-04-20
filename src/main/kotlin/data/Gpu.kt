@@ -11,18 +11,17 @@ import java.io.File
 
 data class Gpu(val name: String, var id: Id = Id(1)) {
 	
-	val inUse
-		get(): Boolean {
-			val isUsed = settings.activeMiners.any { miner -> miner.assignedGpuIds.any { it == id } }
-			if (!isUsed) {
-				percentage = null
-				temperature = null
-				time = null
-				powerDraw = null
-				powerEfficiency = null
-			}
-			return isUsed
+	val inUse by derivedStateOf {
+		val isUsed = settings.activeMiners.any { miner -> miner.assignedGpuIds.any { it == id } }
+		if (!isUsed) {
+			percentage = null
+			temperature = null
+			time = null
+			powerDraw = null
+			powerEfficiency = null
 		}
+		isUsed
+	}
 	
 	var percentage by mutableStateOf<Int?>(null)
 	

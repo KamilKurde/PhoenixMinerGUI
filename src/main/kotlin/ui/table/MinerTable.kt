@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,7 +46,7 @@ fun MinerTable(
 			}
 			items(settings.miners.size)
 			{
-				val miner = settings.miners[it]
+				val miner by derivedStateOf { settings.miners[it] }
 				MaterialRow(Modifier.fillMaxWidth()) {
 					ConstrainedRow(
 						Modifier.weight(1f),

@@ -7,7 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
@@ -23,7 +23,7 @@ import ui.table.TableCell
 @Composable
 fun RowScope.MinerControls(miner: Miner, size: Int, activity: Activity) {
 	val modifier = Modifier.width((size / 2).dp)
-	val minerRunning = miner.status != MinerStatus.Offline && miner.status != MinerStatus.Closing
+	val minerRunning by derivedStateOf { miner.status != MinerStatus.Offline && miner.status != MinerStatus.Closing }
 	Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.Start) {
 		TableCell(miner.id, modifier = Modifier.width(ID_COLUMN_SIZE.dp))
 		IconButton(

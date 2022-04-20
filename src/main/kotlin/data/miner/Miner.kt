@@ -49,7 +49,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 	
 	var status by mutableStateOf(MinerStatus.Offline)
 	
-	val isActive get() = status != MinerStatus.Offline && status != MinerStatus.Waiting
+	val isActive by derivedStateOf { status != MinerStatus.Offline && status != MinerStatus.Waiting }
 	
 	var hashrate by mutableStateOf<Float?>(null)
 	
