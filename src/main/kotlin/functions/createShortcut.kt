@@ -1,7 +1,7 @@
 package functions
 
 import com.github.pgreze.process.process
-import data.folder
+import data.tmp
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -19,7 +19,7 @@ object Shortcut {
 	@OptIn(ExperimentalCoroutinesApi::class)
 	fun create() {
 		CoroutineScope(Job() + Dispatchers.IO).launch {
-			val file = File(folder + File.separator + "startupShortcutMaker.vbs")
+			val file = File(tmp + File.separator + "startupShortcutMaker.vbs")
 			file.createNewFile()
 			
 			// Based on https://superuser.com/questions/392061/how-to-make-a-shortcut-from-cmd#answer-392082

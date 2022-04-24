@@ -19,7 +19,9 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-val folder = System.getenv("LOCALAPPDATA") + File.separator + "PhoenixMinerGUI"
+val localAppdata by folder(System.getenv("LOCALAPPDATA") + File.separator + "PhoenixMinerGUI")
+
+val tmp by folder(System.getenv("TMP") + File.separator + "PhoenixMinerGUI")
 
 @Serializable(with = SettingsSerializer::class)
 class Settings(
@@ -55,8 +57,7 @@ class Settings(
 		}
 		
 		fun load() = tryOrNull {
-			val file = File(folder + File.separator + "settings.json")
-			@Suppress("JSON_FORMAT_REDUNDANT")
+			val file = File(localAppdata + File.separator + "settings.json")
 			serializer.decodeFromString<Settings>(file.readText())
 		}
 	}
@@ -68,7 +69,7 @@ class Settings(
 		}
 	}
 	
-	private val errorLog = File(folder + File.separator + "error_log.txt")
+	private val errorLog = File(localAppdata + File.separator + "error_log.txt")
 	
 	fun addError(e: Exception, printError: Boolean = true) {
 		if (printError) {
@@ -164,8 +165,7 @@ class Settings(
 	
 	fun save() {
 		miners.sortBy { it.id.value }
-		File(folder).mkdirs()
-		val file = File(folder + File.separator + "settings.json")
+		val file = File(localAppdata + File.separator + "settings.json")
 		file.createNewFile()
 		file.writeText(serializer.encodeToString(this))
 	}

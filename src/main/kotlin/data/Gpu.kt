@@ -37,7 +37,7 @@ data class Gpu(val name: String, var id: Id = Id(1)) {
 @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
 @OptIn(ExperimentalCoroutinesApi::class)
 suspend fun getGpus(): Array<Gpu> {
-	val file = File(folder + File.separator + "deviceDiscovery.bat")
+	val file = File(tmp + File.separator + "deviceDiscovery.bat")
 	file.createNewFile()
 	val path = settings.phoenixPath
 	file.writeText(
