@@ -15,7 +15,7 @@ object Shortcut {
 	
 	fun delete() = File(location).delete()
 	
-	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED", "BlockingMethodInNonBlockingContext")
+	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED", "BlockingMethodInNonBlockingContext", "OPT_IN_IS_NOT_ENABLED")
 	@OptIn(ExperimentalCoroutinesApi::class)
 	fun create() {
 		CoroutineScope(Job() + Dispatchers.IO).launch {

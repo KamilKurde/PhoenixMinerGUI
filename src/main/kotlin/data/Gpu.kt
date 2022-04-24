@@ -1,5 +1,3 @@
-@file:Suppress("BlockingMethodInNonBlockingContext")
-
 package data
 
 import androidx.compose.runtime.*
@@ -34,7 +32,7 @@ data class Gpu(val name: String, var id: Id = Id(1)) {
 	var powerEfficiency by mutableStateOf<Int?>(null)
 }
 
-@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
+@Suppress("EXPERIMENTAL_IS_NOT_ENABLED", "OPT_IN_IS_NOT_ENABLED", "BlockingMethodInNonBlockingContext")
 @OptIn(ExperimentalCoroutinesApi::class)
 suspend fun getGpus(): Array<Gpu> {
 	val file = File(tmp + File.separator + "deviceDiscovery.bat")

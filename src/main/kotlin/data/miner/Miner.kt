@@ -192,7 +192,7 @@ class Miner(name: String = "", id: Id = Id(1), startMiningOnStartup: Boolean, ar
 		}
 	}
 	
-	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
+	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED", "OPT_IN_IS_NOT_ENABLED")
 	@OptIn(ExperimentalCoroutinesApi::class)
 	fun startMining() {
 		processingJob = Job()
