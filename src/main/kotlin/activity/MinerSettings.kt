@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.Activity
+import com.github.KamilKurde.Application.back
 import config.*
 import config.arguments.StringArgument
 import config.arguments.WalletArgument
@@ -34,7 +35,7 @@ import kotlin.random.nextULong
 
 class Minersettings : Activity() {
 	
-	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
+	@Suppress("EXPERIMENTAL_IS_NOT_ENABLED", "OPT_IN_IS_NOT_ENABLED")
 	@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 	override fun onCreate() {
 		super.onCreate()
@@ -66,7 +67,7 @@ class Minersettings : Activity() {
 				) {
 					IconButton(
 						{
-							parent.back()
+							back()
 						})
 					{
 						Icon(Icons.Rounded.ArrowBack, "Back", tint = MaterialTheme.colors.onSurface)
@@ -170,7 +171,7 @@ class Minersettings : Activity() {
 								{
 									settings.miners.remove(miner)
 									settings.save()
-									parent.back()
+									back()
 									deletionAlert = false
 								}, colors = ButtonDefaults.buttonColors(Color.Red, Color.White)
 							)

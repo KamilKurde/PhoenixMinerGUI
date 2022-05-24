@@ -11,7 +11,7 @@ import functions.*
 import kotlinx.coroutines.*
 import phoenix.phoenixPathIsCorrect
 
-val icon = @Composable { painterResource("icon.ico") }
+val logo = @Composable { painterResource("icon.ico") }
 
 var settings = Settings.load() ?: Settings()
 
@@ -43,32 +43,28 @@ fun main(args: Array<String>) = Application({ settings.addError(it) }) {
 			}
 		}
 	}
-	val windowState = WindowState(
+	title = "PhoenixMiner GUI"
+	icon = logo
+	windowState = WindowState(
 		width = settings.width.dp,
 		height = settings.height.dp,
 		placement = settings.placement,
 		position = WindowPosition(settings.positionX.dp, settings.positionY.dp)
 	)
-	val intent = Intent(Summary::class)
-	Window(
-		intent,
-		title = "PhoenixMiner GUI",
-		icon = icon,
-		windowState = windowState,
-		defaultTheme = settings.theme,
-		onCloseRequest = {
-			runBlocking { Miner.stopAllMiners("/nokill" !in args) }
-			settings.apply {
-				height = windowState.size.height.value.toInt()
-				width = windowState.size.width.value.toInt()
-				placement = windowState.placement
-				positionX = windowState.position.x.value.toInt()
-				positionY = windowState.position.y.value.toInt()
-				save()
-			}
-			close()
+	defaultTheme = settings.theme
+	onCloseRequest = {
+		runBlocking { Miner.stopAllMiners("/nokill" !in args) }
+		settings.apply {
+			height = windowState.size.height.value.toInt()
+			width = windowState.size.width.value.toInt()
+			placement = windowState.placement
+			positionX = windowState.position.x.value.toInt()
+			positionY = windowState.position.y.value.toInt()
+			save()
 		}
-	)
+	}
+	
+	startActivity(Intent(Summary::class))
 	
 	val settingsScope = CoroutineScope(Job())
 	settingsScope.launch {

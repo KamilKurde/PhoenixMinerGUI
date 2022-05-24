@@ -14,12 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.KamilKurde.*
+import com.github.KamilKurde.Application.defaultTheme
 import settings
 import ui.ConstrainedRow
 import ui.MinerControls
 import ui.material.*
 
-@Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED")
+@Suppress("FunctionName", "EXPERIMENTAL_IS_NOT_ENABLED", "OPT_IN_IS_NOT_ENABLED")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MinerTable(
@@ -69,7 +70,7 @@ fun MinerTable(
 				modifier = Modifier.padding(start = 8.dp),
 				onClick = {
 					settings.darkMode = !settings.darkMode
-					Application.windows.forEach { it.defaultTheme = settings.theme }
+					defaultTheme = settings.theme
 				})
 			{
 				Icon(if (settings.darkMode) Icons.Rounded.LightMode else Icons.Rounded.DarkMode, "Change theme")
